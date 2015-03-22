@@ -1,0 +1,35 @@
+extends layout
+
+block content
+  .container-fluid
+    .row
+      .col-sm-3.col-md-2.sidebar
+        ul.nav.nav-sidebar
+          li.active
+            a(href='#') Overview
+          li
+            a(href='#') Browse
+          li
+            a(href='#') Visualise
+          li
+            a(href='/ontology/#{ontology.id}/downloads') Download
+     .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+        h1.page-header #{ontology.id} - #{ontology.name}
+        h4.sub-header #{ontology.description}
+        h2.sub-header Statistics
+        .table-responsive
+          table.table.table-striped
+            tbody
+              tr
+                td Class Count
+                td #{stats.classCount}
+              tr
+                td Logical Axiom Count
+                td #{stats.logicalAxiomCount}
+              tr
+                td RBox Axiom Count
+                td #{stats.rBoxAxiomCount}
+              tr
+                td TBox Axiom Count
+                td #{stats.tBoxAxiomCount}
+                

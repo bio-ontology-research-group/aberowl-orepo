@@ -6,14 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var ontologies = require('./routes/ontologies');
 
 var databank = require('databank').Databank;
 
 // connect to the database
 var params = {
     'schema': {},
-    'port': 6988
+    'port': 6379
 };
 var db = databank.get('redis', params);
 db.connect({}, function(err) {
@@ -36,19 +36,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(function(req, res, next) {
+    req.db = db;
+    next();
+});
+
 app.use('/', routes);
-app.use('/users', users);
+app.use('/ontology', ontologies);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
-});
-
-app.use('*', function(req, res, next) {
-    req.db = db;
-    next();
 });
 
 // error handlers

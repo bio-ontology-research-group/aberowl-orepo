@@ -1,5 +1,11 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  .container-fluid
+    .jumbotron
+      h1 Welcome to AberOWL
+        p
+          | Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms. 
+        p
+        a.btn.btn-lg.btn-primary(href='ontology', role='button') Browse Ontologies &raquo;
+  
