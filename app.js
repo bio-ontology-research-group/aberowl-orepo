@@ -1,14 +1,17 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express = require('express'),
+    path = require('path'),
+    favicon = require('serve-favicon'),
+    logger = require('morgan'),
+    cookieParser = require('cookie-parser'),
+    bodyParser = require('body-parser'),
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy,
+    passHash = require('password-hash'),
+    databank = require('databank').Databank;
 
+// import routes
 var routes = require('./routes/index');
 var ontologies = require('./routes/ontologies');
-
-var databank = require('databank').Databank;
 
 // connect to the database
 var params = {
@@ -43,6 +46,13 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 app.use('/ontology', ontologies);
+app.post('/login', 
+  passport.authenticate('local', {
+    'successRedirect': '/',
+    'failureRedirect': '/login',
+    'failureFlash': true
+  })
+);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -50,6 +60,33 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 });
+
+// Set up authentication
+
+passport.use(new LocalStrategy(function(username, password, done) {
+  db.read('users', username, function(err, user) {
+    if(!err && user) {
+      if(passHash.verify(password, user.password)) {
+        return done(null, user);
+      } else {
+        return done(null, false, { 'message': 'Incorrect password' });
+      }
+    } else {
+      return done(null, false, { 'message': 'Unknown user' });
+    }
+  }); 
+}));
+
+passport.serializeUser(function(user, done) {
+  done(null, user.username);
+});
+
+passport.deserializeUser(function(id, done) {
+  db.read('users', id, function (err, user) {
+    done(err, user);
+  });
+});
+
 
 // error handlers
 

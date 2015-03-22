@@ -7,7 +7,6 @@ router.get('/', function(req, res) {
   var ontologies = {};
 
   req.db.scan('ontologies', function(ontology) {
-  console.log(ontology);
     ontologies[ontology.id] = ontology; 
   }, function() {
     res.render('ontologies', {
@@ -25,7 +24,6 @@ router.get('/:id', function(req, res) {
       },
       'json': true
     }, function(request, response, body) {
-    console.log(body);
       res.render('ontology', {
         'ontology': ontology,
         'stats': body
