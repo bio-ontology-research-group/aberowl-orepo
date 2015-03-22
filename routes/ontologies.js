@@ -40,6 +40,12 @@ router.get('/:id/downloads', function(req, res) {
   });
 });
 
-
+router.get('/:id/query', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_query', {
+      'ontology': ontology
+    });
+  });
+});
 
 module.exports = router;
