@@ -8,6 +8,20 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var databank = require('databank').Databank;
+
+// connect to the database
+var params = {
+    'schema': {},
+    'port': 6988
+};
+var db = databank.get('redis', params);
+db.connect({}, function(err) {
+    if(err) {
+        throw new Error('Could not connect to database');
+    }
+}.bind(this));
+
 var app = express();
 
 // view engine setup
@@ -30,6 +44,11 @@ app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
+});
+
+app.use('*', function(req, res, next) {
+    req.db = db;
+    next();
 });
 
 // error handlers
