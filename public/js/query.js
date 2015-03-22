@@ -5,8 +5,6 @@ $(document).keypress(function(event){
 	var keycode = (event.keyCode ? event.keyCode : event.which);
 	if(keycode == '13'){
 		$("#button").click();
-//		alert('You pressed a "enter" key in somewhere');
-	
 	}
  
 });
@@ -14,8 +12,9 @@ $(document).keypress(function(event){
 function redrawTable() {
     window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
-    var qType = $('input[name="type"]:checked').val();
-    var ontology = $( "#ontologyselector option:selected" ).text();
+    //var qType = $('input[name="type"]:checked').val();
+    var qType = 'subeq';
+    var ontology = $("#ontology").text();
 
     var table = $('#example').dataTable( {
         "processing": false,
@@ -34,13 +33,13 @@ function redrawTable() {
 	    { "sWidth": "40%"},
 	],
 	"fnInitComplete": function( oSettings ) {
-	    document.getElementById('pubmedsearchlink').href = "pubmed/?type="+qType+"&owlquery="+query+"&ontology="+ontology ;
+	    /*document.getElementById('pubmedsearchlink').href = "pubmed/?type="+qType+"&owlquery="+query+"&ontology="+ontology ;
 	    $('#searchpubmed').show();                                                                                                         
 	    document.getElementById('sparqlsearchlink').href = "sparql/?type="+qType+"&query="+query+"&ontology="+ontology ;
-	    $('#searchsparql').show();                                                                                                         
+	    $('#searchsparql').show();                                                                                                         */
         },
         "ajax": {
-            "url": "api/runQuery.groovy?type="+qType+"&query="+query+"&ontology="+ontology,
+            "url": "/api/runQuery.groovy?type="+qType+"&query="+query.trim()+"&ontology="+ontology,
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -90,7 +89,6 @@ $(document).ready(function() {
     })
       
     //$('#example').parents('div.dataTables_wrapper').first().hide();
-
 	
     var q = window.location.hash.replace("#","");
     if (q!=null && q.length>0) {
@@ -98,25 +96,27 @@ $(document).ready(function() {
             redrawTable();
     //	document.getElementById('autocomplete').value = query ;
     }
+});
 
+$(function() {
             $( "#button" ).button();
 	    //$( "#radioset" ).buttonset();
 
 		$( "#autocomplete" )
 		.bind( "keydown", function( event ) {
 		    	if ( event.keyCode === $.ui.keyCode.TAB &&
-            		$( this ).data( "ui-autocomplete" ).menu.active ) {
-          		event.preventDefault();
+            		    $( this ).data( "ui-autocomplete" ).menu.active ) {
+          		  event.preventDefault();
         		}
       		})
 		.autocomplete({
 		    minLength: 3,
 		    source: function( request, response ) {
-			var ontology = $( "#ontologyselector option:selected" ).text();
-			$.getJSON( "api/queryNames.groovy", {
-			    term: extractLast( request.term ),
-			    ontology : ontology,
-			}, response );
+			var ontology = $("#ontology").text();
+			$.getJSON( "/api/queryNames.groovy", {
+			    term: extractLast(request.term),
+			    ontology: ontology
+			}, response);
 		    },
 		    search: function() {
 			// custom minLength
@@ -142,6 +142,7 @@ $(document).ready(function() {
 		    }
 		})
 	.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
+        console.log(item);
 	    return $( "<li>" )
 		.append( "<a>" + item.label +"</a>" )
 		.appendTo( ul );
