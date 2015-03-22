@@ -1,0 +1,13 @@
+extends layout
+
+block content
+ .container-fluid
+   .jumbotron
+      form.form-signin(action='/register', method='post', role='form')
+        h2.form-signin-heading Register
+        p #{msg}
+        input.form-control(name='username', type='username', placeholder='Username', required='', autofocus='')
+        input.form-control(name='email', type='email', placeholder='Email address', required='')
+        input.form-control(name='password', type='password', placeholder='Password', required='')
+        br
+        button.btn.btn-lg.btn-primary.btn-block(type='submit') Register

@@ -5,8 +5,10 @@ var express = require('express'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
     passport = require('passport'),
+    session = require('express-session'),
     LocalStrategy = require('passport-local').Strategy,
     passHash = require('password-hash'),
+    flash = require('flash'),
     databank = require('databank').Databank;
 
 // import routes
@@ -38,10 +40,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: 'it takes a lot of paint to cover a whole dinosaur' })); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash());
 
 app.use(function(req, res, next) {
     req.db = db;
     next();
+});
+
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+  next();
 });
 
 app.use('/', routes);
@@ -67,6 +78,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
   db.read('users', username, function(err, user) {
     if(!err && user) {
       if(passHash.verify(password, user.password)) {
+      console.log('success');
         return done(null, user);
       } else {
         return done(null, false, { 'message': 'Incorrect password' });

@@ -18,13 +18,17 @@ html
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href='#') AberOWL Repository
+          a.navbar-brand(href='/') AberOWL Repository
         .navbar-collapse.collapse
-          form.navbar-form.navbar-right(role='form')
-            .form-group
-              input.form-control(type='text', placeholder='Email')
-            .form-group
-              input.form-control(type='password', placeholder='Password')
-            button.btn.btn-success(type='submit') Sign in
+          -if(user) 
+              p.navbar.navbar-brand.navbar-right Logged in as #{user.username}
+          - else
+              form.navbar-form.navbar-right(action='/login', method='post', role='form')
+                .form-group
+                  input.form-control(type='text', placeholder='Email')
+                .form-group
+                  input.form-control(type='password', placeholder='Password')
+                button.btn.btn-success(type='submit') Sign in
+                a.btn.btn.btn-info(href='/register') Register
         // /.navbar-collapse
     block content
