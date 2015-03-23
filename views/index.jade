@@ -3,8 +3,12 @@ extends layout
 block content
   .container-fluid
     .jumbotron
-      h1 Welcome to AberOWL
-        p
+      img.img-responsive(style="float:left" width=150, height=150, src='logo-owl.png')
+      br
+      h1 &nbsp;Welcome to AberOWL
+        br
+        br
+        p(style="clear:both")
           | Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms. 
         p
         a.btn.btn-lg.btn-primary(href='ontology', role='button') Browse Ontologies &raquo;
