@@ -27,7 +27,8 @@ html
           a.navbar-brand(href='/') AberOWL Repository
         .navbar-collapse.collapse
           -if(user) 
-              p.navbar.navbar-brand.navbar-right Logged in as #{user.username}
+              p.navbar.navbar-brand.navbar-right Logged in as 
+                a(href='/user/#{user.username}') #{user.username}
           - else
               form.navbar-form.navbar-right(action='/login', method='post', role='form')
                 .form-group

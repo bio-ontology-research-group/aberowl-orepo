@@ -14,6 +14,7 @@ var express = require('express'),
 // import routes
 var routes = require('./routes/index');
 var ontologies = require('./routes/ontologies');
+var users = require('./routes/users');
 
 // connect to the database
 var params = {
@@ -37,7 +38,7 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '500mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'it takes a lot of paint to cover a whole dinosaur' })); // session secret
@@ -57,6 +58,7 @@ app.use(function(req, res, next) {
 
 app.use('/', routes);
 app.use('/ontology', ontologies);
+app.use('/user', users);
 app.post('/login', 
   passport.authenticate('local', {
     'successRedirect': '/',
@@ -98,7 +100,6 @@ passport.deserializeUser(function(id, done) {
     done(err, user);
   });
 });
-
 
 // error handlers
 

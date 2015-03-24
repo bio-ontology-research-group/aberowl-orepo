@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .container-fluid
+    .jumbotron
+        h3.page-header #{target_user.username}'s Ontologies
+        
+        -if(!ontologies)
+          p #{target_user.username} has no ontologies :'(
+          p Have you considered making an ontology of #{random_noun}? Why not?
+        -else
+          .table-responsive
+            table.table.table-striped(data-toggle="table", data-url="x" data-search="true")
+              thead
+                tr
+                  th Acronym
+                  th Name
+                  th Description
+              tbody
+                for ontology in ontologies
+                  tr
+                    td
+                     a(href='ontology/'+ontology.id) #{ontology.id} 
+                    td #{ontology.name}
+                    td #{ontology.description}

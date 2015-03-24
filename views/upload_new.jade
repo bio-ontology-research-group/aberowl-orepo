@@ -1,0 +1,21 @@
+extends layout
+
+block content
+ .container-fluid
+   .jumbotron
+      form.form-signin(action='/upload', method='post', role='form', enctype="multipart/form-data")
+        h2.form-signin-heading Upload New Ontology
+        p #{msg}
+        h5 Here you can upload a new ontology. First you should probably check 
+          a(href='/ontology/') here
+          span  to see if it has already been uploaded (you can claim ownership for your ontologies). If you don't have an ontology yet, try making one about #{noun}?
+        br
+        input.form-control(name='name', type='name', placeholder='Ontology Name', required='', autofocus='')
+        br
+        textarea.form-control(name='description', type='description', placeholder='Ontology Description', required='', autofocus='')
+        br 
+        span.btn.btn-default.btn-file Choose Ontology File
+          input(name='ontology', type='file', required='')
+        br
+        br
+        button.btn.btn-lg.btn-primary.btn-block(type='submit') Upload Ontology
