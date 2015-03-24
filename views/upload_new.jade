@@ -10,6 +10,8 @@ block content
           a(href='/ontology/') here
           span  to see if it has already been uploaded (you can claim ownership for your ontologies). If you don't have an ontology yet, try making one about #{noun}?
         br
+        input.form-control(name='acronym', type='acronym', placeholder='Ontology Acronym', required='', autofocus='')
+        br
         input.form-control(name='name', type='name', placeholder='Ontology Name', required='', autofocus='')
         br
         textarea.form-control(name='description', type='description', placeholder='Ontology Description', required='', autofocus='')

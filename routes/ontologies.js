@@ -26,14 +26,36 @@ router.get('/upload', function(req,res) {
 });
 
 router.post('/upload', function(req, res) {
-  fs.readFile(req.files.displayImage.path, function (err, data) {
-    // ...
-    var newPath = __dirname + "/uploads/uploadedFileName";
-    fs.writeFile(newPath, data, function (err) {
-      req.flash('message', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
-      res.redirect('/' + req.body.name);
+    req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
+      if(!exOnt) { 
+        fs.readFile(req.files.ontology.path, function (err, data) {
+          var newPath = __dirname + '/public/onts';
+          fs.writeFile(newPath, data, function (err) {
+            // Create ontology in DB
+            var time = Date.now()
+            req.db.save('ontologies', req.body.acronym, {
+              'id': req.body.acronym,
+              'name': req.body.name,
+              'lastSub
+              'status': 'untested'
+            }, function(err) {
+              // reload ontology in aber owl
+              request.get('http://aber-owl.net/aber-owl/service/api/reloadOntology.groovy', {
+                'qs': {
+                  'name': req.body.acronym 
+                } // Later this will need API key
+              }, function() {}); // we don't actually care about the response
+
+              req.flash('message', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+              res.redirect('/' + req.body.name);
+            });
+          });
+        });
+      } else {
+        req.flash('message', 'Ontology with acronym ' + req.body.acronym + ' already exists!');
+        res.redirect('/upload')
+      }
     });
-  });
 });
 
 router.get('/:id', function(req, res) {
@@ -74,6 +96,8 @@ router.get('/:id/reloaded', function(req, res) {
   var success = req.params.result;
 
   // Send an email or whatever
+
+  // If no success then BALEET
 });
 
 module.exports = router;
