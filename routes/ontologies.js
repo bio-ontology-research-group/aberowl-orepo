@@ -29,18 +29,25 @@ router.post('/upload', function(req, res) {
     req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
       if(!exOnt) { 
         fs.readFile(req.files.ontology.path, function (err, data) {
-          var newPath = __dirname + '/public/onts';
+          var newName = req.body.acronym + '_1.ont',
+              newPath = __dirname + '/public/onts/' + newName;
+
           fs.writeFile(newPath, data, function (err) {
             // Create ontology in DB
-            var time = Date.now()
-            req.db.save('ontologies', req.body.acronym, {
+            var time = Date.now();
+            var ont = {
               'id': req.body.acronym,
               'name': req.body.name,
-              'lastSub
+              'lastSubDate': time,
+              'submissions': {
+                
+              },
               'status': 'untested'
-            }, function(err) {
-              // reload ontology in aber owl
-              request.get('http://aber-owl.net/aber-owl/service/api/reloadOntology.groovy', {
+            };
+            ont.submissions[time] = newName;
+
+            req.db.save('ontologies', req.body.acronym, ont, function(err) {
+              request.get(req.aberowl + 'reloadOntology.groovy', {
                 'qs': {
                   'name': req.body.acronym 
                 } // Later this will need API key
@@ -60,7 +67,7 @@ router.post('/upload', function(req, res) {
 
 router.get('/:id', function(req, res) {
   req.db.read('ontologies', req.params.id, function(err, ontology) {
-    request.get('http://aber-owl.net/aber-owl/service/api/getStats.groovy', {
+    request.get(req.aberowl + 'getStats.groovy', {
       'qs': {
         'ontology': ontology.id
       },

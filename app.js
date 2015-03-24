@@ -41,17 +41,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, limit: '500mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({ secret: 'it takes a lot of paint to cover a whole dinosaur' })); // session secret
+app.use(session({ secret: 'it takes a lot of dye to cover a whole dinosaur' })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash());
 
 app.use(function(req, res, next) {
-    req.db = db;
-    next();
-});
-
-app.use(function(req, res, next) {
+  req.aberowl = 'http://aber-owl.net/aber-owl/service/api/';
+  req.db = db;
   res.locals.user = req.user;
   next();
 });
