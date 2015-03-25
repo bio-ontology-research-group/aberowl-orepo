@@ -15,6 +15,9 @@ block content
             a(href='#') Visualise
           li
             a(href='/ontology/#{ontology.id}/downloads') Download
+          -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+            li
+              a(href='/ontology/#{ontology.id}/manage') Manage
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         h1.page-header #{ontology.id} - #{ontology.name}
         h4.sub-header #{ontology.description}

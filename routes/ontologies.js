@@ -25,6 +25,22 @@ router.get('/upload', function(req,res) {
   });
 });
 
+router.post('/:id/update', function(req, res) { // this is just to update the deets
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      ontology.name = req.body.name;
+      ontology.description = req.body.description;
+      req.db.save('ontologies', ontology.id, ontology, function() {
+        req.flash('message', 'Ontology Updated');
+        res.redirect('/ontology/'+ontology.id+'/manage');
+      });
+    } else {
+      req.flash('message', 'You don\'t have permission to manage ' + req.body.acronym + '!');
+      res.redirect('/');
+    }
+  });
+});
+
 router.post('/upload', function(req, res) {
     req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
       if(!exOnt) { 
@@ -86,6 +102,19 @@ router.get('/:id/downloads', function(req, res) {
     res.render('ontology_download', {
       'ontology': ontology
     });
+  });
+});
+
+router.get('/:id/manage', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      res.render('ontology_manage', {
+        'ontology': ontology
+      });
+    } else {
+      req.flash('message', 'You don\'t have permission to manage ' + req.body.acronym + '!');
+      res.redirect('/');
+    }
   });
 });
 
