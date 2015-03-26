@@ -43,20 +43,26 @@ router.post('/:id/update', function(req, res) { // this is just to update the de
 });
 
 router.post('/:id/updatesyncmethod', function(req, res) { // this is just to update the deets
-console.log(_.keys(req.body));
-  /*req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
-      ontology.name = req.body.name;
-      ontology.description = req.body.description;
+      if(req.body.method == 'Bioportal') {
+        ontology.source = 'bioportal';
+      } else if(req.body.method == 'Manual update only') {
+        ontology.source = 'manual';
+      } else {
+        ontology.source = req.body.sourcetext;
+      }
+      console.log(req.body.method);
+
       req.db.save('ontologies', ontology.id, ontology, function() {
-        req.flash('info', 'Ontology Updated');
+        req.flash('info', 'Sync Method Updated');
         res.redirect('/ontology/'+ontology.id+'/manage');
       });
     } else {
       req.flash('error', 'Please log in to manage this ontology');
       res.redirect('/login');
     }
-  });*/
+  });
 });
 
 router.post('/upload', function(req, res) {

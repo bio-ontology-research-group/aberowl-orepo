@@ -11,7 +11,7 @@ function changeText(source) {
   } else if(source == 'Direct link') {
     $('#sourcetext').val('Enter link to ontology.');
     $('#sourcetext').prop('disabled', false);
-  } else if(source == 'Manual update only') {
+  } else if(source == 'Manual') {
     $('#sourcetext').val('Ontology will only be updated manually.');
     $('#sourcetext').prop('disabled', true);
   }
@@ -31,7 +31,7 @@ openSourceForm = function() {
         '<ul id="syncbox" class="dropdown-menu" role="menu">' + 
           '<li><a href="#">Bioportal</a></li> ' + 
           '<li><a href="#">Direct link</a></li> ' +
-          '<li><a href="#">Manual update only</a></li>' +
+          '<li><a href="#">Manual</a></li>' +
         '</ul>' +
       '</div><!-- /btn-group -->' + 
       '<input name="sourcetext" id="sourcetext" type="text" class="form-control" aria-label="..." />' +
@@ -43,7 +43,7 @@ openSourceForm = function() {
   $('#syncbox li').on('click', function(event) {
     var $target = $(event.currentTarget);
     $('#syncbutt').text($target.text());
-    $('#method').text($target.text());
+    $('#method').val($target.text());
     changeText($target.text());
   });
 };

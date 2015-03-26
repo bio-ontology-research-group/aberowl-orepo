@@ -36,9 +36,12 @@ block content
           button.btn.btn-success(type='submit') Save
 
         h3.sub-header Updates
-          h5 Currently automatically updating from: 
-            -if(ontology.source == 'bioportal')
+          h5 Current update method: 
+            -if(ontology.source == 'bioportal' || ontology.source == 'manual')
               div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
+              &nbsp;
+            -else 
+              div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
               &nbsp;
             a(href='#', onclick='openSourceForm()') change...
             div#sourceForm
