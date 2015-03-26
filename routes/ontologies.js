@@ -5,6 +5,8 @@ var Moniker = require('moniker');
 var names = Moniker.generator([Moniker.noun]);
 var pluralise = require('pluralize');
 var _ = require('underscore')._;
+var passport = require('passport');
+var fs = require('fs');
 
 /* GET users listing. */
 router.get('/', function(req, res) {
@@ -21,9 +23,62 @@ router.get('/', function(req, res) {
 });
 
 router.get('/upload', function(req,res) {
-  res.render('upload_new', {
-      'noun': pluralise(names.choose()),
-  });
+  if(req.isAuthenticated()) {
+    res.render('upload_new', {
+        'noun': pluralise(names.choose())
+    });
+  } else {
+      req.flash('error', 'Please log in to upload ontologies');
+      res.redirect('/login');
+  }
+});
+
+router.post('/upload', function(req, res) {
+  if(req.isAuthenticated()) {
+    req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
+      if(!exOnt) { 
+        fs.readFile(req.files.ontology.path, function (err, data) {
+          var newName = req.body.acronym + '_1.ont',
+              newPath = __dirname + '/../public/onts/' + newName;
+
+          fs.writeFile(newPath, data, function (err) {
+            // Create ontology in DB
+            var time = Date.now();
+            var ont = {
+              'id': req.body.acronym,
+              'name': req.body.name,
+              'description': req.body.description,
+              'lastSubDate': time,
+              'submissions': {
+                
+              },
+              'status': 'untested',
+              'source': 'manual',
+              'owners': [ req.user.username ]
+            };
+            ont.submissions[time] = newName;
+
+            req.db.save('ontologies', req.body.acronym, ont, function(err) {
+              request.get(req.aberowl + 'reloadOntology.groovy', {
+                'qs': {
+                  'name': req.body.acronym 
+                } // Later this will need API key
+              }, function() {}); // we don't actually care about the response
+
+              req.flash('info', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+              res.redirect('/ontology/' + req.body.acronym);
+            });
+          });
+        });
+      } else {
+        req.flash('error', 'Ontology with acronym ' + req.body.acronym + ' already exists!');
+        res.redirect('/ontology/upload')
+      }
+    });
+  } else {
+      req.flash('error', 'Please log in to upload ontologies');
+      res.redirect('/login');
+  }
 });
 
 router.post('/:id/update', function(req, res) { // this is just to update the deets
@@ -63,46 +118,6 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
       res.redirect('/login');
     }
   });
-});
-
-router.post('/upload', function(req, res) {
-    req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
-      if(!exOnt) { 
-        fs.readFile(req.files.ontology.path, function (err, data) {
-          var newName = req.body.acronym + '_1.ont',
-              newPath = __dirname + '/public/onts/' + newName;
-
-          fs.writeFile(newPath, data, function (err) {
-            // Create ontology in DB
-            var time = Date.now();
-            var ont = {
-              'id': req.body.acronym,
-              'name': req.body.name,
-              'lastSubDate': time,
-              'submissions': {
-                
-              },
-              'status': 'untested'
-            };
-            ont.submissions[time] = newName;
-
-            req.db.save('ontologies', req.body.acronym, ont, function(err) {
-              request.get(req.aberowl + 'reloadOntology.groovy', {
-                'qs': {
-                  'name': req.body.acronym 
-                } // Later this will need API key
-              }, function() {}); // we don't actually care about the response
-
-              req.flash('Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
-              res.redirect('/' + req.body.name);
-            });
-          });
-        });
-      } else {
-        req.flash('Ontology with acronym ' + req.body.acronym + ' already exists!');
-        res.redirect('/upload')
-      }
-    });
 });
 
 router.get('/:id', function(req, res) {

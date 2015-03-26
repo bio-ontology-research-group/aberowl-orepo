@@ -4,6 +4,7 @@ var express = require('express'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
+    multer = require('multer'),
     passport = require('passport'),
     session = require('express-session'),
     LocalStrategy = require('passport-local').Strategy,
@@ -39,6 +40,7 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false, limit: '500mb' }));
+app.use(multer());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'it takes a lot of dye to cover a whole dinosaur' })); // session secret

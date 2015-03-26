@@ -3,9 +3,12 @@ extends layout
 block content
  .container-fluid
    .jumbotron
-      form.form-signin(action='/upload', method='post', role='form', enctype="multipart/form-data")
+      form.form-signin(action='/ontology/upload', method='post', role='form', enctype="multipart/form-data")
         h2.form-signin-heading Upload New Ontology
-        p #{msg}
+        -if(messages.error) 
+          div.alert.alert-danger(role='alert')
+            span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+            span &nbsp; Error: #{messages.error}
         h5 Here you can upload a new ontology. First you should probably check 
           a(href='/ontology/') here
           span  to see if it has already been uploaded (you can claim ownership for your ontologies). If you don't have an ontology yet, try making one about #{noun}?
