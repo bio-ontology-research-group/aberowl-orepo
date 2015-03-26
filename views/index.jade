@@ -2,7 +2,9 @@ extends layout
 
 block content
   .container-fluid
-    p #{flash.message}
+    -if(messages)
+      p #{messages.errors}
+      p #{Object.keys(messages)}
     .jumbotron
       img.img-responsive(style="float:left" width=150, height=150, src='logo-owl.png')
       br

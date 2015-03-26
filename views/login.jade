@@ -1,12 +1,14 @@
 extends layout
 
 block content
- .container-fluid
-   .jumbotron
+  .container-fluid
+    .jumbotron
+      -if(messages.error) 
+        div.alert.alert-danger(role='alert')
+          span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+          span &nbsp; Error: #{messages.error}
       form.form-signin(action='/login', method='post', role='form')
         h2.form-signin-heading Log In
-        p #{msg}
-        p #{messages.message}
         input.form-control(name='username', type='username', placeholder='Username', required='', autofocus='')
         input.form-control(name='password', type='password', placeholder='Password', required='')
         br

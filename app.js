@@ -8,7 +8,7 @@ var express = require('express'),
     session = require('express-session'),
     LocalStrategy = require('passport-local').Strategy,
     passHash = require('password-hash'),
-    flash = require('flash'),
+    flash = require('express-flash'),
     databank = require('databank').Databank;
 
 // import routes
@@ -47,7 +47,7 @@ app.use(passport.session()); // persistent login sessions
 app.use(flash());
 
 app.use(function(req, res, next) {
-  req.aberowl = 'http://aber-owl.net/aber-owl/service/api/';
+  req.aberowl = 'http://localhost/api/';
   req.db = db;
   res.locals.user = req.user;
   next();
@@ -77,7 +77,6 @@ passport.use(new LocalStrategy(function(username, password, done) {
   db.read('users', username, function(err, user) {
     if(!err && user) {
       if(passHash.verify(password, user.password)) {
-      console.log('success');
         return done(null, user);
       } else {
         return done(null, false, { 'message': 'Incorrect password' });

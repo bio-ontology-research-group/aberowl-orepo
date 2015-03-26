@@ -4,6 +4,7 @@ var router = express.Router();
 var Moniker = require('moniker');
 var names = Moniker.generator([Moniker.noun]);
 var pluralise = require('pluralize');
+var _ = require('underscore')._;
 
 /* GET users listing. */
 router.get('/', function(req, res) {
@@ -31,14 +32,31 @@ router.post('/:id/update', function(req, res) { // this is just to update the de
       ontology.name = req.body.name;
       ontology.description = req.body.description;
       req.db.save('ontologies', ontology.id, ontology, function() {
-        req.flash('message', 'Ontology Updated');
+        req.flash('info', 'Ontology Updated');
         res.redirect('/ontology/'+ontology.id+'/manage');
       });
     } else {
-      req.flash('message', 'You don\'t have permission to manage ' + req.body.acronym + '!');
-      res.redirect('/');
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
     }
   });
+});
+
+router.post('/:id/updatesyncmethod', function(req, res) { // this is just to update the deets
+console.log(_.keys(req.body));
+  /*req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      ontology.name = req.body.name;
+      ontology.description = req.body.description;
+      req.db.save('ontologies', ontology.id, ontology, function() {
+        req.flash('info', 'Ontology Updated');
+        res.redirect('/ontology/'+ontology.id+'/manage');
+      });
+    } else {
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
+    }
+  });*/
 });
 
 router.post('/upload', function(req, res) {
@@ -69,13 +87,13 @@ router.post('/upload', function(req, res) {
                 } // Later this will need API key
               }, function() {}); // we don't actually care about the response
 
-              req.flash('message', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+              req.flash('Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
               res.redirect('/' + req.body.name);
             });
           });
         });
       } else {
-        req.flash('message', 'Ontology with acronym ' + req.body.acronym + ' already exists!');
+        req.flash('Ontology with acronym ' + req.body.acronym + ' already exists!');
         res.redirect('/upload')
       }
     });
@@ -112,8 +130,8 @@ router.get('/:id/manage', function(req, res) {
         'ontology': ontology
       });
     } else {
-      req.flash('message', 'You don\'t have permission to manage ' + req.body.acronym + '!');
-      res.redirect('/');
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
     }
   });
 });
