@@ -20,8 +20,15 @@ block content
               a(href='/ontology/#{ontology.id}/manage') Manage
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         h1.page-header #{ontology.id} - #{ontology.name}
+        -if(messages.info) 
+          div.alert.alert-success(role='alert')
+            span.glyphicon.glyphicon-ok(aria-hidden='true')
+            span &nbsp; Info: #{messages.info}
         -if(!stats.loaded) 
-          span.label.label-warning Unloadable
+          -if(ontology.status == 'untested')
+            span.label.label-info Loading
+          -else
+            span.label.label-warning Unloadable
         -else if(!stats.consistent)
           span.label.label-danger Inconsistent
         -else
