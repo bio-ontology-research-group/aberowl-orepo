@@ -8,6 +8,10 @@ block content
           div.alert.alert-success(role='alert')
             span.glyphicon.glyphicon-ok(aria-hidden='true')
             span &nbsp; Info: #{messages.info}
+        -else if(messages.error)
+         div.alert.alert-danger(role='alert')
+            span.glyphicon.glyphicon-exclamation-sign(aria-hidden='true')
+            span &nbsp; Error: #{messages.error}
         .table-responsive
           table.table.table-striped(data-toggle="table", data-url="x" data-search="true")
             thead
@@ -19,6 +23,6 @@ block content
               for ontology in ontologies
                 tr
                   td
-                   a(href='ontology/'+ontology.id) #{ontology.id} 
+                   a(href='#{ontology.id}') #{ontology.id} 
                   td #{ontology.name}
                   td #{ontology.description}

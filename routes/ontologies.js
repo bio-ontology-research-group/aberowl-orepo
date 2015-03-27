@@ -25,6 +25,12 @@ router.get('/', function(req, res) {
 
 router.get('/:id', function(req, res) {
   req.db.read('ontologies', req.params.id, function(err, ontology) {
+  console.log(err);
+  console.log(ontology);
+    if(err || !ontology) {
+      req.flash('error', 'No such ontology');
+      return res.redirect('/ontology');
+    }
     request.get(req.aberowl + 'getStats.groovy', {
       'qs': {
         'ontology': ontology.id
