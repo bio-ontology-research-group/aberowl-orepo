@@ -48,6 +48,7 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash());
 
+// Populate the routes with useful info
 app.use(function(req, res, next) {
   req.aberowl = 'http://localhost/api/';
   req.db = db;
@@ -122,6 +123,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

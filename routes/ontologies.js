@@ -8,7 +8,8 @@ var _ = require('underscore')._;
 var passport = require('passport');
 var fs = require('fs');
 
-/* GET users listing. */
+/** Ontology Listing and display. **/
+
 router.get('/', function(req, res) {
   var ontologies = {};
 
@@ -21,6 +22,53 @@ router.get('/', function(req, res) {
     });
   });
 });
+
+router.get('/:id', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    request.get(req.aberowl + 'getStats.groovy', {
+      'qs': {
+        'ontology': ontology.id
+      },
+      'json': true
+    }, function(request, response, body) {
+      res.render('ontology', {
+        'ontology': ontology,
+        'stats': body
+      });
+    });
+  });
+});
+
+router.get('/:id/downloads', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_download', {
+      'ontology': ontology
+    });
+  });
+});
+
+router.get('/:id/manage', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      res.render('ontology_manage', {
+        'ontology': ontology
+      });
+    } else {
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
+    }
+  });
+});
+
+router.get('/:id/query', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_query', {
+      'ontology': ontology
+    });
+  });
+});
+
+/** Ontology Uploading **/
 
 router.get('/upload', function(req,res) {
   if(req.isAuthenticated()) {
@@ -81,6 +129,8 @@ router.post('/upload', function(req, res) {
   }
 });
 
+/** Ontology Modification **/
+
 router.post('/:id/update', function(req, res) { // this is just to update the deets
   req.db.read('ontologies', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
@@ -117,51 +167,6 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
       req.flash('error', 'Please log in to manage this ontology');
       res.redirect('/login');
     }
-  });
-});
-
-router.get('/:id', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    request.get(req.aberowl + 'getStats.groovy', {
-      'qs': {
-        'ontology': ontology.id
-      },
-      'json': true
-    }, function(request, response, body) {
-      res.render('ontology', {
-        'ontology': ontology,
-        'stats': body
-      });
-    });
-  });
-});
-
-router.get('/:id/downloads', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    res.render('ontology_download', {
-      'ontology': ontology
-    });
-  });
-});
-
-router.get('/:id/manage', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
-      res.render('ontology_manage', {
-        'ontology': ontology
-      });
-    } else {
-      req.flash('error', 'Please log in to manage this ontology');
-      res.redirect('/login');
-    }
-  });
-});
-
-router.get('/:id/query', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    res.render('ontology_query', {
-      'ontology': ontology
-    });
   });
 });
 
