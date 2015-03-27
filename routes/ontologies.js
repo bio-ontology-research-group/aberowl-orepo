@@ -135,6 +135,42 @@ router.post('/upload', function(req, res) {
   }
 });
 
+router.post('/:id/upload', function(req, res) {
+  if(req.isAuthenticated()) {
+    req.db.read('ontologies', req.params.id, function(err, exOnt) { 
+      if(exOnt && _.include(exOnt.owners, req.user.username)) { 
+        fs.readFile(req.files.ontology.path, function (err, data) {
+          var newName = req.params.id + '_' + (_.size(exOnt.submissions) + 1) + '.ont',
+              newPath = __dirname + '/../public/onts/' + newName;
+
+          fs.writeFile(newPath, data, function (err) {
+            var time = Date.now();
+            exOnt.submissions[time] = newName;
+            exOnt.lastSubDate = time;
+
+            req.db.save('ontologies', , ont, function(err) {
+              request.get(req.aberowl + 'reloadOntology.groovy', {
+                'qs': {
+                  'name': req.params.id
+                } // Later this will need API key
+              }, function() {}); // we don't actually care about the response
+
+              req.flash('info', 'Ontology updated successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+              res.redirect('/ontology/' + req.params.id + '/manage');
+            });
+          });
+        });
+      } else {
+        req.flash('error', req.params.id + ' does not exist.');
+        res.redirect('/ontology')
+      }
+    });
+  } else {
+      req.flash('error', 'Please log in to upload ontologies');
+      res.redirect('/login');
+  }
+});
+
 /** Ontology Modification **/
 
 router.post('/:id/update', function(req, res) { // this is just to update the deets
