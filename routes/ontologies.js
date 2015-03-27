@@ -23,57 +23,6 @@ router.get('/', function(req, res) {
   });
 });
 
-router.get('/:id', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-  console.log(err);
-  console.log(ontology);
-    if(err || !ontology) {
-      req.flash('error', 'No such ontology');
-      return res.redirect('/ontology');
-    }
-    request.get(req.aberowl + 'getStats.groovy', {
-      'qs': {
-        'ontology': ontology.id
-      },
-      'json': true
-    }, function(request, response, body) {
-      res.render('ontology', {
-        'ontology': ontology,
-        'stats': body
-      });
-    });
-  });
-});
-
-router.get('/:id/downloads', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    res.render('ontology_download', {
-      'ontology': ontology
-    });
-  });
-});
-
-router.get('/:id/manage', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
-      res.render('ontology_manage', {
-        'ontology': ontology
-      });
-    } else {
-      req.flash('error', 'Please log in to manage this ontology');
-      res.redirect('/login');
-    }
-  });
-});
-
-router.get('/:id/query', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
-    res.render('ontology_query', {
-      'ontology': ontology
-    });
-  });
-});
-
 /** Ontology Uploading **/
 
 router.get('/upload', function(req,res) {
@@ -170,6 +119,58 @@ router.post('/:id/upload', function(req, res) {
       req.flash('error', 'Please log in to upload ontologies');
       res.redirect('/login');
   }
+});
+
+
+router.get('/:id', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  console.log(err);
+  console.log(ontology);
+    if(err || !ontology) {
+      req.flash('error', 'No such ontology');
+      return res.redirect('/ontology');
+    }
+    request.get(req.aberowl + 'getStats.groovy', {
+      'qs': {
+        'ontology': ontology.id
+      },
+      'json': true
+    }, function(request, response, body) {
+      res.render('ontology', {
+        'ontology': ontology,
+        'stats': body
+      });
+    });
+  });
+});
+
+router.get('/:id/downloads', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_download', {
+      'ontology': ontology
+    });
+  });
+});
+
+router.get('/:id/manage', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      res.render('ontology_manage', {
+        'ontology': ontology
+      });
+    } else {
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
+    }
+  });
+});
+
+router.get('/:id/query', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_query', {
+      'ontology': ontology
+    });
+  });
 });
 
 /** Ontology Modification **/
