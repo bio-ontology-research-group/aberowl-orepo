@@ -17,10 +17,6 @@ function changeText(source) {
   }
 }
 
-function submitForm() {
-
-}
-
 openSourceForm = function() {
   var oid = $('#ontology_value').text();
   var source = capitalise($('#osource').text());
@@ -46,5 +42,12 @@ openSourceForm = function() {
     $('#method').val($target.text());
     changeText($target.text());
   });
+};
+
+openVersionForm = function() {
+  var oid = $('#ontology_value').text();
+  $('#versionForm').html('<br /><form class="form" action="/ontology/'+oid+'/upload" method="post" role="form", enctype="multipart/form-data"> ' +
+    '<span class="btn btn-default btn-file">Choose Ontology File <input name="ontology", type="file", required="" /></span>' +
+    '<button class="btn btn-success" style="margin-left:5px" type="submit">Upload</button></form>');
 };
 

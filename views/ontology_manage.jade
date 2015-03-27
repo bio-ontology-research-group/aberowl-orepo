@@ -45,9 +45,10 @@ block content
               &nbsp;
             a(href='#', onclick='openSourceForm()') change...
             div#sourceForm
-        a.btn.btn-sm.btn-warning(style='margin-left:10px', href='ontology/upload', role='button') 
+        a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
           span Manually Upload New Version&nbsp;
           span.glyphicon.glyphicon-upload(aria-hidden='true') 
+        div#versionForm
 
         h3.sub-header Final and Irreversible Measure of Insurmountable and Unforgiveable Sadness
         form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')

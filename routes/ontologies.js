@@ -147,8 +147,9 @@ router.post('/:id/upload', function(req, res) {
             var time = Date.now();
             exOnt.submissions[time] = newName;
             exOnt.lastSubDate = time;
+            exOnt.status = 'untested';
 
-            req.db.save('ontologies', , ont, function(err) {
+            req.db.save('ontologies', req.params.id, exOnt, function(err) {
               request.get(req.aberowl + 'reloadOntology.groovy', {
                 'qs': {
                   'name': req.params.id
