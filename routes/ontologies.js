@@ -170,6 +170,20 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
   });
 });
 
+router.post('/:id/delete', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
+      req.db.del('ontologies', ontology.id, function() {
+        req.flash('info', 'Ontology deleted');
+        res.redirect('/ontology');
+      });
+    } else {
+      req.flash('error', 'Please log in to manage this ontology');
+      res.redirect('/login');
+    }
+  });
+});
+
 // Reloaded event
 // Note sure this is the best way to do this but eh
 router.get('/:id/reloaded', function(req, res) {

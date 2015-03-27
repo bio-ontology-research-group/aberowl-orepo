@@ -4,6 +4,10 @@ block content
   .container-fluid
     .jumbotron
         h3.page-header Browse Ontologies
+        -if(messages.info) 
+          div.alert.alert-success(role='alert')
+            span.glyphicon.glyphicon-ok(aria-hidden='true')
+            span &nbsp; Info: #{messages.info}
         .table-responsive
           table.table.table-striped(data-toggle="table", data-url="x" data-search="true")
             thead
