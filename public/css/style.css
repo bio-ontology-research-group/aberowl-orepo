@@ -1,5 +1,5 @@
 body {
-  padding-top: 100px;
+  padding-top: 60px;
   padding-bottom: 20px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -22,6 +22,11 @@ word-wrap: break-word;
 /*
  * Global add-ons
  */
+
+.navbar-right {
+  margin-top: 20px;
+  margin-right: 5px;
+}
 
 .sub-header {
   padding-bottom: 10px;
