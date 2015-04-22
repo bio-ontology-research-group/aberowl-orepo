@@ -17,3 +17,27 @@ block content
         a.btn.btn-lg.btn-warning(style='margin-left:10px', href='ontology/upload', role='button') 
           span Upload New Ontology&nbsp;
           span.glyphicon.glyphicon-upload(aria-hidden='true') 
+      center
+        input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+        input(name='type', type='radio', value='supeq') 
+        label Super- and Equivalent classes
+        input(name='type', type='radio', value='supclass') 
+        label Superclasses
+        input(name='type', type='radio', value='equivalent') 
+        label Equivalent classes
+        input(name='type', type='radio', value='subclass') 
+        label Subclasses
+        input(name='type', type='radio', value='subeq' checked='true') 
+        label Sub- and Equivalent classes
+        br
+        a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+
+      table#example.table.table-striped
+        thead
+          tr
+            th OWL Class
+            th Ontology
+            th Label
+            th Definition
+      div#ontology(style="display:none")
+        

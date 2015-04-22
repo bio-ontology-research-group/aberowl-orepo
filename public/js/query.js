@@ -12,8 +12,7 @@ $(document).keypress(function(event){
 function redrawTable() {
     window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
-    //var qType = $('input[name="type"]:checked').val();
-    var qType = 'subeq';
+    var qType = $('input[name="type"]:checked').val();
     var ontology = $("#ontology").text();
 
     var table = $('#example').dataTable( {
@@ -52,12 +51,11 @@ function redrawTable() {
                     datatable[i][1] = "<a href='"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
                     datatable[i][2] = result[i].label || " " ;
                     datatable[i][3] = result[i].definition || " " ;
-
                 }
                 return datatable;
             }
         },
-	 "dom": 'T<"clear">lfrtip',
+	"dom": 'T<"clear">lfrtip',
 	"tableTools": {
             "sSwfPath": "js/TableTools-2.0.0/media/swf/copy_csv_xls_pdf.swf"
         }
