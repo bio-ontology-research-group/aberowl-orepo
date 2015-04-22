@@ -5,18 +5,8 @@ block content
     -if(messages)
       p #{messages.errors}
     .jumbotron
-      img.img-responsive(style="float:left" width=150, height=150, src='logo-owl.png')
-      br
-      h1 &nbsp;Welcome to AberOWL
-        br
-        br
-        p(style="clear:both")
-          | Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms. 
-        p
-        a.btn.btn-lg.btn-primary(href='ontology', role='button') Browse Ontologies &raquo;
-        a.btn.btn-lg.btn-warning(style='margin-left:10px', href='ontology/upload', role='button') 
-          span Upload New Ontology&nbsp;
-          span.glyphicon.glyphicon-upload(aria-hidden='true') 
+      p(align='center')
+        span Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
       center
         input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
         input(name='type', type='radio', value='supeq') 
