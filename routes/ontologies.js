@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
   }, function() {
     res.render('ontologies', {
       'title': 'Ontology List',
-      'ontologies': ontologies
+      'ontologies': _.sortBy(ontologies, 'acronym')
     });
   });
 });
