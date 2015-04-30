@@ -8,6 +8,11 @@ router.get('/', function(req, res) {
   request.get(req.aberowl + 'getStats.groovy', {
       'json': true
     }, function(request, response, body) {
+      if(body) {
+        body.oCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        body.cCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        body.aCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+      }
       res.render('index', {
         'stats': body
       });
