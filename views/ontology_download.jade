@@ -30,6 +30,7 @@ block content
             tbody
               - var x = 1
               for i, time in ontology.submissions
+                - time = new Date(parseInt(time)).toUTCString()
                 tr
                   td #{time}
                   td Version #{x}

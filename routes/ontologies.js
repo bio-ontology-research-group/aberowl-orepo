@@ -31,8 +31,8 @@ router.get('/upload', function(req,res) {
         'noun': pluralise(names.choose())
     });
   } else {
-      req.flash('error', 'Please log in to upload ontologies');
-      res.redirect('/login');
+    req.flash('error', 'Please log in to upload ontologies');
+    res.redirect('/login');
   }
 });
 

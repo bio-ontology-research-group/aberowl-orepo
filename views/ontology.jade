@@ -55,4 +55,22 @@ block content
               tr
                 td TBox Axiom Count
                 td #{stats.tBoxAxiomCount}
-                
+        h2.sub-header Recent Versions
+        .table-responsive
+          table.table.table-striped
+            thead
+              tr
+                th Date 
+                th Name
+                th Download
+            tbody
+              - var x = 1
+              for i, time in ontology.submissions
+                - time = new Date(parseInt(time)).toUTCString()
+                - if(x > 3) return;
+                tr
+                  td #{time}
+                  td Version #{x}
+                  td 
+                    a(href='/onts/'+i) Download...
+                - x++
