@@ -11,8 +11,6 @@ block content
             a(href='/ontology/#{ontology.id}/query') Query
           li
             a(href='#') Browse
-          li
-            a(href='#') Visualise
           li.active
             a(href='#') Download
           -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
