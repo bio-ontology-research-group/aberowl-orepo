@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 var passHash = require('password-hash');
+var _ = require('underscore')._;
 
 /* GET home page. */
 router.get('/', function(req, res) {
   request.get(req.aberowl + 'getStats.groovy', {
       'json': true
     }, function(request, response, body) {
-      if(body) {
+      if(response.statusCode = 200 && _.isObject(body)) {
         body.oCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
         body.cCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
         body.aCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
