@@ -10,9 +10,9 @@ router.get('/', function(req, res) {
       'json': true
     }, function(request, response, body) {
       if(response.statusCode = 200 && _.isObject(body)) {
-        body.oCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-        body.cCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-        body.aCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        body.oCount = body.oCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        body.cCount = body.cCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        body.aCount = body.aCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
       }
       res.render('index', {
         'stats': body
