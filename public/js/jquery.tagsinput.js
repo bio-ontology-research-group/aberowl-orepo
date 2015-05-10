@@ -266,6 +266,10 @@
 					  	});
 					} else if (jQuery.ui.autocomplete !== undefined) {
 						$(data.fake_input).autocomplete(autocomplete_options);
+                                                if(settings.autocomplete_renderitem) {
+                                                  $(data.fake_input).data('ui-autocomplete')._renderItem = settings.autocomplete_renderitem;
+                                                }
+                                                  
 						$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique)});
 							return false;

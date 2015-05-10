@@ -92,14 +92,20 @@ $(document).ready(function() {
     'defaultText': '',
     'autocomplete_url': '',
     'autocomplete': {
-      source: function(request, response) {
+      'source': function(request, response) {
         var ontology = $("#ontology").text();
-        $.getJSON( "/api/queryNames.groovy", {
+        $.getJSON("/api/queryNames.groovy", {
             term: extractLast(request.term),
             ontology: ontology
         }, response);
       }
-    }
+    },
+    'autocomplete_renderitem': function(ul, item) {
+      return $( "<li>" )
+             .append( "<p>" + item.label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>" +
+              "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />")
+             .appendTo(ul);
+     }
   });
 });
 
