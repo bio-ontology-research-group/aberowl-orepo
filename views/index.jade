@@ -8,7 +8,7 @@ block content
       p(align='center')
         span Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
       center
-        input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+        input#autocomplete(width="100%", style="width:100%", placeholder='Enter Manchester OWL Syntax Query', type='text')
         input(name='type', type='radio', value='supeq') 
         label Super- and Equivalent classes
         input(name='type', type='radio', value='supclass') 
@@ -30,4 +30,3 @@ block content
             th Label
             th Definition
       div#ontology(style="display:none")
-        
