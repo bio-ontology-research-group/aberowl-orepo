@@ -8,6 +8,9 @@ $(document).keypress(function(event){
 });
 
 function redrawTable() {
+    //var query = $('#autocomplete').value();
+    var query = $.map($('.tag span'),function(e,i){return $(e).text().trim();}).join(' ');
+
     window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
@@ -36,7 +39,7 @@ function redrawTable() {
 	    $('#searchsparql').show();                                                                                                         */
         },
         "ajax": {
-            "url": "/api/runQuery.groovy?type="+qType+"&query="+query.trim()+"&ontology="+ontology,
+            "url": "/api/runQuery.groovy?type="+qType+"&query="+query.trim()+"&ontology="+ontology+"&labels=true",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -58,43 +61,29 @@ function redrawTable() {
             "sSwfPath": "js/TableTools-2.0.0/media/swf/copy_csv_xls_pdf.swf"
         }
     } );
-
-//    $('#searchpubmed').show();
 }
-
-    function split( val ) {
-      return val.split( /\s/ );
-    }
-    function extractLast( term ) {
-      return split( term ).pop();
-    }
 
 
 $(document).ready(function() {
-    $('#example').dataTable( {
-        "processing": false,
-        "serverSide": false,
-	"paging": true,
-	"scrollY": 400,
-	aoColumns : [
-	    { "sWidth": "15%"},
-	    { "sWidth": "15%"},
-	    { "sWidth": "30%"},
-	    { "sWidth": "40%"},
-	],
-    })
-      
-    //$('#example').parents('div.dataTables_wrapper').first().hide();
-	
-    var q = window.location.hash.replace("#","");
-    if (q!=null && q.length>0) {
-            query = q ;
-            redrawTable();
-    //	document.getElementById('autocomplete').value = query ;
-    }
-});
+  $('#example').dataTable( {
+      "processing": false,
+      "serverSide": false,
+      "paging": true,
+      "scrollY": 400,
+      aoColumns : [
+          { "sWidth": "15%"},
+          { "sWidth": "15%"},
+          { "sWidth": "30%"},
+          { "sWidth": "40%"},
+      ]
+  })
+    
+  var q = window.location.hash.replace("#","");
+  if (q!=null && q.length>0) {
+          query = q ;
+          redrawTable();
+  }
 
-$(function() {
   $( "#button" ).button();
 
   $('#autocomplete').tagsInput({
@@ -103,7 +92,7 @@ $(function() {
     'defaultText': '',
     'autocomplete_url': '',
     'autocomplete': {
-      source: function( request, response ) {
+      source: function(request, response) {
         var ontology = $("#ontology").text();
         $.getJSON( "/api/queryNames.groovy", {
             term: extractLast(request.term),
@@ -112,6 +101,11 @@ $(function() {
       }
     }
   });
-  
-  $('#autocomplete').attr('placeholder', 'Enter Manchester OWL Syntax Query...')
 });
+
+function split( val ) {
+  return val.split( /\s/ );
+}
+function extractLast( term ) {
+  return split( term ).pop();
+}
