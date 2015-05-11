@@ -1,15 +1,15 @@
-var query = "" ;
+var uriMap = {};
 
 $(document).keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
   if(keycode == '13'){
-          $("#button").click();
+    $("#button").click();
   }
 });
 
 function redrawTable() {
     //var query = $('#autocomplete').value();
-    var query = $.map($('.tag span'),function(e,i){return $(e).text().trim();}).join(' ');
+    var query = $.map($('.tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
 
     window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
@@ -39,7 +39,7 @@ function redrawTable() {
 	    $('#searchsparql').show();                                                                                                         */
         },
         "ajax": {
-            "url": "/api/runQuery.groovy?type="+qType+"&query="+query.trim()+"&ontology="+ontology+"&labels=true",
+            "url": "/api/runQuery.groovy?type="+qType+"&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -98,13 +98,21 @@ $(document).ready(function() {
             term: extractLast(request.term),
             ontology: ontology
         }, response);
+      },
+      'select': function(event, ui) {
+        uriMap[ui.item.value] = ui.item.data;
+        console.log(uriMap);
       }
-    },
+    }, 
     'autocomplete_renderitem': function(ul, item) {
       return $( "<li>" )
              .append( "<p>" + item.label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>" +
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />")
              .appendTo(ul);
+     },
+     'onRemoveTag': function(value) {
+        delete uriMap[value];
+        console.log(uriMap);
      }
   });
 });

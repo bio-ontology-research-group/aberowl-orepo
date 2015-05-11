@@ -269,7 +269,9 @@
                                                 if(settings.autocomplete_renderitem) {
                                                   $(data.fake_input).data('ui-autocomplete')._renderItem = settings.autocomplete_renderitem;
                                                 }
-                                                  
+                                                if(settings.autocomplete_formatresult) {
+                                                  $(data.fake_input).data('ui-autocomplete')._renderItem = settings.autocomplete_renderitem;
+                                                }
 						$(data.fake_input).bind('autocompleteselect',data,function(event,ui) {
 							$(event.data.real_input).addTag(ui.item.value,{focus:true,unique:(settings.unique)});
 							return false;
