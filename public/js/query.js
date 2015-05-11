@@ -93,11 +93,30 @@ $(document).ready(function() {
     'autocomplete_url': '',
     'autocomplete': {
       'source': function(request, response) {
-        var ontology = $("#ontology").text();
+        var ontology = $("#ontology").text(),
+            query = extractLast(request.term);
+
         $.getJSON("/api/queryNames.groovy", {
-            term: extractLast(request.term),
+            term: query,
             ontology: ontology
-        }, response);
+        }, function(json) {
+          if(query.match(/an/)) {
+            json.unshift({
+              'data': 'AND',
+              'iri': 'AND',
+              'ontology': '',
+              'value': 'AND'
+            }); 
+          } else if(query.match(/so/)) {
+            json.unshift({
+              'data': 'SOME',
+              'iri': 'SOME',
+              'ontology': '',
+              'value': 'SOME'
+            });
+          }
+          response(json);
+        });
       },
       'select': function(event, ui) {
         uriMap[ui.item.value] = ui.item.data;
