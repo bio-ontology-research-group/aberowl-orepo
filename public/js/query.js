@@ -33,10 +33,10 @@ function redrawTable() {
 	    { "sWidth": "40%"},
 	],
 	"fnInitComplete": function( oSettings ) {
-	    /*document.getElementById('pubmedsearchlink').href = "pubmed/?type="+qType+"&owlquery="+query+"&ontology="+ontology ;
-	    $('#searchpubmed').show();                                                                                                         
-	    document.getElementById('sparqlsearchlink').href = "sparql/?type="+qType+"&query="+query+"&ontology="+ontology ;
-	    $('#searchsparql').show();                                                                                                         */
+	    $('#pubmed').attr('href', "pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
+	    $('#pubmed').show();                                                                                                         
+	    $('#sparql').attr('href', "sparql/?type="+qType+"&query="+encodeURIComponent(query)+"&ontology="+ontology);
+	    $('#sparql').show();
         },
         "ajax": {
             "url": "/api/runQuery.groovy?type="+qType+"&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
