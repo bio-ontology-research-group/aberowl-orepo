@@ -133,6 +133,9 @@ $(document).ready(function() {
      'onRemoveTag': function(value) {
         delete uriMap[value];
         console.log(uriMap);
+     },
+     'onAddTag': function() {
+       $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
      }
   });
 });

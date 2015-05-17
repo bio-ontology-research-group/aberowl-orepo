@@ -148,6 +148,11 @@ box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 background-clip: padding-box;
 *border-right-width: 2px;
 *border-bottom-width: 2px;
+
+      max-height: 50%;
+          overflow-y: auto;
+              /* prevent horizontal scrollbar */
+                  overflow-x: hidden;
  
  .ui-menu-item > a.ui-corner-all {
  display: block;
