@@ -90,6 +90,7 @@ $(document).ready(function() {
     'height': '40px',
     'width': '100%',
     'defaultText': '',
+    'delimiter': '|',
     'autocomplete_url': '',
     'autocomplete': {
       'source': function(request, response) {
