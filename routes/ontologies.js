@@ -87,7 +87,7 @@ router.post('/upload', function(req, res) {
 router.post('/:id/upload', function(req, res) {
   if(req.isAuthenticated()) {
     req.db.read('ontologies', req.params.id, function(err, exOnt) { 
-      if(exOnt && _.include(exOnt.owners, req.user.username)) { 
+      if(exOnt && (_.include(exOnt.owners, req.user.username) || req.user.admin == true)) { 
         fs.readFile(req.files.ontology.path, function (err, data) {
           var newName = req.params.id + '_' + (_.size(exOnt.submissions) + 1) + '.ont',
               newPath = __dirname + '/../public/onts/' + newName;
@@ -168,6 +168,14 @@ router.get('/:id/manage', function(req, res) {
 router.get('/:id/query', function(req, res) {
   req.db.read('ontologies', req.params.id, function(err, ontology) {
     res.render('ontology_query', {
+      'ontology': ontology
+    });
+  });
+});
+
+router.get('/:id/browse', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+    res.render('ontology_browse', {
       'ontology': ontology
     });
   });

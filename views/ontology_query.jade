@@ -10,7 +10,7 @@ block content
           li.active
             a(href='#') Query
           li
-            a(href='#') Browse
+            a(href='/ontology/#{ontology.id}/browse') Browse
           li
             a(href='/ontology/#{ontology.id}/downloads') Download
           -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
