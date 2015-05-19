@@ -10,67 +10,145 @@ block content
               span.glyphicon.glyphicon-menu-left(aria-hidden='true') 
               span Back to Browse
           li.divider(role='presentation', style="background-color:#aaa;display:block;height:5px;")
-          li.active
-            a(href='#') Overview
-          li
-            a(href='/ontology/#{ontology.id}/query') Query
-          li
-            a(href='/ontology/#{ontology.id}/browse') Browse
-          li
-            a(href='/ontology/#{ontology.id}/downloads') Download
-          -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
-            li
-              a(href='/ontology/#{ontology.id}/manage') Manage
+          li here
+          li be
+          li classes
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
-        h1.page-header #{ontology.id} - #{ontology.name}
-        -if(messages.info) 
-          div.alert.alert-success(role='alert')
-            span.glyphicon.glyphicon-ok(aria-hidden='true')
-            span &nbsp; Info: #{messages.info}
-        -if(!stats.loaded) 
-          -if(ontology.status == 'untested')
-            span.label.label-info Loading
+        div(style='float:right')
+          -if(messages.info) 
+            div.alert.alert-success(role='alert')
+              span.glyphicon.glyphicon-ok(aria-hidden='true')
+              span &nbsp; Info: #{messages.info}
+          -if(!stats.loaded) 
+            -if(ontology.status == 'untested')
+              span.label.label-info Loading
+            -else
+              span.label.label-warning Unloadable
+          -else if(!stats.consistent)
+            span.label.label-danger Inconsistent
           -else
-            span.label.label-warning Unloadable
-        -else if(!stats.consistent)
-          span.label.label-danger Inconsistent
-        -else
-          span.label.label-success Classified
-        h4.sub-header #{ontology.description}
-        -if(user)
-          h5 Do you own this ontology? Email luke.slater@kaust.edu.sa to gain maintenance priveleges.
-        h2.sub-header Statistics
-        .table-responsive
-          table.table.table-striped
-            tbody
-              tr
-                td Class Count
-                td #{stats.classCount}
-              tr
-                td Logical Axiom Count
-                td #{stats.logicalAxiomCount}
-              tr
-                td RBox Axiom Count
-                td #{stats.rBoxAxiomCount}
-              tr
-                td TBox Axiom Count
-                td #{stats.tBoxAxiomCount}
-        h2.sub-header Recent Versions
-        .table-responsive
-          table.table.table-striped
-            thead
-              tr
-                th Date 
-                th Name
-                th Download
-            tbody
-              - var x = 1
-              for i, time in ontology.submissions
-                - time = new Date(parseInt(time)).toUTCString()
-                - if(x > 3) return;
+            span.label.label-sm.label-success Classified
+
+        h1.page-header #{ontology.id} - #{ontology.name}
+
+        div#tabs
+          ul
+            li
+              a(href='#overview') Overview
+            li
+              a(href='#browse') Browse
+            li
+              a(href='#query') Query
+            li
+              a(href='#visualise') Visualise
+            li
+              a(href='#downloads') Download
+            -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+              li
+                a(href='#manage') Manage
+          div#overview
+            h4.sub-header #{ontology.description}
+            -if(user)
+              h5 Do you own this ontology? Email luke.slater@kaust.edu.sa to gain maintenance priveleges.
+            h2.sub-header Statistics
+            .table-responsive
+              table.table.table-striped
+                tbody
+                  tr
+                    td Class Count
+                    td #{stats.classCount}
+                  tr
+                    td Logical Axiom Count
+                    td #{stats.logicalAxiomCount}
+                  tr
+                    td RBox Axiom Count
+                    td #{stats.rBoxAxiomCount}
+                  tr
+                    td TBox Axiom Count
+                    td #{stats.tBoxAxiomCount}
+            h2.sub-header Recent Versions
+            .table-responsive
+              table.table.table-striped
+                thead
+                  tr
+                    th Date 
+                    th Name
+                    th Download
+                tbody
+                  - var x = 1
+                  for i, time in ontology.submissions
+                    - time = new Date(parseInt(time)).toUTCString()
+                    - if(x > 3) return;
+                    tr
+                      td #{time}
+                      td Version #{x}
+                      td 
+                        a(href='/onts/'+i) Download...
+                    - x++
+          div#downloads
+            .table-responsive
+              table.table.table-striped
+                thead
+                  tr
+                    th Date 
+                    th Name
+                    th Download
+                tbody
+                  - var x = 1
+                  for i, time in ontology.submissions
+                    - time = new Date(parseInt(time)).toUTCString()
+                    tr
+                      td #{time}
+                      td Version #{x}
+                      td 
+                        a(href='/onts/'+i) Download...
+                    - x++
+          div#query
+            center
+              input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+
+            table#example.table.table-striped
+              thead
                 tr
-                  td #{time}
-                  td Version #{x}
-                  td 
-                    a(href='/onts/'+i) Download...
-                - x++
+                  th OWL Class
+                  th Ontology
+                  th Label
+                  th Definition
+            div#ontology(style="display:none") #{ontology.id}
+          div#visualise
+            div#infovis(style='width:100%')
+            div#ontology_value(style='display:none') #{ontology.id}
+          div#manage
+            -if(messages.info) 
+              div.alert.alert-success(role='alert')
+                span.glyphicon.glyphicon-ok(aria-hidden='true')
+                span &nbsp; Info: #{messages.info}
+            form.form(action='/ontology/#{ontology.id}/update', method='post', role='form')
+              h5 Name
+              input.form-control(name='name', type='name', value='#{ontology.name}', required='', autofocus='')
+              br
+              h5 Description
+              textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
+              br
+              button.btn.btn-success(type='submit') Save
+
+            h3.sub-header Updates
+              h5 Current update method: 
+                -if(ontology.source == 'bioportal' || ontology.source == 'manual')
+                  div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
+                  &nbsp;
+                -else 
+                  div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
+                  &nbsp;
+                a(href='#', onclick='openSourceForm()') change...
+                div#sourceForm
+            a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
+              span Manually Upload New Version&nbsp;
+              span.glyphicon.glyphicon-upload(aria-hidden='true') 
+            div#versionForm
+
+            h3.sub-header Final and Irreversible Measure of Insurmountable and Unforgiveable Sadness
+            form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')
+              button.btn.btn-danger(type='submit') Delete Ontology
+        div#ontology_value(style='display:none') #{ontology.id}
