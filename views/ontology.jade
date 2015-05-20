@@ -4,15 +4,13 @@ block content
   .container-fluid
     .row
       .col-sm-3.col-md-2.sidebar
-        ul.nav.nav-sidebar
+        div.nav.nav-sidebar
           li
             a(href='/ontology/') 
               span.glyphicon.glyphicon-menu-left(aria-hidden='true') 
               span Back to Browse
           li.divider(role='presentation', style="background-color:#aaa;display:block;height:5px;")
-          li here
-          li be
-          li classes
+        div#tree test
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         div(style='float:right')
           -if(messages.info) 
@@ -85,6 +83,8 @@ block content
                       td 
                         a(href='/onts/'+i) Download...
                     - x++
+          div#browse
+            div#browse_content
           div#downloads
             .table-responsive
               table.table.table-striped
