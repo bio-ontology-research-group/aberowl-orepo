@@ -19,7 +19,7 @@ var qs = function () {
     }
   } 
     return query_string;
-} ();
+}();
 
 $(function() {
   var ontology = $('#ontology_value').text();
@@ -32,15 +32,9 @@ $(function() {
     }
   })
   .on('changed.jstree', function (e, data) {
-    var i, j, r = [];
-    for(i = 0, j = data.selected.length; i < j; i++) {
-      r.push(data.instance.get_node(data.selected[i]).text);
-    }
     var last = data.selected[data.selected.length-1];
-    console.log('sending /api/getClass.groovy?type=equivalent&query='+last+'&ontology='+ontology);
 
     $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(last)+'&ontology='+ontology,function(data) {
-      console.log(data);
       var html = '<table class="table table-striped"><tbody>'
       $.each(data, function(a, y) {
         html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
@@ -68,35 +62,54 @@ $(function() {
         'dataFilter': function(data) {
           data = JSON.parse(data);
           var nodes = [];
-          var currentNode = false;
           
-          if(data.classes) {
-            while(true) {
-              if(!data) break;
+          if(data.classes) { // TODO remove much duplication wow
+            var addChildren = function(node, subtree) {
+              node.children = [];
+              $.each(subtree.classes, function(i, c) {
+                var p = {
+                  'id': c.classURI,
+                  'text': c.label,
+                  'children': [],
+                  'state': {
+                    'opened': false
+                  }
+                };
+                if(!p.text) p.text = c.remainder;
 
+                node.children.push(p);
+
+                if(data.chosen.classURI == c.classURI) {
+                  p.state.selected = true;
+                }
+
+                if(c.children) {
+                  p.state.opened = true;
+                  p = addChildren(p, c.children);
+                }
+              });
+
+              return node;
+            };
+
+            $.each(data.classes, function(i, c) {
               var p = {
-                'id': data.classes[0].classURI,
-                'text': data.classes[0].label,
-                'children': [],
+                'id': c.classURI,
+                'text': c.label,
+                'children': true,
                 'state': {
-                  'opened': true
+                  'opened': false
                 }
               };
               if(!p.text) p.text = data.classes[0].remainder;
-              if(!data.children) {
-                p.state.selected = true;
-                p.children = true;
+
+              if(c.children) {
+                p.state.opened = true;
+                p = addChildren(p, c.children);
               }
 
-              if(!currentNode) {
-                nodes.push(p);
-              } else {
-                currentNode.push(p);
-              }
-              currentNode = p.children;
-
-              data = data.children;
-            }
+              nodes.push(p);
+            });
           } else {
             data = data.result;
             $.each(data, function(i, c) {
