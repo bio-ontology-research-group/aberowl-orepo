@@ -24,6 +24,13 @@ var qs = function () {
 $(function() {
   var ontology = $('#ontology_value').text();
   $('#tree')
+  .on('open_node.jstree close_node.jstree', function(e, data) {
+    var currentNode = data.node;
+    if(e.type == 'close_node') {
+      var tree = $.jstree.reference('#tree');
+      tree.refresh_node(currentNode);
+    }
+  })
   .on('changed.jstree', function (e, data) {
     var i, j, r = [];
     for(i = 0, j = data.selected.length; i < j; i++) {
