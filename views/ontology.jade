@@ -40,6 +40,8 @@ block content
             li
               a(href='#visualise') Visualise
             li
+              a(href='#pubmed') PubMed
+            li
               a(href='#downloads') Download
             -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
               li
@@ -122,6 +124,28 @@ block content
                   th Ontology
                   th Label
                   th Definition
+            div#ontology(style="display:none") #{ontology.id}
+
+          div#pubmed
+            center
+              input#pubmed_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input(name='type', type='radio', value='supeq') 
+              label Super- and Equivalent classes
+              input(name='type', type='radio', value='supclass') 
+              label Superclasses
+              input(name='type', type='radio', value='equivalent') 
+              label Equivalent classes
+              input(name='type', type='radio', value='subclass') 
+              label Subclasses
+              input(name='type', type='radio', value='subeq' checked='true') 
+              label Sub- and Equivalent classes
+              br
+              a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
+            table#pubmed_results.table.table-striped
+              thead
+                tr
+                  th ID
+                  th Text
             div#ontology(style="display:none") #{ontology.id}
           div#visualise
             div#infovis(style='width:100%')

@@ -9,7 +9,7 @@ $(document).keypress(function(event){
 
 function redrawTable() {
     //var query = $('#autocomplete').value();
-    var query = $.map($('.tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
+    var query = $.map($('#autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
 
     window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
