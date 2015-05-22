@@ -77,15 +77,19 @@ $(function() {
                 };
                 if(!p.text) p.text = c.remainder;
 
-                node.children.push(p);
+                if(!c.deprecated) {
+                  node.children.push(p);
 
-                if(data.chosen.classURI == c.classURI) {
-                  p.state.selected = true;
-                }
+                  if(data.chosen.classURI == c.classURI) {
+                    p.state.selected = true;
+                  }
 
-                if(c.children) {
-                  p.state.opened = true;
-                  p = addChildren(p, c.children);
+                  if(c.children) {
+                    p.state.opened = true;
+                    p = addChildren(p, c.children);
+                  }
+                } else {
+                  console.log('not adding because deprecated');
                 }
               });
 
@@ -103,12 +107,16 @@ $(function() {
               };
               if(!p.text) p.text = data.classes[0].remainder;
 
-              if(c.children) {
-                p.state.opened = true;
-                p = addChildren(p, c.children);
-              }
+              if(!c.deprecated) {
+                if(c.children) {
+                  p.state.opened = true;
+                  p = addChildren(p, c.children);
+                }
 
-              nodes.push(p);
+                nodes.push(p);
+              } else {
+                console.log('not adding because deprecated');
+              }
             });
           } else {
             data = data.result;
@@ -119,7 +127,9 @@ $(function() {
                 'children': true
               };
               if(!node.text) node.text = c.remainder;
-              nodes.push(node);
+              if(!c.deprecated) {
+                nodes.push(node);
+              }
             });
           }
 
