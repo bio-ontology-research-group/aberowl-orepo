@@ -115,36 +115,37 @@ block content
           div#visualise
             div#infovis(style='width:100%')
             div#ontology_value(style='display:none') #{ontology.id}
-          div#manage
-            -if(messages.info) 
-              div.alert.alert-success(role='alert')
-                span.glyphicon.glyphicon-ok(aria-hidden='true')
-                span &nbsp; Info: #{messages.info}
-            form.form(action='/ontology/#{ontology.id}/update', method='post', role='form')
-              h5 Name
-              input.form-control(name='name', type='name', value='#{ontology.name}', required='', autofocus='')
-              br
-              h5 Description
-              textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
-              br
-              button.btn.btn-success(type='submit') Save
+          -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+            div#manage
+              -if(messages.info) 
+                div.alert.alert-success(role='alert')
+                  span.glyphicon.glyphicon-ok(aria-hidden='true')
+                  span &nbsp; Info: #{messages.info}
+              form.form(action='/ontology/#{ontology.id}/update', method='post', role='form')
+                h5 Name
+                input.form-control(name='name', type='name', value='#{ontology.name}', required='', autofocus='')
+                br
+                h5 Description
+                textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
+                br
+                button.btn.btn-success(type='submit') Save
 
-            h3.sub-header Updates
-              h5 Current update method: 
-                -if(ontology.source == 'bioportal' || ontology.source == 'manual')
-                  div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
-                  &nbsp;
-                -else 
-                  div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
-                  &nbsp;
-                a(href='#', onclick='openSourceForm()') change...
-                div#sourceForm
-            a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
-              span Manually Upload New Version&nbsp;
-              span.glyphicon.glyphicon-upload(aria-hidden='true') 
-            div#versionForm
+              h3.sub-header Updates
+                h5 Current update method: 
+                  -if(ontology.source == 'bioportal' || ontology.source == 'manual')
+                    div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
+                    &nbsp;
+                  -else 
+                    div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
+                    &nbsp;
+                  a(href='#', onclick='openSourceForm()') change...
+                  div#sourceForm
+              a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
+                span Manually Upload New Version&nbsp;
+                span.glyphicon.glyphicon-upload(aria-hidden='true') 
+              div#versionForm
 
-            h3.sub-header Final and Irreversible Measure of Insurmountable and Unforgiveable Sadness
-            form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')
-              button.btn.btn-danger(type='submit') Delete Ontology
+              h3.sub-header Final and Irreversible Measure of Insurmountable and Unforgiveable Sadness
+              form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')
+                button.btn.btn-danger(type='submit') Delete Ontology
         div#ontology_value(style='display:none') #{ontology.id}
