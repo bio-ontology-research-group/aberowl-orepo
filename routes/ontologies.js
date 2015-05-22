@@ -16,9 +16,14 @@ router.get('/', function(req, res) {
   req.db.scan('ontologies', function(ontology) {
     ontologies[ontology.id] = ontology; 
   }, function() {
-    res.render('ontologies', {
-      'title': 'Ontology List',
-      'ontologies': _.sortBy(ontologies, 'acronym')
+    request.get(req.aberowl + 'getStatuses.groovy', {
+      'json': true
+    }, function(request, response, body) {
+      res.render('ontologies', {
+        'title': 'Ontology List',
+        'ontologies': _.sortBy(ontologies, 'acronym'),
+        'stati': body
+      });
     });
   });
 });
@@ -124,8 +129,6 @@ router.post('/:id/upload', function(req, res) {
 
 router.get('/:id', function(req, res) {
   req.db.read('ontologies', req.params.id, function(err, ontology) {
-  console.log(err);
-  console.log(ontology);
     if(err || !ontology) {
       req.flash('error', 'No such ontology');
       return res.redirect('/ontology');

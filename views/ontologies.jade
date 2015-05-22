@@ -17,6 +17,7 @@ block content
             thead
               tr
                 th Acronym
+                th Status
                 th Name
                 th Description
             tbody
@@ -24,5 +25,14 @@ block content
                 tr
                   td
                    a(href='/ontology/#{ontology.id}') #{ontology.id} 
+                  td 
+                    -if(stati[ontology.id] == 'unloadable')
+                      span.label.label-warning Unloadable
+                    -else if(stati[ontology.id] == 'inconsistent')
+                      span.label.label-danger Inconsistent
+                    -else if(stati[ontology.id] == 'classified')
+                      span.label.label-sm.label-success Classified
+                    -else
+                      span.label.label-sm.label-default Unknown
                   td #{ontology.name}
                   td #{ontology.description}
