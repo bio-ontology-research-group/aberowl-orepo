@@ -9,14 +9,14 @@ $(function() {
           'injectInto': 'infovis',  
           //add styles/shapes/colors  
           //to nodes and edges  
-          levelsToShow: 5,
+          levelsToShow: 2,
             
           //set overridable=true if you want  
           //to set styles for nodes individually   
           Node: {  
             overridable: true,  
             width: 200,  
-            height: 20,  
+            height: 25,  
             color: '#ccc'  
           },  
           //change the animation/transition effect  
@@ -40,7 +40,7 @@ $(function() {
               var style = label.style;  
               label.id = node.id;  
               style.color = '#333';  
-              style.fontSize = '0.8em';  
+              style.fontSize = '6';  
               style.textAlign = 'center';  
               style.height = "20px";  
               label.innerHTML = node.name;  
@@ -82,7 +82,9 @@ $(function() {
                   'name': c.label
                 };
                 if(!node.name) node.name = c.remainder;
-                level.children.push(node);
+                if(!c.deprecated) {
+                  level.children.push(node);
+                }
               });
               onComplete.onComplete(nodeId, level);    
           }); 
@@ -106,7 +108,9 @@ $(function() {
             'name': c.label
           };
           if(!node.name) node.name = c.remainder;
-          root.children.push(node);
+          if(!c.deprecated) {
+            root.children.push(node);
+          }
         });
         console.log(root);
 
