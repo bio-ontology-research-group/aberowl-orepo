@@ -33,15 +33,17 @@ $(function() {
   })
   .on('changed.jstree', function (e, data) {
     var last = data.selected[data.selected.length-1];
-    $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
-      var html = '<table class="table table-striped"><tbody>'
-      $.each(data, function(a, y) {
-        html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
+    if(data.node) {
+      $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
+        var html = '<table class="table table-striped"><tbody>'
+        $.each(data, function(a, y) {
+          html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
+        });
+        html += '</tbody></table>';
+        $('#browse_content').html(html);
+        $('#tabs').tabs('option', 'active', 1);
       });
-      html += '</tbody></table>';
-      $('#browse_content').html(html);
-      $('#tabs').tabs('option', 'active', 1);
-    });
+    }
   }) 
   .jstree({
     'plugins': ['ui', 'json_data', 'themes'],
@@ -81,6 +83,7 @@ $(function() {
                   node.children.push(p);
 
                   if(data.chosen.classURI == c.classURI) {
+                    $('#quicksearch').addTag(p.text);
                     p.state.selected = true;
                   }
 
