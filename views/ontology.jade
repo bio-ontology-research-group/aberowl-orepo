@@ -42,6 +42,8 @@ block content
             li
               a(href='#pubmed') PubMed
             li
+              a(href='#sparql') SPARQL
+            li
               a(href='#downloads') Download
             -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
               li
@@ -147,6 +149,20 @@ block content
                   th ID
                   th Text
             div#ontology(style="display:none") #{ontology.id}
+          div#sparql
+            div#radio
+              button.btn.btn-default(onclick="changeSPARQLQuery('values');" type="radio" id="radio1" name="radio" value="values" checked="checked") Use in VALUES statement
+              button.btn.btn-default(onclick="changeSPARQLQuery('filter');" type="radio" id="radio2" name="radio" value="filter") Use in FILTER statement
+            br
+            textarea#squery(name='sparqlquery' cols='80' rows='15')
+            p Use OBO-style URIs:  
+              input(type='checkbox', name'short', id='short')
+            p SPARQL Endpoint URI:
+              input#endpoint(type='text')
+            input#qtype(type='hidden' value='values')
+            button.btn.btn-success(onclick='runSPARQLQuery()') Submit
+
+            div#ontology_value(style='display:none') #{ontology.id}
           div#visualise
             div#infovis(style='width:100%')
             div#ontology_value(style='display:none') #{ontology.id}

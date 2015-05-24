@@ -23,6 +23,17 @@ block content
         a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
         a#sparql.btn.btn.btn-default(href='#' style='display:none') Use in SPARQL
         a#pubmed.btn.btn.btn-default(href='#' style='display:none') Search PubMed
+        h5 Try 
+          a(href='#' onclick='addExample(0)') 'ventricular septal defect'
+          , 
+          a(href='#' onclick='addExample(1)') part_of some heart
+          , 
+          a(href='#' onclick='addExample(2)') develops_from some 'stem cell'
+          , 
+          a(href='#' onclick='addExample(3)') part_of some 'apoptotic process'
+          span  or 
+          a(href='#' onclick='addExample(4)') has_part some alcohol
+           
 
       table#example.table.table-striped
         thead

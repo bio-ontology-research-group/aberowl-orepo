@@ -1,4 +1,17 @@
 var uriMap = {};
+var examples = [
+  {
+    'text': [ '\'venctricular septal defect\'' ],
+    'uri': [ 'http://purl.obolibrary.org/obo/HP_0001629' ]
+  }
+];
+
+function addExample(i) {
+  $.each(examples[i].text, function(a, y) {
+    $('#autocomplete').addTag(y); 
+    uriMap[y] = examples[i].uri[a];
+  });
+}
 
 $(document).keypress(function(event){
   var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -136,7 +149,7 @@ $(document).ready(function() {
         console.log(uriMap);
      },
      'onAddTag': function() {
-       $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
+       $('div.tagsinput span.tag').filter(function(){ return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
      }
   });
 });
