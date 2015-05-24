@@ -33,8 +33,7 @@ $(function() {
   })
   .on('changed.jstree', function (e, data) {
     var last = data.selected[data.selected.length-1];
-
-    $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(last)+'&ontology='+ontology,function(data) {
+    $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
       var html = '<table class="table table-striped"><tbody>'
       $.each(data, function(a, y) {
         html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
@@ -56,7 +55,7 @@ $(function() {
               return '/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology
             }
           } else {
-            return '/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.id)+'>&ontology='+ontology
+            return '/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology
           }
         },
         'dataFilter': function(data) {
@@ -68,7 +67,8 @@ $(function() {
               node.children = [];
               $.each(subtree.classes, function(i, c) {
                 var p = {
-                  'id': c.classURI,
+                  'id': c.classURI + i,
+                  'data': c.classURI,
                   'text': c.label,
                   'children': [],
                   'state': {
@@ -98,7 +98,8 @@ $(function() {
 
             $.each(data.classes, function(i, c) {
               var p = {
-                'id': c.classURI,
+                'id': c.classURI + i,
+                'data': c.classURI,
                 'text': c.label,
                 'children': true,
                 'state': {
@@ -122,7 +123,8 @@ $(function() {
             data = data.result;
             $.each(data, function(i, c) {
               var node = {
-                'id': c.classURI,
+                'id': c.classURI + i,
+                'data': c.classURI,
                 'text': c.label,
                 'children': true
               };
