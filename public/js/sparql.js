@@ -32,7 +32,7 @@ function changeSPARQLQuery(to) {
   }
 }
 
-function sendQuery() {
+function sendSPARQLQuery() {
   $.ajax({
     'url': '/sparql/sparqowljson.php',
     'type': 'POST',
@@ -45,7 +45,30 @@ function sendQuery() {
       'output': 'json'
     },
     'success': function(result) {
-      console.log(result);
+      if(result.length > 0) {
+        var table = '<thead><tr>',
+            fields = [];
+
+        $.each(result[0], function(a, y) {
+          table += '<th>'+a+'</th>' 
+          fields.push(a);
+        });
+
+        table += '</thead><tbody>';
+
+        $.each(result, function(i, item) {
+          table += '<tr>';
+          $.each(fields, function(f, field) {
+            table += '<td>' + item[field] + '</td>';  
+          });
+          table += '</tr>';
+        });
+        
+        table += '</tbody></table>';
+        console.log(table);
+
+        $('#sparql_results').html(table);
+      }
     }
   });
 }

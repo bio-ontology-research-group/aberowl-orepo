@@ -161,7 +161,9 @@ block content
             p SPARQL Endpoint URI:
               input#endpoint(type='text')
             input#qtype(type='hidden' value='values')
-            button.btn.btn-success(onclick='sendQuery()') Submit
+            button.btn.btn-success(onclick='sendSPARQLQuery()') Submit
+
+            table#sparql_results.table.table-striped
 
             div#ontology_value(style='display:none') #{ontology.id}
 

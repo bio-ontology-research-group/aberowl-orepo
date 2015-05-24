@@ -62,12 +62,6 @@ $(function() {
       ]
   })
     
-  var q = window.location.hash.replace("#","");
-  if (q!=null && q.length>0) {
-          query = q ;
-          redrawTable();
-  }
-
   $( "#button" ).button();
 
   $('#pubmed_autocomplete').tagsInput({
