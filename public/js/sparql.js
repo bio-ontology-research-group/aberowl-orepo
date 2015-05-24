@@ -3,7 +3,6 @@ function changeSPARQLQuery(to) {
   var qtype = $('#qtype');
   var ontology = $('#ontology_value').text();
 
-  console.log('clicked');
   if(to == 'values') {
     qtype.val("values");
     query.val("SELECT ?s ?p ?o WHERE { \n" +
@@ -31,6 +30,24 @@ function changeSPARQLQuery(to) {
     "  ) . \n" +
     "}\n");
   }
+}
+
+function sendQuery() {
+  $.ajax({
+    'url': '/sparql/sparqowljson.php',
+    'type': 'POST',
+    'dataType': 'json',
+    'data': {
+      'radio': $('#qtype').val(),
+      'sparqlquery': $('#squery').val(),
+      'endpoint': $('#endpoint').val(),
+      'short': $('#short').val(),
+      'output': 'json'
+    },
+    'success': function(result) {
+      console.log(result);
+    }
+  });
 }
 
 $(function() {
