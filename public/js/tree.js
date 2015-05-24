@@ -23,11 +23,11 @@ var qs = function () {
 
 $(function() {
   var ontology = $('#ontology_value').text();
-  $('#tree')
+  $('#left_tree')
   .on('open_node.jstree close_node.jstree', function(e, data) {
     var currentNode = data.node;
     if(e.type == 'close_node') {
-      var tree = $.jstree.reference('#tree');
+      var tree = $.jstree.reference('#left_tree');
       tree.refresh_node(currentNode);
     }
   })
@@ -75,7 +75,7 @@ $(function() {
                     'opened': false
                   }
                 };
-                if(!p.text) p.text = c.remainder;
+                if(!c.label) p.text = c.remainder;
 
                 if(!c.deprecated) {
                   node.children.push(p);
@@ -105,7 +105,7 @@ $(function() {
                   'opened': false
                 }
               };
-              if(!p.text) p.text = data.classes[0].remainder;
+              if(!c.label) p.text = c.remainder;
 
               if(!c.deprecated) {
                 if(c.children) {
@@ -126,7 +126,7 @@ $(function() {
                 'text': c.label,
                 'children': true
               };
-              if(!node.text) node.text = c.remainder;
+              if(!c.label) node.text = c.remainder;
               if(!c.deprecated) {
                 nodes.push(node);
               }

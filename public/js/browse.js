@@ -37,6 +37,8 @@ $(function() {
           //handlers to each node label.  
           onCreateLabel: function(label, node){  
               //add some styles to the node label  
+              $('#wat').text(node.name);
+
               var style = label.style;  
               label.id = node.id;  
               style.color = '#333';  
@@ -67,18 +69,16 @@ $(function() {
 
           request: function(nodeId, level, onComplete) {  
             var ontology = $('#ontology_value').text();
-            console.log(nodeId);
             $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(nodeId)+'>&ontology='+ontology, function(data ) {
               data = data.result;
-              console.log(data);
               var level = {
-                'id': nodeId,
+                'id': nodeId + '-vis',
                 'children': []
               };
 
               $.each(data, function(i, c) {
                 var node = {
-                  'id': c.classURI,
+                  'id': c.classURI + '-vis',
                   'name': c.label
                 };
                 if(!node.name) node.name = c.remainder;
@@ -86,6 +86,7 @@ $(function() {
                   level.children.push(node);
                 }
               });
+
               onComplete.onComplete(nodeId, level);    
           }); 
         }
@@ -95,7 +96,6 @@ $(function() {
       var ontology = $('#ontology_value').text();
       $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology, function(data ) {
         data = data.result;
-        console.log(data);
         var root = {
           'id': 'root',
           'name': 'Owl:Thing',
@@ -104,7 +104,7 @@ $(function() {
         };
         $.each(data, function(i, c) {
           var node = {
-            'id': c.classURI,
+            'id': c.classURI + '-vis',
             'name': c.label
           };
           if(!node.name) node.name = c.remainder;
@@ -112,7 +112,6 @@ $(function() {
             root.children.push(node);
           }
         });
-        console.log(root);
 
         //load json data  
         st.loadJSON(root);  
@@ -120,7 +119,6 @@ $(function() {
         //compute node positions and layout  
         st.compute();  
         //optional: make a translation of the tree  
-        st.geom.translate(new $jit.Complex(-200, 0), "current");  
         //Emulate a click on the root node.  
         st.onClick(st.root);  
       });
