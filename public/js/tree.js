@@ -78,7 +78,8 @@ $(function() {
                     'opened': false
                   }
                 };
-                if(!c.label) p.text = c.remainder;
+                if(!p.text) p.text = c.remainder;
+                if(!p.text) p.text = c.classURI;
 
                 if(!c.deprecated) {
                   node.children.push(p);
@@ -110,7 +111,8 @@ $(function() {
                   'opened': false
                 }
               };
-              if(!c.label) p.text = c.remainder;
+              if(!p.text) p.text = c.remainder;
+              if(!p.text) p.text = c.classURI;
 
               if(!c.deprecated) {
                 if(c.children) {
@@ -132,7 +134,9 @@ $(function() {
                 'text': c.label,
                 'children': true
               };
-              if(!c.label) node.text = c.remainder;
+              if(!node.text) node.text = c.remainder;
+              if(!node.text) node.text = c.classURI;
+
               if(!c.deprecated) {
                 nodes.push(node);
               }

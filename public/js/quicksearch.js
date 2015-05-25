@@ -37,7 +37,7 @@ $('#quicksearch').tagsInput({
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
-      var label = item.label || item.remainder;
+      var label = item.label || item.remainder || item.classURI;
       return $( "<li>" )
              .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+

@@ -83,6 +83,7 @@ $(function() {
                   'name': c.label
                 };
                 if(!node.name) node.name = c.remainder;
+                if(!node.name) node.name = c.classURI;
                 if(!c.deprecated) {
                   level.children.push(node);
                 }
@@ -109,6 +110,7 @@ $(function() {
             'name': c.label
           };
           if(!node.name) node.name = c.remainder;
+          if(!node.name) node.name = c.classURI;
           if(!c.deprecated) {
             root.children.push(node);
           }
