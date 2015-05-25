@@ -209,3 +209,9 @@ width:100%;
 }
 
 
+#quicksearch_tagsinput {
+overflow:hidden;
+}
+#autocomplete_tagsinput {
+overflow:hidden;
+}
