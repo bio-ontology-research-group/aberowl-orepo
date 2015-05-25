@@ -2,7 +2,42 @@ $(function() {
   var visitialised = false;
   $( "#tabs" ).tabs();
   $( "#tabs" ).on( "tabsactivate", function( event, ui ) {
-    if(ui.newPanel.selector == '#visualise' && !visitialised) {
+    if(ui.newPanel.selector == '#pubmed') {
+      var tree = $.jstree.reference('#left_tree');
+      var selectedNodes = tree.get_selected(true);
+      if(selectedNodes.length > 0) {
+        $.each($('#pubmed_autocomplete_tagsinput .tag span'),function(e,i){ $('#pubmed_autocomplete').removeTag($(i).text().trim())});
+        var name = selectedNodes[0].text;
+        if(name.indexOf(' ') != -1) {
+          name = '\'' + name + '\'';
+        }
+        $('#pubmed_autocomplete').addTag(name);
+        uriMap[name] = selectedNodes[0].data;
+      }
+    } else if(ui.newPanel.selector == '#query') {
+      var tree = $.jstree.reference('#left_tree');
+      var selectedNodes = tree.get_selected(true);
+      if(selectedNodes.length > 0) {
+        $.each($('#autocomplete_tagsinput .tag span'),function(e,i){ $('#autocomplete').removeTag($(i).text().trim())});
+        var name = selectedNodes[0].text;
+        if(name.indexOf(' ') != -1) {
+          name = '\'' + name + '\'';
+        }
+        $('#autocomplete').addTag(name);
+        uriMap[name] = selectedNodes[0].data;
+      }
+    } else if(ui.newPanel.selector == '#sparql') {
+      var tree = $.jstree.reference('#left_tree');
+      var selectedNodes = tree.get_selected(true);
+      if(selectedNodes.length > 0) {
+        var name = selectedNodes[0].text;
+        if(name.indexOf(' ') != -1) {
+          name = '\'' + name + '\'';
+        }
+        $('#squery').val($('#squery').val().replace(/INSERT OWL HERE/, name));
+      }
+    } else if(ui.newPanel.selector == '#visualise' && !visitialised) {
+
       //Create a new ST instance  
       visitialised = true;
       var st = new $jit.ST({  
