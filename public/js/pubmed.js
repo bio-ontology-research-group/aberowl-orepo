@@ -62,7 +62,7 @@ $(function() {
       ]
   })
     
-  $( "#button" ).button();
+  $( "#pubmed_button" ).button();
 
   $('#pubmed_autocomplete').tagsInput({
     'height': '40px',

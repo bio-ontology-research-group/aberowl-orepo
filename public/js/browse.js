@@ -14,6 +14,7 @@ $(function() {
         $('#pubmed_autocomplete').addTag(name);
         uriMap[name] = selectedNodes[0].data;
       }
+      $("#pubmed_button").click();
     } else if(ui.newPanel.selector == '#query') {
       var tree = $.jstree.reference('#left_tree');
       var selectedNodes = tree.get_selected(true);
