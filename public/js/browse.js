@@ -9,7 +9,7 @@ $(function() {
           'injectInto': 'infovis',  
           //add styles/shapes/colors  
           //to nodes and edges  
-          levelsToShow: 2,
+          levelsToShow: 5,
             
           //set overridable=true if you want  
           //to set styles for nodes individually   
@@ -69,16 +69,17 @@ $(function() {
 
           request: function(nodeId, level, onComplete) {  
             var ontology = $('#ontology_value').text();
-            $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(nodeId)+'>&ontology='+ontology, function(data ) {
+            reqId = nodeId.replace(/^vis#/, '');
+            $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(reqId)+'>&ontology='+ontology, function(data ) {
               data = data.result;
               var level = {
-                'id': nodeId + '-vis',
+                'id': 'vis#' + nodeId,
                 'children': []
               };
 
               $.each(data, function(i, c) {
                 var node = {
-                  'id': c.classURI + '-vis',
+                  'id': 'vis#' + c.classURI,
                   'name': c.label
                 };
                 if(!node.name) node.name = c.remainder;
@@ -97,14 +98,14 @@ $(function() {
       $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology, function(data ) {
         data = data.result;
         var root = {
-          'id': 'root',
+          'id': 'vis#root',
           'name': 'Owl:Thing',
           'data': {},
           'children': []
         };
         $.each(data, function(i, c) {
           var node = {
-            'id': c.classURI + '-vis',
+            'id': 'vis#' + c.classURI,
             'name': c.label
           };
           if(!node.name) node.name = c.remainder;

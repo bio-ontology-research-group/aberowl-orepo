@@ -18,7 +18,8 @@ var qs = function () {
       query_string[pair[0]].push(pair[1]);
     }
   } 
-    return query_string;
+
+  return query_string;
 }();
 
 $(function() {

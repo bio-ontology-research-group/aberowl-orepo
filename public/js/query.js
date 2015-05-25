@@ -138,8 +138,9 @@ $(document).ready(function() {
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
+      var label = item.label || item.remainder;
       return $( "<li>" )
-             .append( "<p>" + item.label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
+             .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
               "<span onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
              .appendTo(ul);
