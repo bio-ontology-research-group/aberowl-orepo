@@ -3,6 +3,10 @@ var examples = [
   {
     'text': [ '\'venctricular septal defect\'' ],
     'uri': [ 'http://purl.obolibrary.org/obo/HP_0001629' ]
+  },
+  {
+    'text': [ 'develops_from', 'SOME', '\'stem ctell\'' ],
+    'uri': [ 'http://purl.obolibrary.org/obo/RO_0002202', 'SOME', 'http://purl.obolibrary.org/obo/CL_0000034' ]
   }
 ];
 
@@ -22,9 +26,8 @@ $(document).keypress(function(event){
 
 function redrawTable() {
     //var query = $('#autocomplete').value();
-    var query = $.map($('#autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
+    var query = $.map($('#autocomplete_tagsinput .tag span'),function(e,i){var x = uriMap[$(e).text().trim()]; if(x != 'AND' && x != 'SOME'){ x='<'+x+'>'; } return x;}).join(' ');
 
-    window.location.hash = "#" + query ;
     $('#example').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
     var ontology = $("#ontology").text();
@@ -105,6 +108,7 @@ $(document).ready(function() {
     'defaultText': '',
     'delimiter': '|',
     'autocomplete_url': '',
+    'unique': false,
     'autocomplete': {
       'source': function(request, response) {
         var ontology = $("#ontology").text(),
@@ -138,7 +142,7 @@ $(document).ready(function() {
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
-      var label = item.label || item.remainder || item.classURI;
+      var label = item.first_label || item.label || item.remainder || item.classURI;
       return $( "<li>" )
              .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
@@ -147,7 +151,6 @@ $(document).ready(function() {
      },
      'onRemoveTag': function(value) {
         delete uriMap[value];
-        console.log(uriMap);
      },
      'onAddTag': function() {
        $('div.tagsinput span.tag').filter(function(){ return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
