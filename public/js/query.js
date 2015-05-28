@@ -7,6 +7,14 @@ var examples = [
   {
     'text': [ 'develops_from', 'SOME', '\'stem ctell\'' ],
     'uri': [ 'http://purl.obolibrary.org/obo/RO_0002202', 'SOME', 'http://purl.obolibrary.org/obo/CL_0000034' ]
+  },
+  { 
+    'text': ['part of', 'SOME', 'apoptotic process', 'AND', 'regulates', 'SOME', 'apoptotic process' ],
+    'uri': [ 'http://purl.obolibrary.org/obo/BFO_0000050', 'SOME', "http://purl.obolibrary.org/obo/GO_0006915", "AND", "http://purl.obolibrary.org/obo/RO_0002211", 'SOME', 'http://purl.obolibrary.org/obo/GO_0006915' ]
+  },
+  {
+    'text': ['has_part', 'SOME', 'alcohol'],
+    'uri': [ 'http://purl.obolibrary.org/obo/chebi#BFO_0000051', 'SOME', 'http://purl.obolibrary.org/obo/CHEBI_30879' ]
   }
 ];
 
