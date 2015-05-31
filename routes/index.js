@@ -24,6 +24,10 @@ router.get('/register', function(req, res) {
   res.render('register', {});
 });
 
+router.get('/help', function(req, res) {
+  res.render('help', {});
+});
+
 router.post('/register', function(req, res) {
   var username = req.body.username,
       email = req.body.email,

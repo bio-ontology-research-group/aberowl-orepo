@@ -215,3 +215,16 @@ overflow:hidden;
 #autocomplete_tagsinput {
 overflow:hidden;
 }
+
+
+.starter-template {
+  padding: 0px 40px;
+}
+
+.api {
+border-bottom: 1px solid;
+border-color: #aaa;
+}
+.api-text {
+padding:5px;
+}

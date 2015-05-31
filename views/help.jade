@@ -1,0 +1,201 @@
+extends layout
+
+block content
+  .container-fluid
+    .starter-template
+      -if(messages)
+        p #{messages.errors}
+      h2 AberOWL Help
+
+      span This is a test.
+      
+      h2 API Documentation
+
+      span The API root is 
+        b http://aber-owl.net/service/api/
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text runQuery.groovy
+
+      span This runs a Manchester OWL Syntax query against the server.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td The Manchester OWL Syntax query
+          tr
+            td type
+            td string
+            td yes
+            td subeq
+            td The classes to return related to the query. One of 
+              b subclass
+              span , 
+              b superclass
+              span , 
+              b subeq
+              span , 
+              b supeq
+              span , 
+              b equivalent
+              span .
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to run the query against. If not provided, query will be run against all ontologies in the repository.
+          tr
+            td labels
+            td boolean
+            td yes
+            td false
+            td Whether to allow labels in the query. By default, URIs must be used.
+          tr
+            td direct
+            td boolean
+            td yes
+            td false
+            td Whether to retrieve only direct subclasses or superclasses. Ignored for equivalent queries.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text queryNames.groovy
+
+      span This provides partial matches on labels.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td term
+            td string
+            td no
+            td None
+            td A partial class name.
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to run the query against. If not provided, query will be run against all ontologies in the repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getClass.groovy
+
+      span Retrieve one particular class from an ontology, by label name.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td A label of the class to retrieve.
+          tr
+            td ontology
+            td string
+            td no
+            td None
+            td An ontology to run the query against. 
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text findRoot.groovy
+
+      span Given a reference to a particular class by label and ontology, retrieve a route back to the root of the ontology.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td A label of the class to retrieve.
+          tr
+            td ontology
+            td string
+            td no
+            td None
+            td An ontology to run the query against. 
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getStats.groovy
+
+      span This provides stats on either one ontology, or all ontologies in the database.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to retrieve stats for. If not provided, total stats will be returned for the whole repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text listOntologies.groovy
+
+      span Return a list of all the ontologies in the repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getStatuses.groovy
+
+      span Return a list of all the ontologies in the repository, with associated load statuses.
+
+      h2 Frequently Asked Questions
+
+      h3 Where is the source?
+
+      span Check it at 
+        a(href='https://github.com/bio-ontology-research-group/aberowl-meta') GitHub
