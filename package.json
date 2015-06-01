@@ -23,6 +23,7 @@
     "underscore": "latest",
     "moniker": "latest",
     "pluralize": "latest",
-    "databank": "latest"
+    "databank": "latest",
+    "databank-redis": "latest"
   }
 }
