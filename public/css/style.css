@@ -62,6 +62,8 @@ word-wrap: break-word;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     background-color: #f5f5f5;
     border-right: 1px solid #eee;
+    overflow-x:scroll;
+    overflow-y:scroll;
   }
 }
 
