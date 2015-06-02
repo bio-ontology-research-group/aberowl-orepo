@@ -46,7 +46,6 @@ $('#quicksearch').tagsInput({
      },
      'onRemoveTag': function(value) {
         delete uriMap[value];
-        console.log(uriMap);
      },
      'onAddTag': function() {
        $('div.tagsinput span.tag').filter(function(){ return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
