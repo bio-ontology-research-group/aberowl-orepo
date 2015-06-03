@@ -19,6 +19,7 @@ function redrawPubmedTable() {
 	"bJQueryUI": true,
 	aoColumns : [
 	    { "sWidth": "15%"},
+	    { "sWidth": "20%"},
 	    { "sWidth": "40%"}
 	],
 	"fnInitComplete": function( oSettings ) {
@@ -42,6 +43,7 @@ function redrawPubmedTable() {
                       datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+result[i].pmid+'">'+result[i].pmid+'</a>';
                     }
                     datatable[i][1] = result[i].title;
+                    datatable[i][2] = result[i].fragment;
                 }
                 return datatable;
             }
@@ -61,6 +63,7 @@ $(function() {
       "scrollY": 400,
       aoColumns : [
           { "sWidth": "15%"},
+          { "sWidth": "20%"},
           { "sWidth": "40%"}
       ]
   })
