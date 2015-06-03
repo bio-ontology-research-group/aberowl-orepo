@@ -19,6 +19,7 @@ function redrawPubmedTable() {
 	"bJQueryUI": true,
 	aoColumns : [
 	    { "sWidth": "15%"},
+	    { "sWidth": "20%"},
 	    { "sWidth": "40%"}
 	],
 	"fnInitComplete": function( oSettings ) {
@@ -31,14 +32,18 @@ function redrawPubmedTable() {
             "url": "/aber-owl/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
-              console.log(json);
                 var datatable = new Array();
 		var result = json;
 
                 for (var i=0 ; i<result.length ; i++ ) {
                     datatable[i] = new Array() ;
-                    datatable[i][0] = result[i].pmcid || result[i].pmid;
+                    if(result[i].pmcid) {
+                      datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC'+result[i].pmcid+'">'+result[i].pmcid+' (full text)</a>';
+                    } else if(result[i].pmid) {
+                      datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+result[i].pmid+'">'+result[i].pmid+'</a>';
+                    }
                     datatable[i][1] = result[i].title;
+                    datatable[i][2] = result[i].fragment;
                 }
                 return datatable;
             }
@@ -58,6 +63,7 @@ $(function() {
       "scrollY": 400,
       aoColumns : [
           { "sWidth": "15%"},
+          { "sWidth": "20%"},
           { "sWidth": "40%"}
       ]
   })
@@ -97,7 +103,6 @@ $(function() {
       },
       'select': function(event, ui) {
         uriMap[ui.item.value] = ui.item.data;
-        console.log(uriMap);
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
@@ -109,7 +114,6 @@ $(function() {
      },
      'onRemoveTag': function(value) {
         delete uriMap[value];
-        console.log(uriMap);
      },
      'onAddTag': function() {
        $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
