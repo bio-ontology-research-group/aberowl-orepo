@@ -31,13 +31,16 @@ function redrawPubmedTable() {
             "url": "/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
-              console.log(json);
                 var datatable = new Array();
 		var result = json;
 
                 for (var i=0 ; i<result.length ; i++ ) {
                     datatable[i] = new Array() ;
-                    datatable[i][0] = result[i].pmcid || result[i].pmid;
+                    if(result[i].pmcid) {
+                      datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC'+result[i].pmcid+'">'+result[i].pmcid+' (full text)</a>';
+                    } else if(result[i].pmid) {
+                      datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+result[i].pmid+'">'+result[i].pmid+'</a>';
+                    }
                     datatable[i][1] = result[i].title;
                 }
                 return datatable;
@@ -99,7 +102,6 @@ $(function() {
       },
       'select': function(event, ui) {
         uriMap[ui.item.value] = ui.item.data;
-        console.log(uriMap);
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
@@ -111,7 +113,6 @@ $(function() {
      },
      'onRemoveTag': function(value) {
         delete uriMap[value];
-        console.log(uriMap);
      },
      'onAddTag': function() {
        $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
