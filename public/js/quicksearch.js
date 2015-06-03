@@ -10,7 +10,7 @@ $('#quicksearch').tagsInput({
         var ontology = $("#ontology").text(),
             query = extractLast(request.term);
 
-        $.getJSON("/api/queryNames.groovy", {
+        $.getJSON("/service/api/queryNames.groovy", {
             term: query,
             ontology: ontology
         }, function(json) {

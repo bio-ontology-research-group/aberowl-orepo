@@ -35,7 +35,7 @@ $(function() {
   .on('changed.jstree', function (e, data) {
     var last = data.selected[data.selected.length-1];
     if(data.node) {
-      $.getJSON('/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
+      $.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
         var html = '<table class="table table-striped"><tbody>'
         $.each(data, function(a, y) {
           html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
@@ -53,12 +53,12 @@ $(function() {
         'url' : function(node) {
           if(node.id === '#') {
             if(qs.c) {  
-              return '/api/findRoot.groovy?direct=true&query=<'+qs.c+'>&ontology='+ontology
+              return '/service/api/findRoot.groovy?direct=true&query=<'+qs.c+'>&ontology='+ontology
             } else {
-              return '/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology
+              return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology
             }
           } else {
-            return '/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology
+            return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology
           }
         },
         'dataFilter': function(data) {

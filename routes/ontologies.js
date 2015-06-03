@@ -21,7 +21,7 @@ router.get('/', function(req, res) {
     }, function(request, response, body) {
       res.render('ontologies', {
         'title': 'Ontology List',
-        'ontologies': _.sortBy(ontologies, 'acronym'),
+        'ontologies': _.sortBy(ontologies, 'id'),
         'stati': body
       });
     });
@@ -111,7 +111,7 @@ router.post('/:id/upload', function(req, res) {
               }, function() {}); // we don't actually care about the response
 
               req.flash('info', 'Ontology updated successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
-              res.redirect('/ontology/' + req.params.id + '/manage');
+              res.redirect('/ontology/' + req.params.id + '/');
             });
           });
         });
@@ -193,7 +193,7 @@ router.post('/:id/update', function(req, res) { // this is just to update the de
       ontology.description = req.body.description;
       req.db.save('ontologies', ontology.id, ontology, function() {
         req.flash('info', 'Ontology Updated');
-        res.redirect('/ontology/'+ontology.id+'/manage');
+        res.redirect('/ontology/'+ontology.id+'/');
       });
     } else {
       req.flash('error', 'Please log in to manage this ontology');
@@ -216,7 +216,7 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
 
       req.db.save('ontologies', ontology.id, ontology, function() {
         req.flash('info', 'Sync Method Updated');
-        res.redirect('/ontology/'+ontology.id+'/manage');
+        res.redirect('/ontology/'+ontology.id+'/');
       });
     } else {
       req.flash('error', 'Please log in to manage this ontology');

@@ -215,3 +215,7 @@ overflow:hidden;
 #autocomplete_tagsinput {
 overflow:hidden;
 }
+.jumbotron {
+margin-top:40px;
+padding:20px;
+}

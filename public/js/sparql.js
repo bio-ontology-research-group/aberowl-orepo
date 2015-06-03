@@ -44,7 +44,7 @@ function changeSPARQLQuery(to) {
 
 function sendSPARQLQuery() {
   $.ajax({
-    'url': '/sparql/sparqowljson.php',
+    'url': '/aber-owl/sparql/sparqowljson.php',
     'type': 'POST',
     'dataType': 'json',
     'data': {
