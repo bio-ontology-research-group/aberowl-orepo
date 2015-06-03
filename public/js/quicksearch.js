@@ -40,8 +40,7 @@ $('#quicksearch').tagsInput({
       var label = item.label || item.remainder || item.classURI;
       return $( "<li>" )
              .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
-              "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
-              "<span onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
+              "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />")
              .appendTo(ul);
      },
      'onRemoveTag': function(value) {
