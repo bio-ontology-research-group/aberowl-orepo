@@ -19,6 +19,7 @@ var examples = [
 ];
 
 function addExample(i) {
+  clearTags();
   $.each(examples[i].text, function(a, y) {
     $('#autocomplete').addTag(y); 
     uriMap[y] = examples[i].uri[a];
@@ -85,8 +86,11 @@ function redrawTable() {
             "sSwfPath": "js/TableTools-2.0.0/media/swf/copy_csv_xls_pdf.swf"
         }
     } );
-}
+};
 
+function clearTags() {
+  $.each($('#autocomplete_tagsinput .tag span'),function(i,e){ $('#autocomplete').removeTag($(e).text().trim()); });
+}
 
 $(document).ready(function() {
   $('#example').dataTable( {

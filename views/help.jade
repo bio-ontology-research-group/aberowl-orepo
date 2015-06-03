@@ -1,0 +1,284 @@
+extends layout
+
+block content
+  .container-fluid
+    .starter-template
+      -if(messages)
+        p #{messages.errors}
+      h1 AberOWL Help
+
+      p. 
+        AberOWL (pronounced /ˌæbəˈraʊl/) is a framework for ontology-based access to biological data.
+        It consists of a repository of bio-ontologies, a set of webservices which provide access
+        to OWL(-EL) reasoning over the ontologies, and several frontends which utilise the ontology
+        repository and reasoning services to provide access to specific biological datasets.
+
+      h2 Web Repository
+      
+      p.
+        The web-based repository front-end provides many features underpinned by reasoned access to
+        ontologies.
+
+      ul
+        li Upload and immediate classification of ontologies.
+        li Semantic querying of ontologies using Manchester OWL Syntax.
+        li Query Pubmed and PubMed central articles using ontology terms.
+        li Ontology-based access to RDF/Linked data through SPARQL integration.
+
+      h3.api Uploading ontologies
+
+      p To do this you must first create an account, then fill out the form on the 
+        a(href='/ontology/upload') upload page
+        span . It is probably a good idea to check whether an ontology exists first. You can
+          | also upload new versions of an existing ontology once you have claimed it.
+
+
+      h3.api Claiming ontologies
+
+      p.
+        To claim an ontology, and gain the ability to manage it and upload new versions, you should send an 
+        email to luke.slater@kaust.edu.sa.
+
+      h3.api Querying ontologies
+
+      h4 Class Query
+
+      p classy
+
+      h4 PubMed Query
+
+      p pubmeddy
+
+      h4 SPARQL Query
+
+      p sparqly
+
+      h2 AberOWL API
+
+      span The API root is 
+        b http://aber-owl.net/service/api/
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text runQuery.groovy
+
+      span This runs a Manchester OWL Syntax query against the server.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td The Manchester OWL Syntax query
+          tr
+            td type
+            td string
+            td yes
+            td subeq
+            td The classes to return related to the query. One of 
+              b subclass
+              span , 
+              b superclass
+              span , 
+              b subeq
+              span , 
+              b supeq
+              span , 
+              b equivalent
+              span .
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to run the query against. If not provided, query will be run against all ontologies in the repository.
+          tr
+            td labels
+            td boolean
+            td yes
+            td false
+            td Whether to allow labels in the query. By default, URIs must be used.
+          tr
+            td direct
+            td boolean
+            td yes
+            td false
+            td Whether to retrieve only direct subclasses or superclasses. Ignored for equivalent queries.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text queryNames.groovy
+
+      span This provides partial matches on labels.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td term
+            td string
+            td no
+            td None
+            td A partial class name.
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to run the query against. If not provided, query will be run against all ontologies in the repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getClass.groovy
+
+      span Retrieve one particular class from an ontology, by label name.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td A label of the class to retrieve.
+          tr
+            td ontology
+            td string
+            td no
+            td None
+            td An ontology to run the query against. 
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text findRoot.groovy
+
+      span Given a reference to a particular class by label and ontology, retrieve a route back to the root of the ontology.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td query
+            td string
+            td no
+            td None
+            td A label of the class to retrieve.
+          tr
+            td ontology
+            td string
+            td no
+            td None
+            td An ontology to run the query against. 
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getStats.groovy
+
+      span This provides stats on either one ontology, or all ontologies in the database.
+
+      h4 Parameters
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th Name
+            th Type
+            th Optional
+            th Default
+            th Description
+        tbody
+          tr
+            td ontology
+            td string
+            td yes
+            td 
+            td An ontology to retrieve stats for. If not provided, total stats will be returned for the whole repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text listOntologies.groovy
+
+      span Return a list of all the ontologies in the repository.
+
+      h3.api 
+        span.glyphicon.glyphicon-circle-arrow-right
+        span.api-text getStatuses.groovy
+
+      span Return a list of all the ontologies in the repository, with associated load statuses.
+
+      h2 Frequently Asked Questions
+
+      h3.api Where can I read more?
+
+      p You can read the paper about AberOWL 
+        a(href='http://www.biomedcentral.com/1471-2105/16/26/') here
+        span .
+
+      h3.api What technology does AberOWL use?
+
+      p The AberOWL server is built using the 
+        a(href='http://www.groovy-lang.org/') Groovy
+        span  programming language, and builds on the 
+        a(href='http://owlapi.sourceforge.net') OWL-API
+        span  library. Reasoning is performed using the 
+        a(href='https://code.google.com/p/elk-reasoner/') ELK reasoner
+        span .
+
+      p The ontology repository is built using 
+        a(href='https://nodejs.org/') NodeJS
+        span , and, er, HTML (
+        a(href='http://jade-lang.com/') Jade
+        span ) and shares a 
+        a(href='http://redis.io/') Redis
+        span  instance with the AberOWL server backend.
+
+      h3.api Where is the source?
+
+      p Check it at 
+        a(href='https://github.com/bio-ontology-research-group/aberowl-meta') GitHub
+
+      h3.api Where to get more help or send feature requests/suggesetions?
+
+      p You can open an issue on our 
+        a(href='https://github.com/bio-ontology-research-group/aberowl-meta/issues') GitHub
+        span  or ask questions on our 
+        a(href='http://groups.google.co.uk/d/forum/aber-owl') mailing list
+        span .
+
+      h3.api Who works on AberOWL?
+      ul
+        li George Gkoutos (Aberystwyth University)
+        li Luke Slater (King Abdullah University of Science and Technology)
+        li Paul Schofield (University of Cambridge)
+        li Robert Hoehndorf (King Abdullah University of Science and Technology) 

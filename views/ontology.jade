@@ -81,7 +81,7 @@ block content
                 tbody
                   - var x = 1
                   for i, time in ontology.submissions
-                    - time = new Date(parseInt(time)).toUTCString()
+                    - time = new Date(parseInt(time)*1000).toUTCString()
                     - if(x > 3) return;
                     tr
                       td #{time}
@@ -100,7 +100,7 @@ block content
                 tbody
                   - var x = 1
                   for i, time in ontology.submissions
-                    - time = new Date(parseInt(time)).toUTCString()
+                    - time = new Date(parseInt(time)*1000).toUTCString()
                     tr
                       td #{time}
                       td 
