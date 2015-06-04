@@ -29,7 +29,7 @@ function redrawPubmedTable() {
 	    $('#sparql').show();*/
         },
         "ajax": {
-            "url": "/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
+            "url": "/aber-owl/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -68,8 +68,6 @@ $(function() {
       ]
   })
     
-  $( "#pubmed_button" ).button();
-
   $('#pubmed_autocomplete').tagsInput({
     'height': '40px',
     'width': '100%',
@@ -81,7 +79,7 @@ $(function() {
         var ontology = $("#ontology").text(),
             query = extractLast(request.term);
 
-        $.getJSON("/api/queryNames.groovy", {
+        $.getJSON("/service/api/queryNames.groovy", {
             term: query,
             ontology: ontology
         }, function(json) {

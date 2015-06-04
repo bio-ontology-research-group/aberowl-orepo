@@ -106,7 +106,7 @@ $(function() {
           request: function(nodeId, level, onComplete) {  
             var ontology = $('#ontology_value').text();
             reqId = nodeId.replace(/^vis#/, '');
-            $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(reqId)+'>&ontology='+ontology, function(data ) {
+            $.getJSON('/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(reqId)+'>&ontology='+ontology, function(data ) {
               data = data.result;
               var level = {
                 'id': 'vis#' + nodeId,
@@ -132,7 +132,7 @@ $(function() {
 
       // Get the head 
       var ontology = $('#ontology_value').text();
-      $.getJSON('/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology, function(data ) {
+      $.getJSON('/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology, function(data ) {
         data = data.result;
         var root = {
           'id': 'vis#root',

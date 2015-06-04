@@ -58,13 +58,13 @@ function redrawTable() {
 	    { "sWidth": "40%"},
 	],
 	"fnInitComplete": function( oSettings ) {
-	    $('#pubmed').attr('href', "pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
+	    $('#pubmed').attr('href', "/aber-owl/pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
 	    $('#pubmed').show();                                                                                                         
-	    $('#sparql').attr('href', "sparql/?type="+qType+"&query="+encodeURIComponent(query)+"&ontology="+ontology);
+	    $('#sparql').attr('href', "/aber-owl/sparql/?type="+qType+"&query="+encodeURIComponent(query)+"&ontology="+ontology);
 	    $('#sparql').show();
         },
         "ajax": {
-            "url": "/api/runQuery.groovy?type="+qType+"&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
+            "url": "/service/api/runQuery.groovy?type="+qType+"&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -126,7 +126,7 @@ $(document).ready(function() {
         var ontology = $("#ontology").text(),
             query = extractLast(request.term);
 
-        $.getJSON("/api/queryNames.groovy", {
+        $.getJSON("/service/api/queryNames.groovy", {
             term: query,
             ontology: ontology
         }, function(json) {
@@ -158,7 +158,7 @@ $(document).ready(function() {
       return $( "<li>" )
              .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
-              "<span style=\"font:blue;font-size:8px;\" onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
+              "<span style='font-size:8px;color:#00B7FF;' onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
              .appendTo(ul);
      },
      'onRemoveTag': function(value) {
