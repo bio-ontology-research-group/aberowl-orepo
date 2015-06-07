@@ -13,7 +13,7 @@ function redrawPubmedTable() {
 	"paging": true,
 	"scrollY": 400,
 	"renderer": "bootstrap",
-	"aaSorting": [[ 1, "asc" ]],
+	"aaSorting": [[ 0, "asc" ]],
 	"bAutoWidth": false,
 	"iDisplayLength": 50,
 	"bJQueryUI": true,
