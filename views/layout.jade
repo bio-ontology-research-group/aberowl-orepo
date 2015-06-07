@@ -41,10 +41,10 @@ html
       .container-fluid
         .navbar-header
           img.img-responsive(style="float:left", width=64, height=64, src='/logo-owl.png')
-          a.navbar-brand(href='/',style='margin-top:10px') AberOWL Repository
+          a.navbar-brand(href='/',style='margin-top:10px;margin-left:10px') AberOWL Repository
         div.navbar-left(style="margin-top:20px")
-          a.btn.btn-primary(href='/ontology', role='button') Browse Ontologies &raquo;
-          a.btn.btn-warning(style='margin-left:10px', href='/ontology/upload', role='button') 
+          a.btn.btn-default(href='/ontology', role='button') Browse Ontologies &raquo;
+          a.btn.btn-default(style='margin-left:10px', href='/ontology/upload', role='button') 
             span Upload New Ontology&nbsp;
             span.glyphicon.glyphicon-upload(aria-hidden='true') 
         -if(user) 
@@ -52,15 +52,15 @@ html
             p.label.label-info(style='margin:2px;') Logged in as #{user.username}
             p.label.label-warning
               a(href='/user/#{user.username}') Your Ontologies
-            a.btn.btn-primary(style="margin-left:20px", href='/help', role='button') Help
+            a.btn.btn-default(style="margin-left:20px", href='/help', role='button') Help
         - else
           form.navbar-form.navbar-right(action='/login', method='post', role='form')
             .form-group
               input.form-control(name='username', type='text', placeholder='Username')
             .form-group
               input.form-control(name='password', type='password', placeholder='Password')
-            button.btn.btn-success(type='submit') Sign in
-            a.btn.btn.btn-info(href='/register') Register
-            a.btn.btn-primary(style="margin-left:20px", href='/help', role='button') Help
+            button.btn.btn-default(type='submit') Sign in
+            a.btn.btn.btn-default(href='/register') Register
+            a.btn.btn-default(style="margin-left:20px", href='/help', role='button') Help
 
     block content
