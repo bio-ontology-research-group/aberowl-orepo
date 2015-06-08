@@ -1,5 +1,8 @@
 extends layout
 
+block title
+  title AberOWL: #{ontology.name}
+
 block content
   .container-fluid
     .row
@@ -120,7 +123,7 @@ block content
               input(name='type', type='radio', value='subeq' checked='true') 
               label Sub- and Equivalent classes
               br
-              a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+              a#button.btn.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
 
             table#example.table.table-striped
               thead
@@ -145,7 +148,7 @@ block content
               input(name='type', type='radio', value='subeq' checked='true') 
               label Sub- and Equivalent classes
               br
-              a#pubmed_button.btn.btn.btn-success(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
+              a#pubmed_button.btn.btn.btn-default(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
             table#pubmed_results.table.table-striped
               thead
                 tr
@@ -165,7 +168,7 @@ block content
             p SPARQL Endpoint URI:
               input#endpoint(type='text')
             input#qtype(type='hidden' value='values')
-            button.btn.btn-success(onclick='sendSPARQLQuery()') Submit
+            button.btn.btn-default(onclick='sendSPARQLQuery()') Submit
 
             table#sparql_results.table.table-striped
 
@@ -188,7 +191,7 @@ block content
                 h5 Description
                 textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
                 br
-                button.btn.btn-success(type='submit') Save
+                button.btn.btn-default(type='submit') Save
 
               h3.sub-header Updates
                 h5 Current update method: 
