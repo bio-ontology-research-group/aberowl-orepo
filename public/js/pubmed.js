@@ -15,7 +15,7 @@ function redrawPubmedTable() {
 	"renderer": "bootstrap",
 	"aaSorting": [[ 0, "asc" ]],
 	"bAutoWidth": false,
-	"iDisplayLength": 50,
+	"iDisplayLength": 100,
 	"bJQueryUI": true,
 	aoColumns : [
 	    { "sWidth": "20%"},

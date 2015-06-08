@@ -158,7 +158,7 @@ $(document).ready(function() {
       return $( "<li>" )
              .append( "<p>" + label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
               "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
-              "<span style='font-size:8px;color:#00B7FF;' onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
+              "<span style='font-size:10px;color:#00B7FF;' onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
              .appendTo(ul);
      },
      'onRemoveTag': function(value) {
