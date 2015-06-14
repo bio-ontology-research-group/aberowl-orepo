@@ -5,11 +5,13 @@ block title
 
 block content
   .container-fluid
-    -if(messages)
+  -if(messages)
       p #{messages.errors}
     .jumbotron
-      p(align='center')
-        span Hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
+        p(align='center')
+          span Welcome to the AberOWL framework for ontology-based data access.
+        p(align='center')
+          span Currently hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
       center
         input#autocomplete(width="100%", style="width:100%", placeholder='Enter Manchester OWL Syntax Query', type='text')
         input(name='type', type='radio', value='supeq') 

@@ -3,6 +3,8 @@ html
   head
     block title
       title Default title
+    meta(name='keywords', content='aberowl aber-owl ontology repository OWL reasoning ontology-based data access biomedical ontologies bio-ontology bio-ontologies')
+    meta(name='description', content='AberOWL consists of a repository of ontologies, a set of webservices which provide access to reasoning over the ontologies, and several frontends to provide ontology-based access to biological datasets.')
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     meta(name='viewport', content='width=device-width, initial-scale=1')
@@ -42,7 +44,7 @@ html
     .navbar.navbar-inverse.navbar-fixed-top(role='navigation')
       .container-fluid
         .navbar-header
-          img.img-responsive(style="float:left", width=64, height=64, src='/logo-owl.png')
+          img.img-responsive(style="float:left", width=64, height=64, src='/logo-owl.png', alt='AberOWL')
           a.navbar-brand(href='/',style='margin-top:10px;margin-left:0px') AberOWL Repository
         div.navbar-left(style="margin-top:10px")
           ul.nav.navbar-nav
@@ -69,3 +71,17 @@ html
             a.btn.btn.btn-default(href='/register') Register
 
     block content
+
+    .footer
+      div(style='padding-top: 60px')
+        p(align='center') AberOWL is jointly developed by researchers from Aberystwyth University, King Abdullah University of Science and Technology, and the University of Cambridge.
+        .container(style='text-align:center;')
+          ul.nav.navbar-nav(style='display: inline-block;float:none;margin-left: auto;margin-right: auto;text-align: center;')
+            li(style='text-align: center;')
+              a(href='https://github.com/bio-ontology-research-group') Source code
+            li
+              a(href='https://github.com/bio-ontology-research-group/aberowl-orepo/issues') Issue tracker
+            li
+              a(href='http://www.biomedcentral.com/1471-2105/16/26') How to cite
+            li
+              a(href='help/') Help
