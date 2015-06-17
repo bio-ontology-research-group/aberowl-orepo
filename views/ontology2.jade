@@ -48,8 +48,6 @@ block content
             li
               a(href='#pubmed') PubMed
             li
-              a(href='#data') Data
-            li
               a(href='#sparql') SPARQL
             li
               a(href='#downloads') Download
@@ -134,7 +132,7 @@ block content
                   th Ontology
                   th Label
                   th Definition
-            div#ontology_value(style="display:none") #{ontology.id}
+            div#ontology(style="display:none") #{ontology.id}
 
           div#pubmed
             center
@@ -156,32 +154,7 @@ block content
                 tr
                   th Title
                   th Abstract
-            div#ontology_value(style="display:none") #{ontology.id}
-
-          div#data
-            center
-              input#data_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
-              input(name='type', type='radio', value='supeq') 
-              label Super- and Equivalent classes
-              input(name='type', type='radio', value='supclass') 
-              label Superclasses
-              input(name='type', type='radio', value='equivalent') 
-              label Equivalent classes
-              input(name='type', type='radio', value='subclass') 
-              label Subclasses
-              input(name='type', type='radio', value='subeq' checked='true') 
-              label Sub- and Equivalent classes
-              br
-              a#data_button.btn.btn.btn-default(onclick='query=document.getElementById(\'data_autocomplete\').value;redrawDataTable();') Query
-            table#data_results.table.table-striped
-              thead
-                tr
-                  th Label
-                  th Description
-                  th Dataset
-                  th Datatype(s)
-
-            div#ontology_value(style="display:none") #{ontology.id}
+            div#ontology(style="display:none") #{ontology.id}
 
           div#sparql
             div#radio
