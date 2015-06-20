@@ -1,5 +1,8 @@
 extends layout
 
+block title
+  title AberOWL: Help pages
+
 block content
   .container-fluid
     .starter-template
@@ -37,21 +40,79 @@ block content
 
       p.
         To claim an ontology, and gain the ability to manage it and upload new versions, you should send an 
-        email to luke.slater@kaust.edu.sa.
+        email to <a href=mailto:luke.slater@kaust.edu.sa>luke.slater@kaust.edu.sa</a> or <a href=mailto:robert.hoehndorf@kaust.edu.sa>robert.hoehndorf@kaust.edu.sa</a>.
+
 
       h3.api Querying ontologies
 
       h4 Class Query
 
-      p classy
+      p Aber-OWL provides semantic access to ontologies. It performs
+        |OWL-EL reasoning over a repository of ontologies using
+        |the <a href="https://code.google.com/p/elk-reasoner/">ELK
+        |reasoner</a> and answers queries over single ontologies or the
+        |full Aber-OWL ontology repository. Ontologies in Aber-OWL are
+        |identified by their name, and queries are performed
+        |in <a href="http://www.w3.org/TR/owl2-manchester-syntax/">Manchester
+        |OWL Syntax</a>. Class names in Manchester OWL syntax are
+        |rendered using the <tt>rdfs:label</tt> property of the class, and
+        |class names containing a space are surrounded by single quotes.
+        |To query an OWL class description, type the class description in Manchester OWL syntax in the query box.
+        | Make sure to select the kind of query: retrieve subclasses, equivalent classes, or superclasses of the class description.
 
       h4 PubMed Query
 
-      p pubmeddy
+      p Aber-OWL: Pubmed is a semantic search engine for Pubmed and
+        |Pubmed Central. We maintain an index of Medline abstracts and
+        |fulltext articles in Pubmed Central. Aber-OWL: Pubmed takes an
+        |OWL query as input, an ontology, and query type
+        |(<tt>subclass</tt>, <tt>superclass</tt>, <tt>equivalent</tt>),
+        |retrieves all classes satisfying the query from Aber-OWL, and
+        |constructs a query based on the disjunction of class
+        |names. Relevant documents are then retrieved from a local Apache Lucene-based
+        |repository of abstracts and articles.
+        |PubMed queries can be accessed on the frontpage or for each ontology. When the PubMed tab in an ontology view is opened, a PubMed query is automatically executed to retrieve documents from
+        | PubMed and PubMed Central in which the queried concept occurs.
 
       h4 SPARQL Query
 
-      p sparqly
+      p Aber-OWL: SPARQL provides semantic access to Linked Data by
+        |incorporating OWL reasoning within the SPARQL syntax. In
+        |particular, Aber-OWL: SPARQL performs query expansion based on
+        |SPARQL syntax extended by the following construct:
+        |<pre>OWL [querytype] [&lt;Aber-OWL service URI&gt;] [&lt;ontology name&gt;] { [OWL query] }</pre>
+        |For example, the query
+        |<pre>OWL subclass &lt;http://aber-owl.net/aber-owl/service/&gt; &lt;GO&gt; { part_of some 'apoptotic process' } </pre>
+        |will return a set of class URIs that satisfy the query <tt>part_of some 'apoptotic process'</tt> in the Gene Ontology.
+      p	There are two main forms in which the OWL statement can be embedded within a SPARQL query. The first is the <b><tt>VALUES</tt></b> form, in which
+        |the results of the OWL query are bound to a variable using the SPARQL <tt>VALUES</tt> statement. For example,
+        |<pre>
+        |  VALUES ?ontid { 
+        |    OWL subclass &lt;http://aber-owl.net/aber-owl/service/&gt; &lt;&gt; { part_of some 'apoptotic process' }
+        |  }
+        |</pre>
+        |will bind the ontology URIs resulting from the OWL query (<tt>part_of some 'apoptotic process'</tt>) to the variable ?ontid.
+
+        p The second use of the <tt>OWL</tt> statement is in the form of a <b><tt>FILTER</tt></b> statement. For example, the query
+        |<pre>
+        |  FILTER ( 
+        |    ?ontid IN ( OWL subclass &lt;http://aber-owl.net/aber-owl/service/&gt; &lt;http://purl.obolibrary.org/obo/hp.owl&gt; { arrhythmia } )
+        |  )
+        |</pre>
+        |will filter the results of a SPARQL query such that the values of ?ontid must be in the result list of the OWL query.
+
+        p As many SPARQL endpoints use different IRIs to refer to classes in ontologies, we have added the possibility to redefine prefixes for the
+        |resulting ontology classes such that they match the IRI scheme used by a particular SPARQL endpoint. To use this feature, the "Use OBO-style URIs"
+        |checkbox must be selected. This will transform the class IRIs resulting from an <tt>OWL</tt> query into OBO-style prefix form and will add
+        |the appropriate prefix to the SPARQL query if it has not been defined in the query itself. For example, the UniProt SPARQL endpoint
+        |(<a href="http://beta.sparql.uniprot.org">http://beta.sparql.uniprot.org</a>) uses the URI pattern "http://purl.uniprot.org/go/&lt;id&gt;" to refer
+        |to Gene Ontology classes (instead of the standard "http://purl.obolibrary.org/obo/GO_&lt;id&gt;". Adding the prefix definition
+        |<pre>
+        |PREFIX GO: &lt;http://purl.uniprot.org/go/&gt;
+        |</pre>
+        |to the SPARQL query and selecting the "Use OBO-style URIs" option will perform the query over UniProt.
+        |</p>
+
 
       h2 AberOWL API
 
@@ -282,3 +343,8 @@ block content
         li Luke Slater (King Abdullah University of Science and Technology)
         li Paul Schofield (University of Cambridge)
         li Robert Hoehndorf (King Abdullah University of Science and Technology) 
+
+      h3.api How do I cite AberOWL?
+
+      p To cite AberOWL, please use the following reference:
+      p <a href=http://www.biomedcentral.com/1471-2105/16/26>Aber-OWL: a framework for ontology-based data access in biology</a>. Hoehndorf, R; Slater, L; Schofield, PN; Gkoutos, Georgios V. BMC Bioinformatics 16:26, 2015.

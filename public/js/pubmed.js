@@ -13,14 +13,13 @@ function redrawPubmedTable() {
 	"paging": true,
 	"scrollY": 400,
 	"renderer": "bootstrap",
-	"aaSorting": [[ 1, "asc" ]],
+	"aaSorting": [[ 0, "asc" ]],
 	"bAutoWidth": false,
-	"iDisplayLength": 50,
+	"iDisplayLength": 100,
 	"bJQueryUI": true,
 	aoColumns : [
-	    { "sWidth": "15%"},
 	    { "sWidth": "20%"},
-	    { "sWidth": "40%"}
+	    { "sWidth": "60%"}
 	],
 	"fnInitComplete": function( oSettings ) {
 	    /*$('#pubmed').attr('href', "pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
@@ -42,8 +41,15 @@ function redrawPubmedTable() {
                     } else if(result[i].pmid) {
                       datatable[i][0] = '<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+result[i].pmid+'">'+result[i].pmid+'</a>';
                     }
-                    datatable[i][1] = result[i].title;
-                    datatable[i][2] = result[i].fragment;
+                    datatable[i][0] = result[i].title;
+                    if(result[i].pmcid) {
+                      datatable[i][0] += '[<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC'+result[i].pmcid+'">PMC:'+result[i].pmcid+']</a> ';
+                    }
+		    if(result[i].pmid) {
+                      datatable[i][0] += '[<a href="http://www.ncbi.nlm.nih.gov/pubmed/'+result[i].pmid+'">PMID:'+result[i].pmid+']</a>';
+                    }
+		    
+                    datatable[i][1] = result[i].fragment;
                 }
                 return datatable;
             }
@@ -62,9 +68,8 @@ $(function() {
       "paging": true,
       "scrollY": 400,
       aoColumns : [
-          { "sWidth": "15%"},
           { "sWidth": "20%"},
-          { "sWidth": "40%"}
+          { "sWidth": "60%"}
       ]
   })
     

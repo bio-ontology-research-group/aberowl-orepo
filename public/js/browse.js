@@ -15,6 +15,19 @@ $(function() {
         uriMap[name] = selectedNodes[0].data;
       }
       $("#pubmed_button").click();
+    } else if(ui.newPanel.selector == '#data') {
+      var tree = $.jstree.reference('#left_tree');
+      var selectedNodes = tree.get_selected(true);
+      if(selectedNodes.length > 0) {
+        $.each($('#data_autocomplete_tagsinput .tag span'),function(e,i){ $('#data_autocomplete').removeTag($(i).text().trim())});
+        var name = selectedNodes[0].text;
+        if(name.indexOf(' ') != -1) {
+          name = '\'' + name + '\'';
+        }
+        $('#data_autocomplete').addTag(name);
+        uriMap[name] = selectedNodes[0].data;
+      }
+      $("#data_button").click();
     } else if(ui.newPanel.selector == '#query') {
       var tree = $.jstree.reference('#left_tree');
       var selectedNodes = tree.get_selected(true);

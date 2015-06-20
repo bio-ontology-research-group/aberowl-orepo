@@ -1,4 +1,6 @@
 extends layout
+block title
+  title AberOWL: Ontology list
 
 block content
   .container-fluid
@@ -35,4 +37,4 @@ block content
                     -else
                       span.label.label-sm.label-default Unknown
                   td #{ontology.name}
-                  td #{ontology.description}
+                  td(style='word-wrap:break-word;width=65%') #{ontology.description}

@@ -1,5 +1,8 @@
 extends layout
 
+block title
+  title AberOWL: #{ontology.name}
+
 block content
   .container-fluid
     .row
@@ -44,6 +47,8 @@ block content
               a(href='#visualise') Visualise
             li
               a(href='#pubmed') PubMed
+            li
+              a(href='#data') Data
             li
               a(href='#sparql') SPARQL
             li
@@ -120,7 +125,7 @@ block content
               input(name='type', type='radio', value='subeq' checked='true') 
               label Sub- and Equivalent classes
               br
-              a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+              a#button.btn.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
 
             table#example.table.table-striped
               thead
@@ -129,7 +134,7 @@ block content
                   th Ontology
                   th Label
                   th Definition
-            div#ontology(style="display:none") #{ontology.id}
+            div#ontology_value(style="display:none") #{ontology.id}
 
           div#pubmed
             center
@@ -145,27 +150,52 @@ block content
               input(name='type', type='radio', value='subeq' checked='true') 
               label Sub- and Equivalent classes
               br
-              a#pubmed_button.btn.btn.btn-success(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
+              a#pubmed_button.btn.btn.btn-default(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
             table#pubmed_results.table.table-striped
               thead
                 tr
-                  th ID
                   th Title
                   th Abstract
-            div#ontology(style="display:none") #{ontology.id}
+            div#ontology_value(style="display:none") #{ontology.id}
+
+          div#data
+            center
+              input#data_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input(name='type', type='radio', value='supeq') 
+              label Super- and Equivalent classes
+              input(name='type', type='radio', value='supclass') 
+              label Superclasses
+              input(name='type', type='radio', value='equivalent') 
+              label Equivalent classes
+              input(name='type', type='radio', value='subclass') 
+              label Subclasses
+              input(name='type', type='radio', value='subeq' checked='true') 
+              label Sub- and Equivalent classes
+              br
+              a#data_button.btn.btn.btn-default(onclick='query=document.getElementById(\'data_autocomplete\').value;redrawDataTable();') Query
+            table#data_results.table.table-striped
+              thead
+                tr
+                  th Label
+                  th Description
+                  th Dataset
+                  th Datatype(s)
+
+            div#ontology_value(style="display:none") #{ontology.id}
 
           div#sparql
             div#radio
               button.btn.btn-default(onclick="changeSPARQLQuery('values');" type="radio" id="radio1" name="radio" value="values" checked="checked") Use in VALUES statement
               button.btn.btn-default(onclick="changeSPARQLQuery('filter');" type="radio" id="radio2" name="radio" value="filter") Use in FILTER statement
             br
+            a(style='float:right;color:#1C94C4;' href='http://aber-owl.net/aber-owl/sparql/') See examples...
             textarea#squery(name='sparqlquery' cols='80' rows='15')
             p Use OBO-style URIs:  
               input(type='checkbox', name'short', id='short')
             p SPARQL Endpoint URI:
               input#endpoint(type='text')
             input#qtype(type='hidden' value='values')
-            button.btn.btn-success(onclick='sendSPARQLQuery()') Submit
+            button.btn.btn-default(onclick='sendSPARQLQuery()') Submit
 
             table#sparql_results.table.table-striped
 
@@ -188,7 +218,7 @@ block content
                 h5 Description
                 textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
                 br
-                button.btn.btn-success(type='submit') Save
+                button.btn.btn-default(type='submit') Save
 
               h3.sub-header Updates
                 h5 Current update method: 

@@ -33,7 +33,7 @@ $('#quicksearch').tagsInput({
         });
       },
       'select': function(event, ui) {
-        window.location = '?c=' + ui.item.data;
+        window.location = '?c=' + encodeURIComponent(ui.item.data);
       }
     }, 
     'autocomplete_renderitem': function(ul, item) {
