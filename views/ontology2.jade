@@ -1,0 +1,214 @@
+extends layout
+
+block title
+  title AberOWL: #{ontology.name}
+
+block content
+  .container-fluid
+    .row
+      .col-sm-3.col-md-2.sidebar
+        div.nav.nav-sidebar
+          li
+            a(href='/ontology/') 
+              span.glyphicon.glyphicon-menu-left(aria-hidden='true') 
+              span Back to Browse
+          li.divider(role='presentation', style="background-color:#aaa;display:block;height:5px;")
+        center
+          input#quicksearch(type="text" style="overflow:hidden;width=100%")
+        br
+        div#left_tree test
+     .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+        div(style='float:right')
+          -if(messages.info) 
+            div.alert.alert-success(role='alert')
+              span.glyphicon.glyphicon-ok(aria-hidden='true')
+              span &nbsp; Info: #{messages.info}
+          -if(!stats.loaded) 
+            -if(ontology.status == 'untested')
+              span.label.label-info Loading
+            -else
+              span.label.label-warning Unloadable
+          -else if(!stats.consistent)
+            span.label.label-danger Inconsistent
+          -else
+            span.label.label-sm.label-success Classified
+
+        h1.page-header #{ontology.id} - #{ontology.name}
+        h2#wat
+        div#tabs
+          ul
+            li
+              a(href='#overview') Overview
+            li
+              a(href='#browse') Browse
+            li
+              a(href='#query') Query
+            li
+              a(href='#visualise') Visualise
+            li
+              a(href='#pubmed') PubMed
+            li
+              a(href='#sparql') SPARQL
+            li
+              a(href='#downloads') Download
+            -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+              li
+                a(href='#manage') Manage
+          div#overview
+            h4.sub-header #{ontology.description}
+            -if(user)
+              h5 Do you own this ontology? Email luke.slater@kaust.edu.sa to gain maintenance priveleges.
+            h2.sub-header Statistics
+            .table-responsive
+              table.table.table-striped
+                tbody
+                  tr
+                    td Class Count
+                    td #{stats.classCount}
+                  tr
+                    td Logical Axiom Count
+                    td #{stats.logicalAxiomCount}
+                  tr
+                    td RBox Axiom Count
+                    td #{stats.rBoxAxiomCount}
+                  tr
+                    td TBox Axiom Count
+                    td #{stats.tBoxAxiomCount}
+            h2.sub-header Recent Versions
+            .table-responsive
+              table.table.table-striped
+                thead
+                  tr
+                    th Date 
+                    th Download
+                tbody
+                  - var x = 1
+                  for i, time in ontology.submissions
+                    - time = new Date(parseInt(time)*1000).toUTCString()
+                    - if(x > 3) return;
+                    tr
+                      td #{time}
+                      td 
+                        a(href='/onts/'+i) Download...
+                    - x++
+          div#browse
+            div#browse_content
+          div#downloads
+            .table-responsive
+              table.table.table-striped
+                thead
+                  tr
+                    th Date 
+                    th Download
+                tbody
+                  - var x = 1
+                  for i, time in ontology.submissions
+                    - time = new Date(parseInt(time)*1000).toUTCString()
+                    tr
+                      td #{time}
+                      td 
+                        a(href='/onts/'+i) Download...
+                    - x++
+          div#query
+            center
+              input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input(name='type', type='radio', value='supeq') 
+              label Super- and Equivalent classes
+              input(name='type', type='radio', value='supclass') 
+              label Superclasses
+              input(name='type', type='radio', value='equivalent') 
+              label Equivalent classes
+              input(name='type', type='radio', value='subclass') 
+              label Subclasses
+              input(name='type', type='radio', value='subeq' checked='true') 
+              label Sub- and Equivalent classes
+              br
+              a#button.btn.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+
+            table#example.table.table-striped
+              thead
+                tr
+                  th OWL Class
+                  th Ontology
+                  th Label
+                  th Definition
+            div#ontology(style="display:none") #{ontology.id}
+
+          div#pubmed
+            center
+              input#pubmed_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input(name='type', type='radio', value='supeq') 
+              label Super- and Equivalent classes
+              input(name='type', type='radio', value='supclass') 
+              label Superclasses
+              input(name='type', type='radio', value='equivalent') 
+              label Equivalent classes
+              input(name='type', type='radio', value='subclass') 
+              label Subclasses
+              input(name='type', type='radio', value='subeq' checked='true') 
+              label Sub- and Equivalent classes
+              br
+              a#pubmed_button.btn.btn.btn-default(onclick='query=document.getElementById(\'pubmed_autocomplete\').value;redrawPubmedTable();') Query
+            table#pubmed_results.table.table-striped
+              thead
+                tr
+                  th Title
+                  th Abstract
+            div#ontology(style="display:none") #{ontology.id}
+
+          div#sparql
+            div#radio
+              button.btn.btn-default(onclick="changeSPARQLQuery('values');" type="radio" id="radio1" name="radio" value="values" checked="checked") Use in VALUES statement
+              button.btn.btn-default(onclick="changeSPARQLQuery('filter');" type="radio" id="radio2" name="radio" value="filter") Use in FILTER statement
+            br
+            a(style='float:right;color:#1C94C4;' href='http://aber-owl.net/aber-owl/sparql/') See examples...
+            textarea#squery(name='sparqlquery' cols='80' rows='15')
+            p Use OBO-style URIs:  
+              input(type='checkbox', name'short', id='short')
+            p SPARQL Endpoint URI:
+              input#endpoint(type='text')
+            input#qtype(type='hidden' value='values')
+            button.btn.btn-default(onclick='sendSPARQLQuery()') Submit
+
+            table#sparql_results.table.table-striped
+
+            div#ontology_value(style='display:none') #{ontology.id}
+
+          div#visualise
+            div#infovis(style='width:100%')
+            div#ontology_value(style='display:none') #{ontology.id}
+
+          -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+            div#manage
+              -if(messages.info) 
+                div.alert.alert-success(role='alert')
+                  span.glyphicon.glyphicon-ok(aria-hidden='true')
+                  span &nbsp; Info: #{messages.info}
+              form.form(action='/ontology/#{ontology.id}/update', method='post', role='form')
+                h5 Name
+                input.form-control(name='name', type='name', value='#{ontology.name}', required='', autofocus='')
+                br
+                h5 Description
+                textarea.form-control(name='description', type='description', required='', autofocus='') #{ontology.description}
+                br
+                button.btn.btn-default(type='submit') Save
+
+              h3.sub-header Updates
+                h5 Current update method: 
+                  -if(ontology.source == 'bioportal' || ontology.source == 'manual')
+                    div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
+                    &nbsp;
+                  -else 
+                    div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
+                    &nbsp;
+                  a(href='#', onclick='openSourceForm()') change...
+                  div#sourceForm
+              a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
+                span Manually Upload New Version&nbsp;
+                span.glyphicon.glyphicon-upload(aria-hidden='true') 
+              div#versionForm
+
+              h3.sub-header Remove Ontology From Repository
+              form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')
+                button.btn.btn-danger(type='submit') Delete Ontology
+        div#ontology_value(style='display:none') #{ontology.id}
