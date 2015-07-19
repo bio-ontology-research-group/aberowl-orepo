@@ -6,7 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "express": "latest",
+    "express": "~4.9.0",
     "express-session": "latest",
     "express-flash": "latest",
     "body-parser": "latest",
