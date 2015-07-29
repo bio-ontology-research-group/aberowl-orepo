@@ -17,9 +17,10 @@ function redrawDataTable() {
 	"paging": true,
 	"scrollY": 400,
 	"renderer": "bootstrap",
-	"aaSorting": [[ 0, "asc" ]],
+//	"aaSorting": [[ 0, "asc" ]],
 	"bAutoWidth": false,
 	"iDisplayLength": 100,
+	"bSort": false,
 	"bJQueryUI": true,
 	aoColumns : [
 	    { "sWidth": "15%"},
@@ -39,14 +40,8 @@ function redrawDataTable() {
                     datatable[i] = new Array() ;
 		    datatable[i][0] = "<a href=\""+result[i]['id']+"\">"+result[i]['title']+"</a>";
 		    datatable[i][3] = "";
-		    for (var k = 0 ; k < result[i]['type'].length ; k++) {
-			if (k == result[i]['type'].length - 1) {
-			    datatable[i][3] += "<a href=\""+result[i]['type'][k]+"\">"+result[i]['type'][k]+"</a>";
-			} else {
-			    datatable[i][3] += "<a href=\""+result[i]['type'][k]+"\">"+result[i]['type'][k]+"</a>, ";
-			}
-		    }
-		    datatable[i][2] = "<a href=\""+result[i]['dataset']+"\">"+result[i]['dataset']+"</a>";
+		    datatable[i][3] += "<a href=\""+result[i]['typeurl']+"\">"+result[i]['type']+"</a>";
+		    datatable[i][2] = "<a href=\""+result[i]['dataseturl']+"\">"+result[i]['dataset']+"</a>";
 		    if (result[i]['description']!=null) {
 			datatable[i][1] = result[i]['description'];
 		    } else {
@@ -69,6 +64,7 @@ $(function() {
       "serverSide": false,
       "paging": true,
       "scrollY": 400,
+      "bSort": false,
       aoColumns : [
 	  { "sWidth": "15%"},
 	  { "sWidth": "15%"},
