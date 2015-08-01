@@ -5,7 +5,7 @@ function redrawPubmedTable() {
     window.location.hash = "#" + query ;
     $('#pubmed_results').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
-    var ontology = $("#ontology").text();
+    var ontology = $("#ontology_value").text();
 
     var table = $('#pubmed_results').dataTable( {
         "processing": false,
