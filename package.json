@@ -24,6 +24,8 @@
     "moniker": "latest",
     "pluralize": "latest",
     "databank": "latest",
-    "databank-redis": "latest"
+    "databank-redis": "latest",
+    "jsdom": "3.1.2"
+
   }
 }

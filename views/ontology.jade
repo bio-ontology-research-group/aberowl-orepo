@@ -202,8 +202,35 @@ block content
             div#ontology_value(style='display:none') #{ontology.id}
 
           div#visualise
-            div#infovis(style='width:100%')
+            div#visualisation
+              table
+                tbody
+                  tr
+                    td
+                      fieldset
+                        legend Versions
+                        p 
+                          select#versions.multiselect(multiple='multiple')
+                            - var keys = Object.keys(ontology.submissions)
+                            - keys.sort() // order the keys, something to take into account in the server.
+                            - keys = keys.reverse() //change the order
+                            - var versions = []
+                            - versions.push(keys.length-1) //Load the actual version
+                            - var index = keys.length-1
+                            - while (index>0) {
+                                option(value='#{index-1}') Version #{index}
+                                - versions.push(null)
+                                - index--
+                            -}
+                    td
+                      fieldset
+                        legend Properties
+                        p 
+                          select#properties.multiselect(multiple='multiple')
+               
+            div#infovis(style='width:100%')            
             div#ontology_value(style='display:none') #{ontology.id}
+            div#num_versions(style='display:none') #{JSON.stringify(versions)}
 
           -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
             div#manage
@@ -224,10 +251,10 @@ block content
                 h5 Current update method: 
                   -if(ontology.source == 'bioportal' || ontology.source == 'manual')
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
-                    &nbsp;
+                     &nbsp;
                   -else 
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
-                    &nbsp;
+                     &nbsp;
                   a(href='#', onclick='openSourceForm()') change...
                   div#sourceForm
               a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 

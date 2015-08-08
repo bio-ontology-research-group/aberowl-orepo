@@ -10,7 +10,14 @@ var express = require('express'),
     LocalStrategy = require('passport-local').Strategy,
     passHash = require('password-hash'),
     flash = require('express-flash'),
-    databank = require('databank').Databank;
+    databank = require('databank').Databank,
+    // import new API for the visualization module.
+    d3 = require('d3'),
+    jsdom = require("jsdom");
+
+//import new API
+var document = jsdom.jsdom(),
+    svg = d3.select(document.body).append("svg");
 
 // import routes
 var routes = require('./routes/index');
