@@ -73,8 +73,8 @@ function redrawTable() {
 
                 for ( var i=0, ien=result.length ; i<ien ; i++ ) {
                     datatable[i] = new Array() ;
-                    datatable[i][0] = "<a href='"+result[i].classURI+"'>"+result[i].classURI+"</a>" ;
-                    datatable[i][1] = "<a href='"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
+                    datatable[i][0] = "<a href='/ontology/"+result[i].ontologyURI + "?c=" +result[i].classURI+"'>"+result[i].classURI+"</a>" ;
+                    datatable[i][1] = "<a href='/ontology/"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
                     datatable[i][2] = result[i].label || " " ;
                     datatable[i][3] = result[i].definition || " " ;
                 }
@@ -123,7 +123,7 @@ $(document).ready(function() {
     'unique': false,
     'autocomplete': {
       'source': function(request, response) {
-        var ontology = $("#ontology").text(),
+        var ontology = $("#ontology_value").text(),
             query = extractLast(request.term);
 
         $.getJSON("/service/api/queryNames.groovy", {

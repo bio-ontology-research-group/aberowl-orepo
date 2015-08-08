@@ -125,6 +125,11 @@ block content
 
       span This runs a Manchester OWL Syntax query against the server.
 
+      h4 Examples
+      
+      p A query for subclasses and equivalent classes in GO for <tt>'part of' some 'apoptotic process'</tt>: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=%27part%20of%27%20some%20%27apoptotic%20process%27&ontology=GO&labels=true'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query='part of' some 'apoptotic process'&ontology=GO&labels=true</tt></a>,
+      | The same query using IRIs instead of labels: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FBFO_0000050%3E%20SOME%20%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0006915%3E&ontology=GO'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=&lt;http://purl.obolibrary.org/obo/BFO_0000050&gt; some &lt;http://purl.obolibrary.org/obo/GO_0006915&gt;&amp;ontology=GO</tt></a>.
+
       h4 Parameters
       table.table.table-striped.table-responsive
         thead
@@ -181,6 +186,11 @@ block content
         span.api-text queryNames.groovy
 
       span This provides partial matches on labels.
+
+      h4 Examples
+      
+      p A query for 'ventricular' in the Human Phenotype Ontology: <a href='http://aber-owl.net/service/api/queryNames.groovy?term=ventricular&ontology=HP'>http://aber-owl.net/service/api/queryNames.groovy?term=ventricular&ontology=HP</a>
+      | and the same query over all ontologies: <a href='http://aber-owl.net/service/api/queryNames.groovy?term=ventricular&ontology='>http://aber-owl.net/service/api/queryNames.groovy?term=ventricular&ontology=</a>
 
       h4 Parameters
       table.table.table-striped.table-responsive
@@ -335,6 +345,14 @@ block content
         a(href='https://github.com/bio-ontology-research-group/aberowl-meta/issues') GitHub
         span  or ask questions on our 
         a(href='http://groups.google.co.uk/d/forum/aber-owl') mailing list
+        span .
+
+      h3.api Can I get a log of the queries performed on AberOWL, and their execution time?
+
+      p Yes, you can find a log at <a href='http://aber-owl.net/queries.log'>http://aber-owl.net/queries.log</a>. The log is updated
+        | in real time and shows the query that is run, the type of query (empty means <tt>subeq</tt>), the ontology that is queries (empty means all ontologies), a flag
+        | that shows whether only direct sub- or superclasses are queried (empty means <tt>false</tt>), whether labels are used in the query (empty means <tt>false</tt>),
+        | the number of classes returned, and the execution time of the query.
         span .
 
       h3.api Who works on AberOWL?

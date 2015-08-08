@@ -40,8 +40,8 @@ function redrawDataTable() {
                     datatable[i] = new Array() ;
 		    datatable[i][0] = "<a href=\""+result[i]['id']+"\">"+result[i]['title']+"</a>";
 		    datatable[i][3] = "";
-		    datatable[i][3] += "<a href=\""+result[i]['type']+"\">"+result[i]['type']+"</a>";
-		    datatable[i][2] = "<a href=\""+result[i]['dataset']+"\">"+result[i]['dataset']+"</a>";
+		    datatable[i][3] += "<a href=\""+result[i]['typeurl']+"\">"+result[i]['type']+"</a>";
+		    datatable[i][2] = "<a href=\""+result[i]['dataseturl']+"\">"+result[i]['dataset']+"</a>";
 		    if (result[i]['description']!=null) {
 			datatable[i][1] = result[i]['description'];
 		    } else {

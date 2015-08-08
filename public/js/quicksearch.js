@@ -7,7 +7,7 @@ $('#quicksearch').tagsInput({
     'autocomplete_url': '',
     'autocomplete': {
       'source': function(request, response) {
-        var ontology = $("#ontology").text(),
+        var ontology = $("#ontology_value").text(),
             query = extractLast(request.term);
 
         $.getJSON("/service/api/queryNames.groovy", {
