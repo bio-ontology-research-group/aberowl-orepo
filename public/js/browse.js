@@ -3,7 +3,6 @@ $(function() {
   var ontology = $('#ontology_value').text();
   var versions = []
   var properties = [];
-  var st;
   var MAXLEVEL = 2; //Constant that represents the number of levels to show
   /*var margin = {top: 20, right: 120, bottom: 20, left: 120},
   width = 960 - margin.right - margin.left,
@@ -81,8 +80,7 @@ $(function() {
 		//Create a new ST instance  
 		visitialised = true;		
 		//Init the visualization
-		root = buildTree(null,null);
-		d3.select(self.frameElement).style("height", "800px");
+		initTree();
 	 }//if
    });//tab
    
@@ -110,6 +108,7 @@ $(function() {
 	  nodeEnter.append("circle")
 		  .attr("r", 1e-6)
 		  .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+		  //.style("fill", function(d) { return d._children ? d.colour : "#fff"; });
 
 	  nodeEnter.append("text")
 		  .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
@@ -126,6 +125,7 @@ $(function() {
 	  nodeUpdate.select("circle")
 		  .attr("r", 4.5)
 		  .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+		  //.style("fill", function(d) { return d._children ? d.colour : "#fff"; });
 
 	  nodeUpdate.select("text")
 		  .style("fill-opacity", 1);
@@ -205,7 +205,6 @@ $(function() {
 	  }
 	};
 
-
 	/**
 	 * This function update the tree
 	 */
@@ -213,7 +212,7 @@ $(function() {
 		var def = $.Deferred();
 		if(level==0){
 		  var newRoot = getRoot(node.data["owlClass"],node.name);
-		  $.when(getRecursiveSubClasses(newRoot,0,false)).done(function(jsonTree){  
+		  getRecursiveClasses(newRoot,0,false).done(function(jsonTree){  
 			if((jsonTree._children!=null)&&(jsonTree._children.length>0)){
 			  node._children = [];
 			  node._children = $.merge(node._children,jsonTree._children);
@@ -230,8 +229,8 @@ $(function() {
 		}
 		return(def.promise());
 	 }
-
-   /**
+	 
+	 /**
 	 * This function gets the root of a tree. Basically it creates the root node using provided data. 
 	 */
 	function getRoot(owlClass,label){
@@ -241,6 +240,23 @@ $(function() {
 			root["owlClass"] = owlClass;
 			root["label"] = label;
 		}
+		return(root);
+	};
+
+	
+   /**
+	 * This function gets the root of a tree. 
+	 */
+	function getRoot(){
+		var root = null
+		var data ={};		
+		data["label"] = "owl:Thing";
+		data["owlClass"] = "<http://www.w3.org/2002/07/owl#Thing>";
+		data["classURI"] = "http://www.w3.org/2002/07/owl#Thing";
+		var root = buildNode(data,0,0);
+		if((versions!==undefined)&&(versions.length>0)){
+			root["versions"] = $.merge(root["versions"],versions.slice(1,versions.length-1));//Add all versions to the root class
+		}		
 		return(root);
 	};   
 
@@ -261,21 +277,9 @@ $(function() {
 	 };
    
    /**
-    * It gets the subclases from a uriClass given.
-    */
-   function getSubClasses(uriClass,ontology,version,type,objectProperty,label){
-	   if((type=='subeq')&&(objectProperty!=null)&&(label!=null)){
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+uriClass+' SOME '+label+'&ontology='+ontology+'&version='+version);
-			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+uriClass+' SOME '+label+'&ontology='+ontology+'&version='+version));
-	   }else{
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+uriClass+'&ontology='+ontology+'&version='+version);
-			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+uriClass+'&ontology='+ontology+'&version='+version));
-		}
-   };
-   /**
     * It provides the colour of each node.
     */
-   function getColor(index){
+   function getColour(index){
 	   	var numElements = $('.checkbox').length+1;//number of checkboxes and the actual version
 		var grades = 360;
 		var angle = Math.round(360/numElements)*index;
@@ -285,10 +289,11 @@ $(function() {
 	/**
 	 * This function builds a node using provided data.
 	 */
-	function buildNode(data, level){
+	function buildNode(data, level,index){
 		var node = null
 		if(data!=null){
 			node = {};
+			//node["id"] = data.classURI;
 			node["name"] = data.label;
 			node["data"] = {};
 			node.data["owlClass"] = data.owlClass;
@@ -298,126 +303,180 @@ $(function() {
 			node["_children"] = null;
 			node["versions"] = []; //Array of versions that this node belongs
 			node["properties"] = []; //Array of properties that this node has
+			updateNodeInfo(node,index);
 		}
 		return(node);
 	};
 	
-	/**
-	 * Create the tree.
-	 */
-	function buildTree(node,colorIndex){
-		var reset = false;
-		var def = $.Deferred();
-		if(node==null){
-			reset = true;
-			var owlClass = "<http://www.w3.org/2002/07/owl#Thing>";
-			var label = "owlThing";
-			var root = getRoot(owlClass,label);
-		}
-		//At least, we will have one version (the actual version) but the vector is checked. 	
-		if((versions!=null)&&(versions.length>0)){
-			var index = versions.length;
-			//node['children'] = []; 
-			$.when(getSubClasses(node.data['$owlClass'],ontology,versions.length-1,'subclass',null,null)).then(function(jsonData,textStatus,jqXHR ) {		
-				if(jsonData.result!=null){
-					//We include all children
-					$.each(jsonData.result,function(index,child){
-						//the version is the colorIndex,
-						if(!child.deprecated){
-							node.children.push(buildNode(child,node.data['$version']));		
-						}				
-					});					 
-					var promises = [];
-					//Versions
-					for(var index = versions.length-2; index>=0; index--){
-						if(versions[index]!=null){
-							var promise = getSubClasses(node.data['$owlClass'],ontology,versions[index],'subclass',null,null);
-							promises.push(promise);								
-						}
-					}
-					//Properties
-					if(node.id!='root'){
-						for (var i = 0;i<properties.length;i++){						
-							if(properties[i]!=null){
-								for(var j = versions.length-1; j>=0; j--){
-									if(versions[j]!=null){
-										var promise = getSubClasses(node.data['$owlClass'],ontology,versions[j],'subeq',properties[i],node.name);
-										promises.push(promise);	
-									}
-								}
-							}					
-						}
-					}
-					
-					$.when.apply($,promises).then(function(){
-						if(arguments.length>0){
-							$.each(arguments,function(promiseIndex,subtree){
-								var colorIndex = -1;
-								var counter = 0;
-								//Searching in the versions vector.
-								//We do not search at the last position because it is the actual
-								if(promiseIndex<(versions.length-2)){
-									for(var i=0,counter=0; i<versions.length-2;i++){
-										if(versions[i]!=null){
-											counter++;
-											if(counter==promiseIndex){
-												colorIndex= counter;
-												break;
-											}
-										}
-
-									}
-								}
-								//Searching in the properties vector.
-								if(colorIndex>=0){
-									for(var i=0; i < properties.length-1; j++){
-										if(properties[i]!=null){
-											counter++
-											if(counter==promiseIndex){
-												colorIndex = counter;
-												break;
-											}
-										}									
-									}
-								}
-								
-								$.each(subtree.result,function(index,child){
-									console.log('child is already included'+jQuery.inArray(child,jsonData.result));
-									if(jQuery.inArray(child,jsonData.result)<0){//The child is not contained
-										if(!child.deprecated){
-											node.children.push(buildNode(child,colorIndex,level));
-										}
-									}
-									
-								});
-							});
-						}
-					});
-				}			
-			}).done(function(){
-				if(reset){
-					console.log(node)
-					root = node;
-					root.x0 = height / 2;
-					root.y0 = 0;		  
-					function collapse(d) {
-						if (d.children) {
-							d._children = d.children;
-							d._children.forEach(collapse);
-							d.children = null;
-						}
-					}	  
-					root.children.forEach(collapse);
-					update(root);
-				}else{
-
+	function getAttribute(index){
+		var attribute = null;
+		var counter =0;		
+		for(var i=0;i<versions.length;i++){
+			if(versions[i]!=null){
+				if(counter==index){
+					attribute = {};
+					attribute["index"] = i;
+					attribute["attribute"] = versions[i];
+					return(attribute);
 				}
-				def.resolve(node);								
-			});				
+				counter++;								
+			}
 		}
-		return(def.promise());					
-	};
+		for(var j=0;j<properties.length;j++){
+			if(properties[j]!=null){
+				if(counter==index){
+					attribute = {};
+					attribute["index"] = j;
+					attribute["attribute"] = properties[j];
+					return(attribute);
+				}
+				counter++
+			}
+		}
+		return(attribute);
+	}
 	
+	function updateNodeInfo(node,index){
+		if((index!=null)&&(index>=0)){
+			var attribute = getAttribute(index);
+			if(attribute!=null){
+				if(isNaN(attribute["attribute"])){//it is a property
+					node["properties"].push(attribute["attribute"]);
+				}else{//it is a property					
+					node["versions"].push(attribute["attribute"]);
+				}
+				node["colour"] = getColour(attribute["index"]);
+			}
+		}
+		return(node);
+	}
+	
+	/**
+	 *  This function collapses the subnodes of given
+	 */
+	var collapse =   function collapse(d) {
+		if (d.children) {
+		  d._children = d.children;
+		  d._children.forEach(collapse);
+		  d.children = null;
+		}
+	}
+	
+	function initTree(){
+		getRecursiveClasses(getRoot(),0,true).done(function(data){
+			if(data!=null){
+				console.log(data.children);
+				root = data;
+				root.x0 = height / 2;
+				root.y0 = 0;
+				if(root.children!=null){
+					root.children.forEach(collapse);
+				}
+				update(root);
+				d3.select(self.frameElement).style("height", "800px");
+			}
+		});
+	}
+	
+   /**
+    * It gets the subclases from a uriClass given.
+    */
+   function getSubClasses(owlClass,version,type,objectProperty){
+	   if((type=='subeq')&&(objectProperty!=null)&&(label!=null)){
+			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
+	   }else{
+			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
+		}
+   };
+	
+	/**
+	 * This function implements a kind of Breadth-first search (BFS) to build the tree.
+	 * 
+	 * listNodes: contains the expanded nodes.
+	 * index: refers the index.
+	 * node: the tree that is being built.
+	 */
+	function getRecursiveClasses(node,level,expand){
+		var def = $.Deferred();
+		if(level>=MAXLEVEL){			
+			def.resolve(node);
+			return(def.promise());
+		}
+		if(node!=null){
+			var promises = [];
+			var child;
+			if((node["versions"]!=null)&&(node["versions"].length>0)){
+				var version;
+				var property;
+				for(var i = 0; i<node["versions"].length;i++){//versions
+					version = node["versions"][i];
+					if(version!=null){
+						var promise = getSubClasses(node.data["owlClass"],version,"subclass",null,null);
+						promises.push(promise);
+					}
+				}
+				for(var i = 0; i<node["versions"].length;i++){//versions
+					version = node["versions"][i];
+					if(version!=null){
+						for(var j = 0; j<node["properties"].length;j++){//properties
+							property = node["versions"][j];
+							if(property!=null){
+								var promise = getSubClasses(node.data["owlClass"],version,"subeq",property,node.id);
+								promises.push(promise);
+							}
+						}
+					}
+				}
+				$.when.apply($,promises).then(function(){
+					if(arguments.length>0){
+						$.each(arguments, function(index,queryResult){
+								
+							if((queryResult!=null)&&(queryResult.result!=null)){
+							
+								$.each(queryResult.result, function(childIndex,child){	
+									if((child!=null)&&(typeof(child)!=="undefined")&&(!child.deprecated)){
+										if((node.children!=null)&&(node.children.indexOf(child)>=0)){//Update the information in the node
+											console.log("update information");
+											var pos = node.children.indexOf(child); 								
+											console.log("The node is going to be updated: "+node.label);
+											node = updateNodeInfo(node.children[pos],index);
+										}else{
+											if(expand){								
+												if(node.children == null){
+												  node.children=[];
+												}
+												var newChild = buildNode(child,level,index);
+												node.children.push(buildNode(child,level,index));
+												node._children = null;
+											}else{
+												if(node._children == null){
+												  node._children=[];
+												}
+												node._children.push(buildNode(child,level,index));
+												node.children = null;
+											}
+										}								
+									}
+								});	
+							}												
+						});
+					}
+					//Once we have collected the children, after that we have to expand the next level
+					console.log("node");
+					console.log(node);
+					$.each(node.children,function(index,child){						
+						promises.push(getRecursiveClasses(child,level+1,expand));
+					});
+					$.when.apply($,promises).done(function(){
+						def.resolve(node);	
+					});
+				});	
+			}
+		}
+		return(def.promise());
+	};
 	//Get the object properties from the server.
 	$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology,function(jsonData,textStatus,jqXHR) {				
 		if(jsonData!=null){
@@ -437,13 +496,7 @@ $(function() {
 			$(this).multiselect();  
 		});
 		$('.checkbox').each(function(index){
-			//Save the color for the actual version
-			if(index>=versions.length){
-				index++;
-			}
-			var color = getColor(index);
-			$(this).css('color',color);
-			//reset the properties choosen	
+			$(this).css('color',getColour(index+1));
 		});
 		$('#versions').change(function(){
 			$('#versions option').each(function(index){
@@ -455,7 +508,7 @@ $(function() {
 				}
 			});
 			console.log(versions.toSource());
-			//buildTree(null);
+			initTree();
 		});
 		$('#properties').change(function(){
 			$('#properties option').each(function(index){
@@ -466,7 +519,7 @@ $(function() {
 				}
 			});
 			console.log(properties.toSource());
-			//buildTree(null);
+			initTree();
 		});	
   });
 });
