@@ -97,14 +97,22 @@ a {
 }
 
 
-#infovis {
+/*#infovis {
     position:relative;
     width:600px;
     height:600px;
     margin:auto;
     overflow:hidden;
-}
+}*/
 
+#infovis {
+    position:relative;
+    width:600px;
+    height:700px;
+	margin:auto;
+	overflow-y: scroll;
+	overflow-x: scroll;
+}
 /*TOOLTIPS*/
 .tip {
     color: #111;

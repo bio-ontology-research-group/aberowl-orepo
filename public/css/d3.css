@@ -17,3 +17,9 @@
   stroke: #ccc;
   stroke-width: 1.5px;
 }
+
+svg {
+	display: block;
+	width: 200%;
+	height: 200%;
+}
