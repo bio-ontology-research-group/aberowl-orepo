@@ -216,9 +216,10 @@ block content
                             -var versions = []
                             -index = keys.length
                             -while (index>0) {
+                              -console.log(index)
                               option(value='#{index-1}') Version #{index}
-                              -if(index == keys.length)
-                                -versions.push(index)
+                              -if(index === keys.length)
+                                -versions.push(index-1)
                               -else
                                 -versions.push(null)
                               -index--
