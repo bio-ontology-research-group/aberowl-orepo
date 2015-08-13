@@ -211,16 +211,17 @@ block content
                         legend Versions
                         p 
                           select#versions.multiselect(multiple='multiple')
-                            - var keys = Object.keys(ontology.submissions)
-                            - keys.sort() // order the keys, something to take into account in the server.
-                            - keys = keys.reverse() //change the order
-                            - var versions = []
-                            - versions.push(keys.length-1) //Load the actual version
-                            - var index = keys.length-1
-                            - while (index>0) {
-                                option(value='#{index-1}') Version #{index}
-                                - versions.push(null)
-                                - index--
+                            -var keys = Object.keys(ontology.submissions)
+                            -keys.sort() // order the keys, something to take into account in the server.
+                            -var versions = []
+                            -index = keys.length
+                            -while (index>0) {
+                              option(value='#{index-1}') Version #{index}
+                              -if(index == keys.length)
+                                -versions.push(index)
+                              -else
+                                -versions.push(null)
+                              -index--
                             -}
                     td
                       fieldset
