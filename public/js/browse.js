@@ -85,6 +85,11 @@ $(function() {
     * It updates the nodes in the visualization
     */
 	function update(source) {
+		
+		
+	  //console.log("name: "+source.name+"	positions:	"+source.y0+"-->"+source.x0);	 
+		
+		
 	  // Compute the new tree layout.
 	  var nodes = tree.nodes(root).reverse(),
 		  links = tree.links(nodes);
@@ -102,7 +107,7 @@ $(function() {
 		  .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
 		  .on("click", click)
 		  .on("mouseover", mouseover)
-		  .on("mouseout", mouseout);
+		  .on("mouseout", mouseout);		  
 
 	  nodeEnter.append("circle")
 		  .attr("r", 1e-6)
@@ -119,7 +124,7 @@ $(function() {
 	  // Transition nodes to their new position.
 	  var nodeUpdate = node.transition()
 		  .duration(duration)
-		  .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+		  .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; }); 
 
 	  nodeUpdate.select("circle")
 		  .attr("r", 4.5)
@@ -247,48 +252,74 @@ $(function() {
 	  } else {
 		//expand
 		if((d._children!=null)&&(d._children.length>MAXCHILDSTOSHOW)){
+	
 			d.children = d._children.splice(0,MAXCHILDSTOSHOW);
-			d.children.push(buildFakeNode("˅˅˅",MAXCHILDSTOSHOW,MAXCHILDSTOSHOW+MAXCHILDSTOSHOW));
+			d.children.unshift(buildFakeNode("˄˄˄",MAXCHILDSTOSHOW,MAXCHILDSTOSHOW+MAXCHILDSTOSHOW));
+						
 		}else if((d.name==="˄˄˄")||(d.name==="˅˅˅")){
 			if((d.parent!=null)&&(d.parent!==undefined)){
-				var parent = d.parent;					
+				var parent = d.parent;	
+				
+				//Clean the fakes nodes				
 				if(parent.children[0].name=="˄˄˄"){			
-					parent.children = parent.children.splice(1,MAXCHILDSTOSHOW+1);//we delete the fake node				
-				}else{
+					parent.children = parent.children.splice(1,MAXCHILDSTOSHOW);
+				}else if(parent.children[parent.children.length-1].name=="˅˅˅"){
+					parent.children = parent.children.splice(0,parent.children.length-1);				
+				}else{					
 					parent.children = parent.children.splice(0,MAXCHILDSTOSHOW);				
 				}
-				var index = d["data"].min-MAXCHILDSTOSHOW // We calculate the last index to insert the children
-				
-				if(index>0){//We rebuild the parent._children vector
-					parent._children = $,merge($.merge(parent._children.splice(0,index),parent.children),parent._children.splice(index,parent._children.length));
-				}else{//0 position just have to merge
-					parent._children = $.merge(parent.children,parent._children);
-				}
-				
-				if(d.name==="˄˄˄"){//min					
+
+				if(d.name==="˄˄˄"){//max		
+					
+					var index = d["data"].min-MAXCHILDSTOSHOW;
+										
+					if(index>0){					
+						parent._children = $.merge($.merge(parent._children.splice(0,index),parent.children),parent._children.splice(index+1,parent._children.length));
+					}else{//index == 0 we insert at the begining
+						parent._children= $.merge([],$.merge(parent.children,parent._children)); 
+					}
+					
 					parent.children = []; //clean the visualizated children array
+
+					var fakeNode = buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW,d["data"].min); //We insert at the end of the list
+
+					if(d["data"].max+MAXCHILDSTOSHOW<parent._children.length){
+						$.merge(parent.children,parent._children.splice(d["data"].min,MAXCHILDSTOSHOW));
+						parent.children.unshift(buildFakeNode("˄˄˄",d["data"].max+1,d["data"].max+MAXCHILDSTOSHOW+1));
+						
+					}else{
+						$.merge(parent.children,parent._children.splice(d["data"].min,parent._children.length-d["data"].min));
+					}	
+					
+					parent.children.push(fakeNode);
+											
+					update(parent);	
+					return;		
+										
+				}else if(d.name==="˅˅˅"){//min
+					
+					var index = d["data"].max;
+					
+					if(index > parent._children.length){// we insert at the end
+						$.merge(parent._children,parent.children);
+					}else{//On the other case we have to mix them
+						parent._children = $.merge($.merge(parent._children.splice(0,index),parent.children),parent._children.splice(index+1,parent._children.length));
+					}
+
+					parent.children = []; //clean the visualizated children array
+
+					parent.children.push(buildFakeNode("˄˄˄",d["data"].max,d["data"].max+MAXCHILDSTOSHOW));		
+
 					if(d["data"].min-MAXCHILDSTOSHOW>0){
 						parent.children = parent._children.splice(d["data"].min,MAXCHILDSTOSHOW);
-						parent.children.unshift(buildFakeNode("˄˄˄",d["data"].min-MAXCHILDSTOSHOW-1,d["data"].min)-1);//We insert at the begining of the list
+						parent.children.push(buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW,d["data"].min));//We insert at the begining of the list
+
 					}else{
-						parent.children = parent._children.splice(0,MAXCHILDSTOSHOW);
-					}	
-					parent.children.push(buildFakeNode("˅˅˅",d["data"].max,d["data"].max+MAXCHILDSTOSHOW));					
+						$.merge(parent.children,parent._children.splice(0,MAXCHILDSTOSHOW));
+					}						
 					
 					update(parent);
 					return;
-				}else if(d.name==="˅˅˅"){//max
-					parent.children = []; //clean the visualizated children array
-					if(d["data"].max+MAXCHILDSTOSHOW<parent._children.length){
-						parent.children = parent._children.splice(d["data"].min,MAXCHILDSTOSHOW);
-						parent.children.push(buildFakeNode("˅˅˅",d["data"].max+1,d["data"].max+MAXCHILDSTOSHOW+1));//We insert at the begining of the list
-					}else{
-						parent.children = parent._children.splice(d["data"].min,parent._children.length-d["data"].min);
-					}	
-					parent.children.unshift(buildFakeNode("˄˄˄",d["data"].min-MAXCHILDSTOSHOW,d["data"].min));
-					
-					update(parent);	
-					return;			
 				}
 			}		
 		}else{
@@ -430,9 +461,13 @@ $(function() {
 			var attribute = getAttribute(index);
 			if(attribute!=null){
 				if(isNaN(attribute["attribute"])){//it is a property
-					node["properties"].push(attribute["attribute"]);
+					if(node["properties"].indexOf(attribute["attribute"])===-1){
+						node["properties"].push(attribute["attribute"]);
+					}
 				}else{//it is a property					
-					node["versions"].push(attribute["attribute"]);
+					if(node["versions"].indexOf(attribute["attribute"])===-1){
+						node["versions"].push(attribute["attribute"]);
+					}
 				}
 				if(node["colour"]===undefined){
 					node["colour"] = getColour(attribute["index"]);
@@ -473,7 +508,7 @@ $(function() {
 	
 	function isChildIncluded(node,child,index){
 		if((node!=null)&&(child!=null)){
-			if(node.children!=null){
+			if(node._children!=null){
 				var subChild;
 				for(var i=0;i<node._children.length;i++){
 					subChild = node._children[i];
@@ -483,10 +518,10 @@ $(function() {
 					}
 				}
 			}
-			if(node._children!=null){
+			if(node.children!=null){
 				var subChild;
-				for(var i=0;i<node._children.length;i++){
-					subChild = node._children[i];
+				for(var i=0;i<node.children.length;i++){
+					subChild = node.children[i];
 					if(subChild["data"].owlClass == child.owlClass){				
 						updateNodeInfo(subChild,index);
 						return(true);
@@ -502,7 +537,7 @@ $(function() {
     */
    function getSubClasses(owlClass,version,type,objectProperty){
 	   if((type=='subeq')&&(objectProperty!=null)){
-			//console.log('/service/api/runQuery.groovy?type='+type+'&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version));
 	   }else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
@@ -602,7 +637,7 @@ $(function() {
 		return(def.promise());
 	};
 	//Get the object properties from the server.
-	$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology,function(jsonData,textStatus,jqXHR) {				
+	$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology,function(jsonData,textStatus,jqXHR) {			
 		if(jsonData!=null){
 			$.each(jsonData,function(key,value){	
 				$('#properties').append($("<option></option>")
@@ -610,25 +645,28 @@ $(function() {
 			.text(key)); 			
 			});
 		}		
-		versions = JSON.parse($('#num_versions').text())
-				
+		versions = JSON.parse($('#num_versions').text());	
+		console.log(versions);	
+		
 		//Reset the selected options.
 		$("select option").prop("selected", false)
-		
+		$('#versions option:first').prop("selected",true);
+		$('#versions option:first').prop("disabled","disabled");
 		
 		$('.multiselect').each(function(component){			
 			$(this).multiselect();  
 		});
 		$('.checkbox').each(function(index){
-			$(this).css('color',getColour(index+1));
+			$(this).css('color',getColour(index));
 		});
 		$('#versions').change(function(){
 			$('#versions option').each(function(index){
-				if($(this).is(':checked')){
-					//index = 0 is the actual version
-					versions[index+1] = $(this).attr('value');
-				}else{
-					versions[index+1] = null;
+				if(index > 0){
+					if($(this).is(':checked')){
+						versions[index] = $(this).attr('value');
+					}else{
+						versions[index] = null;
+					}
 				}
 			});
 			console.log(versions.toSource());
