@@ -3,14 +3,17 @@ $(function() {
   var ontology = $('#ontology_value').text();
   var versions = []
   var properties = [];
-  var MAXLEVEL = 2; //Constant that represents the number of levels to show
-  var MAXCHILDSTOSHOW = 15; //Constant that represents the numbers of nodes to show.
+  var MAXDEPTHLEVEL = 2; //Constant that represents the number of depth levels to show
+  var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
+  var MAXCHILDSTOSHOW = 3; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
   
   var margin = {top: 20, right: 450, bottom: 20, left: 450},
   width = 960 - margin.right - margin.left,
   height = 600 - margin.top - margin.bottom;
   
-  var i = 0,duration = 750, root;
+  //var i = 0,duration = 750, root;
+
+  var i = 0,duration = 350, root;
 
   var tree = d3.layout.tree()
 		.size([height, width]);
@@ -85,11 +88,7 @@ $(function() {
     * It updates the nodes in the visualization
     */
 	function update(source) {
-		
-		
-	  //console.log("name: "+source.name+"	positions:	"+source.y0+"-->"+source.x0);	 
-		
-		
+
 	  // Compute the new tree layout.
 	  var nodes = tree.nodes(root).reverse(),
 		  links = tree.links(nodes);
@@ -209,6 +208,7 @@ $(function() {
 			node["data"] = {};
 			node.data["min"] = min;
 			node.data["max"] = max;
+			node.data["level"] = MAXDEPTHLEVEL;
 		}
 		return(node);
 	}
@@ -238,7 +238,34 @@ $(function() {
 	function mouseout(d) {
 		d3.select(this).select("text.hover").remove();
 	}
-	 
+
+	function updateUpperNodes(parent,d){
+
+		var index = d["data"].min - MAXCHILDSTOSHOW;
+
+		if (index > 0) {
+			$.merge(parent.children,parent._children.splice(index, (parent._children.length)));
+			parent._children = $.merge([], $.merge(parent._children.splice(0,index),parent.children));
+		} else {//index == 0 we insert at the begining
+			parent._children = $.merge([], $.merge(parent.children, parent._children));
+		}
+
+		parent.children = []; //clean the visualizated children array
+
+		var fakeNode = buildFakeNode("˅˅˅", d["data"].min - MAXCHILDSTOSHOW, d["data"].min); //We insert at the end of the list
+
+		if (d["data"].max + MAXCHILDSTOSHOW < parent._children.length) {
+			$.merge(parent.children, parent._children.splice(d["data"].min, MAXCHILDSTOSHOW));
+			parent.children.unshift(buildFakeNode("˄˄˄", d["data"].max + 1, (d["data"].max + MAXCHILDSTOSHOW + 1)));
+		} else {
+			$.merge(parent.children, parent._children.splice(d["data"].min, parent._children.length - d["data"].max));
+		}
+
+		parent.children.push(fakeNode);
+
+		update(parent);
+
+	}
 
 	/**
 	 * Toggle children on click.
@@ -252,13 +279,13 @@ $(function() {
 	  } else {
 		//expand
 		if((d._children!=null)&&(d._children.length>MAXCHILDSTOSHOW)){
-	
 			d.children = d._children.splice(0,MAXCHILDSTOSHOW);
 			d.children.unshift(buildFakeNode("˄˄˄",MAXCHILDSTOSHOW,MAXCHILDSTOSHOW+MAXCHILDSTOSHOW));
 						
 		}else if((d.name==="˄˄˄")||(d.name==="˅˅˅")){
+
 			if((d.parent!=null)&&(d.parent!==undefined)){
-				var parent = d.parent;	
+				var parent = d.parent;
 				
 				//Clean the fakes nodes				
 				if(parent.children[0].name=="˄˄˄"){			
@@ -269,33 +296,22 @@ $(function() {
 					parent.children = parent.children.splice(0,MAXCHILDSTOSHOW);				
 				}
 
-				if(d.name==="˄˄˄"){//max		
-					
-					var index = d["data"].min-MAXCHILDSTOSHOW;
-										
-					if(index>0){					
-						parent._children = $.merge($.merge(parent._children.splice(0,index),parent.children),parent._children.splice(index+1,parent._children.length));
-					}else{//index == 0 we insert at the begining
-						parent._children= $.merge([],$.merge(parent.children,parent._children)); 
-					}
-					
-					parent.children = []; //clean the visualizated children array
+				if(d.name==="˄˄˄"){//max
 
-					var fakeNode = buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW,d["data"].min); //We insert at the end of the list
-
-					if(d["data"].max+MAXCHILDSTOSHOW<parent._children.length){
-						$.merge(parent.children,parent._children.splice(d["data"].min,MAXCHILDSTOSHOW));
-						parent.children.unshift(buildFakeNode("˄˄˄",d["data"].max+1,d["data"].max+MAXCHILDSTOSHOW+1));
-						
+					if((parent._children.length-d["data"].max)<MAXCHILDSTOSHOW*MAXBREADTHLEVEL) {
+						//We have to wait for the updating process ends.
+						getRecursiveClasses(parent, 0, false).then(function () {
+							if ((arguments != null) && (arguments.length > 0)) {
+								//update the new children
+								update(parent);
+							}
+							//We update the visualization with the updated children
+							updateUpperNodes(parent,d);
+						});
 					}else{
-						$.merge(parent.children,parent._children.splice(d["data"].min,parent._children.length-d["data"].min));
-					}	
-					
-					parent.children.push(fakeNode);
-											
-					update(parent);	
-					return;		
-										
+						updateUpperNodes(parent,d);
+					}
+					return;
 				}else if(d.name==="˅˅˅"){//min
 					
 					var index = d["data"].max;
@@ -303,7 +319,8 @@ $(function() {
 					if(index > parent._children.length){// we insert at the end
 						$.merge(parent._children,parent.children);
 					}else{//On the other case we have to mix them
-						parent._children = $.merge($.merge(parent._children.splice(0,index),parent.children),parent._children.splice(index+1,parent._children.length));
+						$.merge(parent.children,parent._children.splice(index, (parent._children.length)));
+						parent._children = $.merge([], $.merge(parent._children.splice(0,index),parent.children));
 					}
 
 					parent.children = []; //clean the visualizated children array
@@ -311,8 +328,8 @@ $(function() {
 					parent.children.push(buildFakeNode("˄˄˄",d["data"].max,d["data"].max+MAXCHILDSTOSHOW));		
 
 					if(d["data"].min-MAXCHILDSTOSHOW>0){
-						parent.children = parent._children.splice(d["data"].min,MAXCHILDSTOSHOW);
-						parent.children.push(buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW,d["data"].min));//We insert at the begining of the list
+						$.merge(parent.children,parent._children.splice(d["data"].min,MAXCHILDSTOSHOW));
+						parent.children.push(buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW-1,d["data"].min-1));//We insert at the begining of the list
 
 					}else{
 						$.merge(parent.children,parent._children.splice(0,MAXCHILDSTOSHOW));
@@ -334,12 +351,12 @@ $(function() {
 	 * This function checks the node level.
 	 */ 
 	function checkLevel(node){
-	  if((node!=null)&&(typeof(node)!="undefined")){
-		if((node.data["level"]!="undefined")&&(node.data["level"]<=MAXLEVEL)){
-		  var newRoot = getRoot(node.data["owlClass"],node.name);
-		  node.data["level"] = MAXLEVEL;
-		  updateTree(node,MAXLEVEL-1); 
-		}
+	  if((node!=null)&&(typeof(node)!="undefined")) {
+		  if ((node.data["level"] != "undefined") && (node.data["level"] <= MAXDEPTHLEVEL)) {
+			  var newRoot = getRoot(node.data["owlClass"], node.name);
+			  node.data["level"] = MAXDEPTHLEVEL;
+			  updateTree(node, MAXDEPTHLEVEL - 1);
+		  }
 	  }
 	};
 
@@ -349,7 +366,7 @@ $(function() {
 	 function updateTree(node,level){
 		var def = $.Deferred();
 		if(level==0){
-			getRecursiveClasses(node,0,false).then(function(jsonTree){  
+			getRecursiveClasses(node,0,false).then(function(jsonTree){
 				update(node);
 				def.resolve(node);	
 			});	
@@ -357,13 +374,13 @@ $(function() {
 		}
 		if(node._children!=null){
 		  node._children.forEach(function(child){
-			child.data["level"] = MAXLEVEL;
+			child.data["level"] = MAXDEPTHLEVEL;
 			updateTree(child,level-1);
 		  });
 		}
 		if(node.children!=null){
 		  node.children.forEach(function(child){
-			child.data["level"] = MAXLEVEL;
+			child.data["level"] = MAXDEPTHLEVEL;
 			updateTree(child,level-1);
 		  });
 		}		
@@ -411,7 +428,9 @@ $(function() {
 			node["name"] = data.label;
 			node["data"] = {};
 			node.data["owlClass"] = data.owlClass;
-			node.data["level"] = MAXLEVEL - level;
+			node.data["level"] = MAXDEPTHLEVEL - level;
+			node.data["indexChild"] = 0;
+			node.data["moreChildren"] = true;
 			//collapse the nodes children = null and  _children = []
 			node["children"] = null;
 			node["_children"] = null;
@@ -532,12 +551,28 @@ $(function() {
 		return(false)
 	}
 	
+	/**
+	 * It counts the number of children from a node given.
+	 */
+	function countChildren(node){
+		var counter =0;
+		if((node!=null)&&(node!=undefined)){
+			if(node.children!=undefined){
+				counter = counter + node.children.length;
+			}
+			if(node._children!=undefined){
+				counter = counter + node._children.length;
+			}
+		}
+		return(counter);		
+	} 	
+	
    /**
     * It gets the subclases from a uriClass given.
     */
    function getSubClasses(owlClass,version,type,objectProperty){
 	   if((type=='subeq')&&(objectProperty!=null)){
-			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
+			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version));
 	   }else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
@@ -554,7 +589,7 @@ $(function() {
 	 */
 	function getRecursiveClasses(node,level,expand){
 		var def = $.Deferred();
-		if(level>=MAXLEVEL){			
+		if((level>=MAXDEPTHLEVEL)&&(!node["data"].moreChildren)){
 			def.resolve(node);
 			return(def.promise());
 		}
@@ -585,35 +620,61 @@ $(function() {
 				}
 				$.when.apply($,promises).then(function(){
 					if((arguments!=null)&&(arguments.length>0)){
-						
+						var counter = 0;
+						var minIndex = node["data"].indexChild;
+						var maxIndex = node["data"].indexChild+(MAXCHILDSTOSHOW*MAXBREADTHLEVEL);
 						$.each(arguments, function(index,queryResult){
 							//To fix some problems when the properties or versions are selected.
 							if(queryResult.result==undefined){
 								queryResult = queryResult[0];
-							}						
+							}
+							
 							if((queryResult!=null)&&(queryResult.result!=null)){
-								$.each(queryResult.result, function(childIndex,child){	
-									if((child!=null)&&(typeof(child)!==undefined)&&(!child.deprecated)){									
-										if(!isChildIncluded(node,child,index)){
-											if(expand){								
-												if(node.children == null){
-												  node.children=[];
+								
+								if((counter+queryResult.result.length)>=minIndex){
+								
+									if(countChildren(node) < maxIndex) {									
+																										
+									//$.each(queryResult.result, function(childIndex,child){	
+										var child;
+										for(var i=0;((i<queryResult.result.length)&&(countChildren(node)<maxIndex));i++){
+											child = queryResult.result[i];
+											if(counter>=minIndex){
+												if((child!=null)&&(typeof(child)!==undefined)&&(!child.deprecated)){									
+													if(!isChildIncluded(node,child,index)){
+														if(expand){								
+															if(node.children == null){
+															  node.children=[];
+															}
+															var newChild = buildNode(child,level,index);
+															node.children.push(buildNode(child,level,index));
+															//node._children = null;
+														}else{
+															if(node._children == null){
+															  node._children=[];
+															}
+															node._children.push(buildNode(child,level,index));
+															//node.children = null;
+														}
+													}								
 												}
-												var newChild = buildNode(child,level,index);
-												node.children.push(buildNode(child,level,index));
-												node._children = null;
-											}else{
-												if(node._children == null){
-												  node._children=[];
-												}
-												node._children.push(buildNode(child,level,index));
-												node.children = null;
 											}
-										}								
-									}
-								});	
-							}												
+											counter++;											
+										}
+									 }
+									//});	
+								}else{
+									counter+=queryResult.result.length;
+								}
+							}
 						});
+						//At the end we have to update the index
+						if(counter>node["data"].indexChild) {
+							node["data"].indexChild = counter;
+						}else{//If the counter is more than indexChild does mean that this node has new children but if not means that all of children has been expanded  so we set the flag a false.
+							node["data"].moreChildren = false;
+						}
+						
 						//Once we have collected the children, after that we have to expand the next level
 						if(node.children!=null){
 							$.each(node.children,function(index,child){						
