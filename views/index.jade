@@ -12,37 +12,53 @@ block content
           span Welcome to the AberOWL framework for ontology-based data access.
         p(align='center')
           span Currently hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
-      center
-        input#autocomplete(width="100%", style="width:100%", placeholder='Enter Manchester OWL Syntax Query', type='text')
-        input(name='type', type='radio', value='supeq') 
-        label Super- and Equivalent classes
-        input(name='type', type='radio', value='supclass') 
-        label Superclasses
-        input(name='type', type='radio', value='equivalent') 
-        label Equivalent classes
-        input(name='type', type='radio', value='subclass') 
-        label Subclasses
-        input(name='type', type='radio', value='subeq' checked='true') 
-        label Sub- and Equivalent classes
-        br
-        a#button.btn.btn.btn-success(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
-        a#sparql.btn.btn.btn-default(href='#' style='display:none') Use in SPARQL
-        a#pubmed.btn.btn.btn-default(href='#' style='display:none') Search PubMed
-        h5 Try 
-          a(href='#' onclick='addExample(0)') 'ventricular septal defect'
-          , 
-          a(href='#' onclick='addExample(1)') develops_from some 'stem cell'
-          , 
-          a(href='#' onclick='addExample(2)') part_of some 'apoptotic process' and regulates some 'apoptotic process'
-          span  or 
-          a(href='#' onclick='addExample(3)') has_part some alcohol
-           
+        div
+          center
+            div.input-group
+              input#search.form-control(placeholder='Enter a Search Query', type='text')
+              span.input-group-btn
+                button#sbutton.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+            a#sparql.btn.btn.btn-default(href='#' style='display:none') Use in SPARQL
+            a#pubmed.btn.btn.btn-default(href='#' style='display:none') Search PubMed
+            br
 
-      table#example.table.table-striped
-        thead
-          tr
-            th OWL Class
-            th Ontology
-            th Label
-            th Definition
-      div#ontology(style="display:none")
+        div#tabs
+          ul
+            li
+              a(href='#overview') Classes
+            li
+              a(href='#ontology') Ontologies
+            li
+              a(href='#mowl') Manchester Syntax
+
+          div#overview
+            table#example.table.table-striped
+              thead
+                tr
+                  th OWL Class
+                  th Ontology
+                  th Label
+                  th Definition
+          div#ontology(style="display:none")
+          div#mowl
+            input(name='type', type='radio', value='supeq')
+            label Super- and Equivalent classes
+            input(name='type', type='radio', value='supclass')
+            label Superclasses
+            input(name='type', type='radio', value='equivalent')
+            label Equivalent classes
+            input(name='type', type='radio', value='subclass')
+            label Subclasses
+            input(name='type', type='radio', value='subeq' checked='true')
+            label Sub- and Equivalent classes
+
+            h5 Try 
+            a(href='#' onclick='addExample(0)') 'ventricular septal defect'
+            , 
+            a(href='#' onclick='addExample(1)') develops_from some 'stem cell'
+            , 
+            a(href='#' onclick='addExample(2)') part_of some 'apoptotic process' and regulates some 'apoptotic process'
+            span  or 
+            a(href='#' onclick='addExample(3)') has_part some alcohol
+
+
