@@ -1,4 +1,3 @@
-
 function doSearch() {
   $('#main_search').dataTable().fnDestroy();
   var query = $('#search').val();
@@ -7,7 +6,7 @@ function doSearch() {
     "processing": false,
     "serverSide": false,
     "paging": true,
-    "scrollY": 400,
+    "scrollY": 800,
     "renderer": "bootstrap",
     "aaSorting": [[ 1, "asc" ]],
     "bAutoWidth": false,
@@ -28,17 +27,14 @@ function doSearch() {
       "ajax": {
           "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
           "dataType": 'json',
-          "dataSrc": function ( json ) {
-              var datatable = new Array();
-      $('#timer').text("Query took " + json.time + 'ms');
-      result = json.result;
-
-              for ( var i=0, ien=result.length ; i<ien ; i++ ) {
-                  datatable[i] = new Array() ;
-                  datatable[i][0] = "<a href='/ontology/"+result[i].ontologyURI + "?c=" +result[i].classURI+"'>"+result[i].classURI+"</a>" ;
-                  datatable[i][1] = "<a href='/ontology/"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
-                  datatable[i][2] = result[i].label || " " ;
-                  datatable[i][3] = result[i].definition || " " ;
+          "dataSrc": function(result) {
+            var datatable = new Array();
+              for( var i=0, ien=result.length ; i<ien ; i++ ) {
+                datatable[i] = new Array() ;
+                datatable[i][0] = "<a href='/ontology/"+result[i].ontology + "?c=" +result[i].iri +"'>"+result[i].iri+"</a>" ;
+                datatable[i][1] = "<a href='/ontology/"+result[i].ontology+"'>"+result[i].ontology+"</a>" ;
+                datatable[i][2] = result[i].label || " " ;
+                datatable[i][3] = result[i].definition || " " ;
               }
               return datatable;
           }
@@ -49,7 +45,6 @@ function doSearch() {
         }
   } );
 };
-
 
 $(function() {
   $('#main_search').dataTable( {
@@ -64,4 +59,12 @@ $(function() {
           { "sWidth": "40%"},
       ]
   });
+
+  console.log('adding');
+  $("#search").keydown(function(event){
+    if(event.keyCode == 13){
+      $("#sbutton").click();
+    }
+  });
+  console.log('added');
 });

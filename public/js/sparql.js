@@ -32,13 +32,15 @@ function changeSPARQLQuery(to) {
   }
 
   var tree = $.jstree.reference('#left_tree');
-  var selectedNodes = tree.get_selected(true);
-  if(selectedNodes.length > 0) {
-    var name = selectedNodes[0].text;
-    if(name.indexOf(' ') != -1) {
-      name = '\'' + name + '\'';
+  if(tree) {
+    var selectedNodes = tree.get_selected(true);
+    if(selectedNodes.length > 0) {
+      var name = selectedNodes[0].text;
+      if(name.indexOf(' ') != -1) {
+        name = '\'' + name + '\'';
+      }
+      query.val(query.val().replace(/INSERT OWL HERE/, name));
     }
-    query.val(query.val().replace(/INSERT OWL HERE/, name));
   }
 }
 
