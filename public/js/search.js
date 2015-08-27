@@ -1,4 +1,11 @@
 function doSearch() {
+
+  $('#tabs').show();
+  //(style='display:none;')
+  $('#otabhead').text('Ontologies (loading...)');
+  $('#mtabhead').text('Manchester Syntax (loading...)');
+  $('#ctabhead').text('Classes (loading...)');
+
   $('#main_search').dataTable().fnDestroy();
   $('#manchester_search').dataTable().fnDestroy();
   $('#ontology_search').dataTable().fnDestroy();
@@ -21,12 +28,6 @@ function doSearch() {
       { "sWidth": "30%"},
       { "sWidth": "40%"},
     ],
-    "fnInitComplete": function( oSettings ) {
-      $('#pubmed').attr('href', "/aber-owl/pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
-      $('#pubmed').show();                                                                                                         
-      $('#sparql').attr('href', "/aber-owl/sparql/?type="+qType+"&query="+encodeURIComponent(query)+"&ontology="+ontology);
-      $('#sparql').show();
-      },
       "ajax": {
           "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
           "dataType": 'json',
@@ -36,7 +37,7 @@ function doSearch() {
             var datatable = new Array();
             for( var i=0, ien=result.length ; i<ien ; i++ ) {
               datatable[i] = new Array() ;
-              datatable[i][0] = "<a href='/ontology/"+result[i].ontology + "?c=" +result[i].iri +"'>"+result[i].iri+"</a>" ;
+              datatable[i][0] = "<a href='/ontology/"+result[i].ontology + "?c=" + encodeURIComponent(result[i].iri) +"'>"+result[i].iri+"</a>" ;
               datatable[i][1] = "<a href='/ontology/"+result[i].ontology+"'>"+result[i].ontology+"</a>" ;
               datatable[i][2] = result[i].label || " " ;
               datatable[i][3] = result[i].definition || " " ;
@@ -87,6 +88,7 @@ function doSearch() {
         }
   });
 
+  var qType = $('input[name="type"]:checked').val();
   var mtable = $('#manchester_search').dataTable( {
     "processing": false,
     "serverSide": false,
@@ -103,14 +105,8 @@ function doSearch() {
       { "sWidth": "30%"},
       { "sWidth": "40%"},
     ],
-    "fnInitComplete": function( oSettings ) {
-      $('#pubmed').attr('href', "/aber-owl/pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
-      $('#pubmed').show();                                                                                                         
-      $('#sparql').attr('href', "/aber-owl/sparql/?type="+qType+"&query="+encodeURIComponent(query)+"&ontology="+ontology);
-      $('#sparql').show();
-      },
       "ajax": {
-        "url": "/service/api/runQuery.groovy?type=subeq&labels=true&query="+encodeURIComponent(query.trim()),
+        "url": "/service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
         "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
