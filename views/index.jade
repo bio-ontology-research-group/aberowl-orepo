@@ -17,7 +17,7 @@ block content
             div.input-group
               input#search.form-control(placeholder='Enter a Search Query', type='text')
               span.input-group-btn
-                button#sbutton.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
+                button#sbutton.btn.btn-default(onclick='doSearch();') Query
             a#sparql.btn.btn.btn-default(href='#' style='display:none') Use in SPARQL
             a#pubmed.btn.btn.btn-default(href='#' style='display:none') Search PubMed
             br
@@ -32,7 +32,7 @@ block content
               a(href='#mowl') Manchester Syntax
 
           div#overview
-            table#example.table.table-striped
+            table#main_search.table.table-striped.table-bordered.table-condensed
               thead
                 tr
                   th OWL Class
