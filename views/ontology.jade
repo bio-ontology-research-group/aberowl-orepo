@@ -17,6 +17,9 @@ block content
           input#quicksearch(type="text" style="overflow:hidden;width=100%")
         br
         div#left_tree test
+        br
+        label Object properties
+        div#left_tree_objectproperty test
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         div(style='float:right')
           -if(messages.info) 
@@ -203,32 +206,47 @@ block content
 
           div#visualise
             div#visualisation
-              table
-                tbody
-                  tr
-                    td
-                      fieldset
-                        legend Versions
-                        p 
-                          select#versions.multiselect(multiple='multiple')
-                            -var keys = Object.keys(ontology.submissions)
-                            -keys.sort() // order the keys, something to take into account in the server.
-                            -var versions = []
-                            -index = keys.length
-                            -while (index>0) {
-                              option(value='#{index-1}') Version #{index}
-                              -if(index === keys.length)
-                                -versions.push(index-1)
-                              -else
-                                -versions.push(null)
-                              -index--
-                            -}
-                    td
-                      fieldset
-                        legend Properties
-                        p 
-                          select#properties.multiselect(multiple='multiple')
-               
+              div#table_properties(style='float:left;')
+                table
+                  tbody
+                    tr
+                      td
+                        fieldset
+                          legend Versions
+                          p
+                            select#versions.multiselect(multiple='multiple')
+                              -var keys = Object.keys(ontology.submissions)
+                              -keys.sort() // order the keys, something to take into account in the server.
+                              -var versions = []
+                              -index = keys.length
+                              -while (index>0) {
+                                option(value='#{index-1}') Version #{index}
+                                -if(index === keys.length)
+                                  -versions.push(index-1)//We just add the actual version that will be located at the last position.
+                                -else
+                                  -versions.push(null)
+                                -index--
+                              -}
+                      td
+                        fieldset
+                          legend Properties
+                          p
+                            select#properties.multiselect(multiple='multiple')
+
+              div#spinner(style='margin:0 auto;width:100px')
+                label(style='display: inline-block;') Number of classes
+                div.input-group
+                  span.input-group-btn
+                    button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
+                      span.glyphicon.glyphicon-minus
+                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1")
+                  span.input-group-btn
+                    button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
+                      span.glyphicon.glyphicon-plus
+
+              div#export(style='float:right;')
+                 button.btn.btn-default(onclick='') Export to SVG
+                 button.btn.btn-default(onclick='') Export to GraphViz
             div#infovis(style='width:100%')            
             div#ontology_value(style='display:none') #{ontology.id}
             div#num_versions(style='display:none') #{JSON.stringify(versions)}

@@ -128,7 +128,8 @@ $(function() {
 		nodeUpdate.select("circle")
 			.attr("r", 4.5)
 			//.style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
-			.style("stroke", function(d) { return "black"; })
+			//.style("stroke", function(d) { return "black"; })
+			.style("stroke", function(d) { return d.edge ? d.edge : "white"; })
 			.style("fill", function(d) { return d._children ? d.colour : d.leaf; })
 
 		nodeUpdate.select("text")
@@ -259,6 +260,7 @@ $(function() {
 
 		parent.children = []; //clean the visualizated children array
 
+
 		var fakeNode = buildFakeNode("˅˅˅", d["data"].min - MAXCHILDSTOSHOW, d["data"].min); //We insert at the end of the list
 
 		if (d["data"].max + MAXCHILDSTOSHOW < parent._children.length) {
@@ -273,6 +275,7 @@ $(function() {
 		update(parent);
 
 	}
+
 
 	/**
 	 * Toggle children on click.
@@ -303,22 +306,17 @@ $(function() {
 						parent.children = parent.children.splice(0,MAXCHILDSTOSHOW);
 					}
 
-					if(d.name==="˄˄˄"){//max
-
-						if((parent._children.length-d["data"].max)<MAXCHILDSTOSHOW*MAXBREADTHLEVEL) {
+					if(d.name==="˄˄˄") {//max
+						if ((parent._children.length - d["data"].max) < MAXCHILDSTOSHOW * MAXBREADTHLEVEL) {
 							//We have to wait for the updating process ends.
-							getRecursiveClasses(parent, 0, false).then(function () {
-								if ((arguments != null) && (arguments.length > 0)) {
-									//update the new children
-									update(parent);
-								}
-								//We update the visualization with the updated children
-								updateUpperNodes(parent,d);
+							$.when(getRecursiveClasses(parent, 0, false)).done(function(jsonTree){
+								updateUpperNodes(parent, d);
+								return;
 							});
-						}else{
-							updateUpperNodes(parent,d);
+						}else {
+							updateUpperNodes(parent, d);
+							return;
 						}
-						return;
 					}else if(d.name==="˅˅˅"){//min
 
 						var index = d["data"].max;
@@ -428,7 +426,7 @@ $(function() {
 	/**
 	 * This function builds a node using provided data.
 	 */
-	function buildNode(data, level,index){
+	function buildNode(data, level,queryType){
 		var node = null
 		if(data!=null){
 			node = {};
@@ -443,67 +441,39 @@ $(function() {
 			node["_children"] = null;
 			node["versions"] = []; //Array of versions that this node belongs
 			node["properties"] = []; //Array of properties that this node has
-			updateNodeInfo(node,index);
+			updateNodeInfo(node,queryType);
 		}
 		return(node);
 	};
 
-	/**
-	 * This function get attribute (property/version) from index given.
-	 */
-	function getAttribute(index){
-		var attribute = null;
-		var counter =0;
-		var i=0;
-		for(i=0;i<versions.length;i++){
-			if(versions[i]!=null){
-				if(counter==index){
-					attribute = {};
-					attribute["index"] = i;
-					attribute["attribute"] = versions[i];
-					return(attribute);
-				}
-				counter++;
-			}
-		}
-		for(var j=0;j<properties.length;j++,i++){
-			if(properties[j]!=null){
-				if(counter==index){
-					attribute = {};
-					attribute["index"] = i
-					attribute["attribute"] = properties[j];
-					return(attribute);
-				}
-				counter++
-			}
-		}
-		return(attribute);
-	}
 
 	/**
 	 * This function updates the information (property/version) from given node.
 	 */
-	function updateNodeInfo(node,index){
-		if((index!=null)&&(index>=0)){
-			var attribute = getAttribute(index);
-			if(attribute!=null){
-				if(isNaN(attribute["attribute"])){//it is a property
-					if(node["properties"].indexOf(attribute["attribute"])===-1){
-						node["properties"].push(attribute["attribute"]);
-					}
-				}else{//it is a property
-					//We avoid to put version 0
-					if(node["versions"].indexOf(attribute["attribute"])===-1){
-						node["versions"].push(attribute["attribute"]);
-					}
+	function updateNodeInfo(node,queryType){
+		var indexVersion =-1;
+		if((queryType!=null)&&(queryType!==undefined)){
+			if(Array.isArray(queryType)&&(queryType.length==2)){//if queryType is an array that means that it is object property, othercase will be version
+				indexVersion = queryType[0];
+				var indexProperty = queryType[1];
+				if(node["properties"].indexOf(properties[indexProperty])===-1){
+					node["properties"].push(properties[indexProperty]);
 				}
-				if(node["colour"]===undefined){
-					node["colour"] = getColour(attribute["index"]);
-					regexp = /hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?%)\)/g;
-					result = regexp.exec(node["colour"]).slice(1);
-					result[2] = parseFloat(result[2])+30;
-					node["leaf"] ="hsl("+result[0]+","+result[1]+","+result[2]+"%)";
+				if(node["edge"]===undefined){
+					node["edge"] = getColour((versions.length+indexProperty));//to avoid the 0 position for the property vector
 				}
+			}else{
+				indexVersion = queryType;
+				if(node["versions"].indexOf(indexVersion)===-1){
+					node["versions"].push(indexVersion);
+				}
+			}
+			if(node["colour"]===undefined){
+				node["colour"] = getColour(indexVersion);
+				regexp = /hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?%)\)/g;
+				result = regexp.exec(node["colour"]).slice(1);
+				result[2] = parseFloat(result[2])+30;
+				node["leaf"] ="hsl("+result[0]+","+result[1]+","+result[2]+"%)";
 			}
 		}
 		return(node);
@@ -581,10 +551,10 @@ $(function() {
 	 */
 	function getSubClasses(owlClass,version,type,objectProperty){
 		if((type=='subeq')&&(objectProperty!=null)){
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}
 	};
@@ -608,21 +578,19 @@ $(function() {
 			if((node["versions"]!=null)&&(node["versions"].length>0)){
 				var version;
 				var property;
+				var execQuery=[];
 				for(var i = 0; i<node["versions"].length;i++){//versions
 					version = node["versions"][i];
 					if(version!=null){
 						var promise = getSubClasses(node.data["owlClass"],version,"subclass",null);
 						promises.push(promise);
-					}
-				}
-				for(var i = 0; i<node["versions"].length;i++){//versions
-					version = node["versions"][i];
-					if(version!=null){
+						execQuery.push(version);
 						for(var j = 0; j<properties.length;j++){//properties
 							property = properties[j];
 							if(property!=null){
 								var promise = getSubClasses(node.data["owlClass"],version,"subeq",property);
 								promises.push(promise);
+								execQuery.push([version,j]);
 							}
 						}
 					}
@@ -653,14 +621,13 @@ $(function() {
 															if(node.children == null){
 																node.children=[];
 															}
-															var newChild = buildNode(child,level,index);
-															node.children.push(buildNode(child,level,index));
+															node.children.push(buildNode(child,level,execQuery[index]));
 															//node._children = null;
 														}else{
 															if(node._children == null){
 																node._children=[];
 															}
-															node._children.push(buildNode(child,level,index));
+															node._children.push(buildNode(child,level,execQuery[index]));
 															//node.children = null;
 														}
 													}
@@ -675,6 +642,8 @@ $(function() {
 								}
 							}
 						});
+						//Clean the array
+						execQuery=[];
 						//At the end we have to update the index
 						if(counter>node["data"].indexChild) {
 							node["data"].indexChild = counter;
@@ -683,21 +652,45 @@ $(function() {
 						}
 
 						//Once we have collected the children, after that we have to expand the next level
+						var childrenPromises=[];
 						if(node.children!=null){
-							$.each(node.children,function(index,child){
-								if(child!=null){
-									var promise	= getRecursiveClasses(child,level+1,expand);
-									promises.push(promise);
+							$.each(node.children, function (index, child) {
+								if (child != null) {
+									var promise = getRecursiveClasses(child, level + 1, expand);
+									childrenPromises.push(promise);
 								}
 							});
-							$.when.apply($,promises).done(function(){
-								if((arguments!=null)&&(arguments.length>0)){
-									def.resolve(node);
-								}
-							});
-						}else{
-							def.resolve(node);
 						}
+						if(node._children!=null){
+							$.each(node._children,function(index,child){
+								if(child!=null) {
+									var promise = getRecursiveClasses(child, level + 1, expand);
+									childrenPromises.push(promise);
+								}
+							});
+						}
+						if(childrenPromises.length>0){
+							$.when.apply($,childrenPromises).done(function(){
+								if((arguments!=null)&&(arguments.length>0)){
+									$.each(arguments, function(index,queryResult) {
+										if(Array.isArray(queryResult)){
+											queryResult = queryResult[0];
+										}
+										if((queryResult!=null)&&(queryResult.result!=null)) {
+											if(expand) {
+												$.merge(node.children[index],queryResult.children);
+												//node.children.push(queryResult);
+											}else{
+												$.merge(node._children[index],queryResult._children);
+												//node._children.push(queryResult);
+											}
+										}
+									});
+								}
+							});
+
+						}
+						def.resolve(node);
 					}
 				});
 			}
@@ -751,5 +744,10 @@ $(function() {
 			console.log(properties.toSource());
 			initTree();
 		});
+		$('.spinner').spinner({
+			min: 0,
+			max: 10
+		});
+
 	});
 });
