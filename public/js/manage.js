@@ -22,17 +22,19 @@ openSourceForm = function() {
   var source = capitalise($('#osource').text());
   $('#sourceForm').html('<br /><form class="form" action="/ontology/'+oid+'/updatesyncmethod" method="post" role="form"> ' +
       '<div class="input-group"> ' +
-      '<div class="input-group-btn">' + 
-        '<button id="syncbutt" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">'+source+'</button> ' +
+      '<span class="input-group-btn">' + 
+        '<button id="syncbutt" class="btn btn-default dropdown-toggle input-group-addon" data-toggle="dropdown" aria-expanded="false">zzz'+source+'</button> ' +
         '<ul id="syncbox" class="dropdown-menu" role="menu">' + 
           '<li><a href="#">Bioportal</a></li> ' + 
           '<li><a href="#">Direct link</a></li> ' +
           '<li><a href="#">Manual</a></li>' +
         '</ul>' +
-      '</div><!-- /btn-group -->' + 
+      '</span><!-- /btn-group -->' + 
       '<input name="sourcetext" id="sourcetext" type="text" class="form-control" aria-label="..." />' +
-      '<input name="method" id="method" type="hidden" />' +
-    '<div class="input-group-btn"><button class="btn btn-success" type="submit">Save</button></div></div></form><br /><!-- /input-group -->');
+      '</div>' +
+    '<button class="btn btn-success" type="submit">Save</button>' +
+    '<input name="method" id="method" type="hidden" />' +
+    '</form><br /><br /><!-- /input-group -->');
 
   changeText(source);
 
