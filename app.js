@@ -57,7 +57,7 @@ app.use(flash());
 
 // Populate the routes with useful info
 app.use(function(req, res, next) {
-  req.aberowl = 'http://localhost/service/api/';
+  req.aberowl = 'http://localhost/api/';
   req.db = db;
   res.locals.user = req.user;
   next();
