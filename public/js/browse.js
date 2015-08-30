@@ -11,8 +11,6 @@ $(function() {
 		width = 960 - margin.right - margin.left,
 		height = 600 - margin.top - margin.bottom;
 
-	//var i = 0,duration = 750, root;
-
 	var i = 0,duration = 350, root;
 
 	var tree = d3.layout.tree()
@@ -700,9 +698,10 @@ $(function() {
 		}
 		return(def.promise());
 	};
+
 	//Get the object properties from the server.
 	$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology,function(jsonData,textStatus,jqXHR) {
-		if(jsonData!=null){
+		if((jsonData!=null)||(jsonData===undefined)){
 			$.each(jsonData,function(key,value){
 				$('#properties').append($("<option></option>")
 					.attr("value",value)
@@ -748,13 +747,85 @@ $(function() {
 			console.log(properties.toSource());
 			initTree();
 		});
-		$('#spinner').change(function(){
-			var value= $(this).val();
-			if(!isNaN(value)){
-				MAXCHILDSTOSHOW = new Number(value);
-				initTree();
-			}
-		});
+	});
+
+	$('#spinner').change(function(){
+		var value= $(this).val();
+		if(!isNaN(value)){
+			MAXCHILDSTOSHOW = new Number(value);
+			initTree();
+		}
+	});
+
+	$('#exportSVG').click(function(){
+
+		var html = d3.select("#infovis").select("svg")
+			.attr("version", 1.1)
+			.attr("xmlns", "http://www.w3.org/2000/svg")
+			.node().parentNode.innerHTML;
+
+
+		var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+		var img = '<img src="'+imgsrc+'">';
+
+		var d = new Date();
+
+		var a = document.createElement("a");
+		a.href = imgsrc
+		a.download = ontology+ d.getTime()+".svg";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		//var xmldom = require('xmldom');
+		/*var svgGraph =  d3.select("#infovis").select("svg")
+			.attr('xmlns', 'http://www.w3.org/2000/svg');
+		var svgXML = (new xmldom.XMLSerializer()).serializeToString(svgGraph[0][0]);
+		fs.writeFile('graph.svg', svgXML);*/
 
 	});
+	$('#exportViz').click(function(){
+
+
+		var svg = Viz("digraph { "+exportToGrapvhViz(root,'')+" }", "svg");
+
+		var imgsrc = 'data:image/svg+xml;base64,'+ btoa(svg);
+
+		var d = new Date();
+
+
+		var a = document.createElement("a");
+		a.href = imgsrc
+		a.download = ontology+ d.getTime()+".xdot";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+
+	});
+
+	function exportToGrapvhViz(node,stGraph){
+		if(typeof(node) === undefined){
+			return (stGraph);
+		}
+		stGraph+= createGraphicVizDescription(node);
+		if(node.children!=null){
+			$.each(node.children,function(index,child){
+				stGraph+= createGraphicVizDescription(child);
+				stGraph+="<"+node.name+"> -> <"+child.name+">; ";
+				exportToGrapvhViz(child,stGraph);
+			});
+		}
+		return(stGraph);
+	}
+
+	function createGraphicVizDescription(node){
+		var description ='';
+		if((node!=null)&&(node!=undefined)){
+			regexp = /hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?%)\)/g;
+			result = regexp.exec(node["colour"]).slice(1);
+			description = '<'+node.name+'> [label=<"'+node.name+'">, shape="egg" style="filled" color="'+result[0]+" "+parseFloat(result[1])+" "+parseFloat(result[2])+'"];';
+		}
+		return description;
+	}
+
 });
+

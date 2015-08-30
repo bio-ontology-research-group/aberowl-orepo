@@ -239,14 +239,14 @@ block content
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-minus
-                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1",data-min="1",data-max="16",readonly:"readonly")
+                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1",data-min="1",data-max="16")
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-plus
 
               div#export(style='float:right;')
-                 button.btn.btn-default(onclick='') Export to SVG
-                 button.btn.btn-default(onclick='') Export to GraphViz
+                 button#exportSVG.btn.btn-default() Export to SVG
+                 button#exportViz.btn.btn-default() Export to GraphViz
             div#infovis(style='width:100%')            
             div#ontology_value(style='display:none') #{ontology.id}
             div#num_versions(style='display:none') #{JSON.stringify(versions)}
