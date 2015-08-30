@@ -16,22 +16,22 @@ block content
         center
           input#quicksearch(type="text" style="overflow:hidden;width=100%")
         br
-        div#left_tree test
+        div#left_tree &nbsp;
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         div(style='float:right')
           -if(messages.info) 
             div.alert.alert-success(role='alert')
               span.glyphicon.glyphicon-ok(aria-hidden='true')
               span &nbsp; Info: #{messages.info}
-          -if(!stats.loaded) 
+          -if(!stats.loaded)
             -if(ontology.status == 'untested')
-              span.label.label-info Loading
+              span#loadstatus.label.label-info Loading
             -else
-              span.label.label-warning Unloadable
+              span#loadstatus.label.label-warning Unloadable
           -else if(!stats.consistent)
-            span.label.label-danger Inconsistent
+            span#loadstatus.label.label-danger Inconsistent
           -else
-            span.label.label-sm.label-success Classified
+            span#loadstatus.label.label-sm.label-success Classified
 
         h1.page-header #{ontology.id} - #{ontology.name}
         h2#wat

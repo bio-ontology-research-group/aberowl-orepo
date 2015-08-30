@@ -23,6 +23,10 @@ var qs = function () {
 }();
 
 $(function() {
+    if($('#loadstatus').text() != 'Classified') {
+      return;
+    }
+      
     var ontology = $('#ontology_value').text();
     $('#left_tree')
 	.on('open_node.jstree close_node.jstree', function(e, data) {

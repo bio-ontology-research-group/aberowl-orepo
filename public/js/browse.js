@@ -83,7 +83,9 @@ $(function() {
 			//Create a new ST instance
 			visitialised = true;
 			//Init the visualization
-			initTree();
+            if($('#loadstatus').text() == 'Classified') {
+              initTree();
+            }
 		}//if
 	});//tab
 
