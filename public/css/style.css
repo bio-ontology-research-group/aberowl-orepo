@@ -201,6 +201,15 @@ width:100%;
 margin:0;
 }
 
+#sbutton {
+margin-top:0;
+height:50px;
+}
+
+#search {
+  height:50px;
+}
+
 .ui-tabs {
 width:100%;
 }
@@ -218,6 +227,8 @@ overflow:hidden;
 overflow:hidden;
 }
 .jumbotron {
+margin-left: 2%;
+margin-right: 2%;
 margin-top:40px;
 padding:20px;
 }
@@ -232,4 +243,16 @@ border-color: #aaa;
 }
 .api-text {
 padding:5px;
+}
+
+#autocomplete {
+  border:0;
+  width:80%;
+}
+
+#main_search_length {
+  float:left;
+}
+#manchester_search_length {
+    float: left;
 }

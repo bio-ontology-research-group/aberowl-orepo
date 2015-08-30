@@ -28,6 +28,9 @@ $(function() {
 
 	$( "#tabs" ).tabs();
 	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
+        $('#manchester_search').DataTable().draw();
+        $('#ontology_search').DataTable().draw();
+        $('#main_search').DataTable().draw();
 		if(ui.newPanel.selector == '#pubmed') {
 			var tree = $.jstree.reference('#left_tree');
 			var selectedNodes = tree.get_selected(true);
