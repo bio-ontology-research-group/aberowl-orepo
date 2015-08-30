@@ -45,39 +45,64 @@ router.post('/upload', function(req, res) {
   if(req.isAuthenticated()) {
     req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
       if(!exOnt) { 
-        fs.readFile(req.files.ontology.path, function (err, data) {
-          var newName = req.body.acronym + '_1.ont',
-              newPath = __dirname + '/../public/onts/' + newName;
+        if(_.has(req.files, 'ontology')) {
+          fs.readFile(req.files.ontology.path, function (err, data) {
+            var newName = req.body.acronym + '_1.ont',
+                newPath = __dirname + '/../public/onts/' + newName;
 
-          fs.writeFile(newPath, data, function (err) {
-            // Create ontology in DB
+            fs.writeFile(newPath, data, function (err) {
+              // Create ontology in DB
+              var time = Date.now();
+              var ont = {
+                'id': req.body.acronym,
+                'name': req.body.name,
+                'description': req.body.description,
+                'lastSubDate': time,
+                'submissions': {
+                  
+                },
+                'status': 'untested',
+                'source': 'manual',
+                'owners': [ req.user.username ]
+              };
+              ont.submissions[time] = newName;
+
+              req.db.save('ontologies', req.body.acronym, ont, function(err) {
+                request.get(req.aberowl + 'reloadOntology.groovy', {
+                  'qs': {
+                    'name': req.body.acronym 
+                  } // Later this will need API key
+                }, function() {}); // we don't actually care about the response
+
+                req.flash('info', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+                res.redirect('/ontology/' + req.body.acronym);
+              });
+            });
+          });
+        } else if(_.has(req.body, 'url')) {
+          // Create ontology in DB
             var time = Date.now();
             var ont = {
               'id': req.body.acronym,
               'name': req.body.name,
               'description': req.body.description,
-              'lastSubDate': time,
+              'lastSubDate': 0,
               'submissions': {
                 
               },
               'status': 'untested',
-              'source': 'manual',
+              'source': req.body.url,
               'owners': [ req.user.username ]
             };
-            ont.submissions[time] = newName;
 
             req.db.save('ontologies', req.body.acronym, ont, function(err) {
-              request.get(req.aberowl + 'reloadOntology.groovy', {
-                'qs': {
-                  'name': req.body.acronym 
-                } // Later this will need API key
-              }, function() {}); // we don't actually care about the response
-
-              req.flash('info', 'Ontology uploaded successfully. Depending on the size of your ontology, you may want to grab a cup of tea while it\'s reasoning')
+              req.flash('info', 'Ontology added successfully and will be synchronised soon...')
               res.redirect('/ontology/' + req.body.acronym);
             });
-          });
-        });
+        } else {
+          req.flash('error', 'You must give a URL or an ontology file!');
+          res.redirect('/ontology/upload')
+        }
       } else {
         req.flash('error', 'Ontology with acronym ' + req.body.acronym + ' already exists!');
         res.redirect('/ontology/upload')

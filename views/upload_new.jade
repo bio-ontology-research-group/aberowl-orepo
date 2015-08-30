@@ -23,7 +23,9 @@ block content
         textarea.form-control(name='description', type='description', placeholder='Ontology Description', required='', autofocus='')
         br 
         span.btn.btn-default.btn-file Choose Ontology File
-          input(name='ontology', type='file', required='')
+          input(name='ontology', type='file')
+        div Or 
+          input.form-control(name='url', placeholder="Enter a URL")
         br
         br
         button.btn.btn-lg.btn-primary.btn-block(type='submit') Upload Ontology
