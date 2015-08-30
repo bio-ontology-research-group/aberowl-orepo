@@ -37,7 +37,9 @@ $(function() {
 	})
 	.on('loading.jstree', function () {
 	    if (qs.c) {
-		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+decodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
+		$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent('http://www.w3.org/2002/07/owl#topObjectProperty'),function(data) {
+			console.log("loading");
+			console.log(data);
 		    var html = '<table class="table table-striped"><tbody>'
 		    $.each(data, function(a, y) {
 			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
@@ -52,9 +54,11 @@ $(function() {
 	.on('changed.jstree', function (e, data) {
 	    var last = data.selected[data.selected.length-1];
 	    if(data.node) {
-		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
+		$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent(data.node.data),function(data) {
 		    var html = '<table class="table table-striped"><tbody>'
 		    $.each(data, function(a, y) {
+				console.log(a);
+				console.log(y);
 			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
 		    });
 		    html += '</tbody></table>';
@@ -68,99 +72,98 @@ $(function() {
 	    'core' : {
 		'data' : {
 		    'url' : function(node) {
-			if(node.id === '#') {
-			    if(qs.c) {
-				return '/service/api/findRoot.groovy?direct=true&query=<'+qs.c+'>&ontology='+ontology
-			    } else {
-				return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology
-			    }
-			} else {
-			    return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology
-			}
+				console.log("url");
+				console.log(node);
+				if(node.id === '#') {
+					return '/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent('http://www.w3.org/2002/07/owl#topObjectProperty');
+				} else {
+			    	return '/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent(node.data);
+				}
 		    },
 		    'dataFilter': function(data) {
-			data = JSON.parse(data);
-			var nodes = [];
-			
-			if(data.classes) { // TODO remove much duplication wow
-			    var addChildren = function(node, subtree) {
-				node.children = [];
-				$.each(subtree.classes, function(i, c) {
-				    var p = {
-					'id': c.classURI + i,
-					'data': c.classURI,
-					'text': c.label,
-					'children': [],
-					'state': {
-					    'opened': false
+				console.log("dataFilter");
+				console.log(data);
+				data = JSON.parse(data);
+				var nodes = [];
+
+				if(data) { // TODO remove much duplication wow
+					var addChildren = function(node, subtree) {
+					node.children = [];
+					$.each(subtree.classes, function(i, c) {
+						var p = {
+						'id': c.classURI + i,
+						'data': c.classURI,
+						'text': c.label,
+						'children': [],
+						'state': {
+							'opened': false
+						}
+						};
+						if(!p.text) p.text = c.remainder;
+						if(!p.text) p.text = c.classURI;
+
+						if(!c.deprecated) {
+						node.children.push(p);
+
+						if(data.chosen.classURI == c.classURI) {
+							$('#quicksearch').addTag(p.text);
+							p.state.selected = true;
+						}
+
+						if(c.children) {
+							p.state.opened = true;
+							p = addChildren(p, c.children);
+						}
+						} else {
+						console.log('not adding because deprecated');
+						}
+					});
+
+					return node;
+					};
+
+					$.each(data, function(i, c) {
+					var p = {
+						'id': c.classURI + i,
+						'data': c.classURI,
+						'text': c.label,
+						'children': true,
+						'state': {
+						'opened': false
+						}
+					};
+					if(!p.text) p.text = c.remainder;
+					if(!p.text) p.text = c.classURI;
+
+					if(!c.deprecated) {
+						if(c.children) {
+						p.state.opened = true;
+						p = addChildren(p, c.children);
+						}
+
+						nodes.push(p);
+					} else {
+						console.log('not adding because deprecated');
 					}
-				    };
-				    if(!p.text) p.text = c.remainder;
-				    if(!p.text) p.text = c.classURI;
-
-				    if(!c.deprecated) {
-					node.children.push(p);
-
-					if(data.chosen.classURI == c.classURI) {
-					    $('#quicksearch').addTag(p.text);
-					    p.state.selected = true;
-					}
-
-					if(c.children) {
-					    p.state.opened = true;
-					    p = addChildren(p, c.children);
-					}
-				    } else {
-					console.log('not adding because deprecated');
-				    }
-				});
-
-				return node;
-			    };
-
-			    $.each(data.classes, function(i, c) {
-				var p = {
-				    'id': c.classURI + i,
-				    'data': c.classURI,
-				    'text': c.label,
-				    'children': true,
-				    'state': {
-					'opened': false
-				    }
-				};
-				if(!p.text) p.text = c.remainder;
-				if(!p.text) p.text = c.classURI;
-
-				if(!c.deprecated) {
-				    if(c.children) {
-					p.state.opened = true;
-					p = addChildren(p, c.children);
-				    }
-
-				    nodes.push(p);
+					});
 				} else {
-				    console.log('not adding because deprecated');
-				}
-			    });
-			} else {
-			    data = data.result;
-			    $.each(data, function(i, c) {
-				var node = {
-				    'id': c.classURI + i,
-				    'data': c.classURI,
-				    'text': c.label,
-				    'children': true
-				};
-				if(!node.text) node.text = c.remainder;
-				if(!node.text) node.text = c.classURI;
+					$.each(data, function(i, c) {
+					var node = {
+						'id': c.classURI + i,
+						'data': c.classURI,
+						'text': c.label,
+						'children': true
+					};
+					if(!node.text) node.text = c.remainder;
+					if(!node.text) node.text = c.classURI;
 
-				if(!c.deprecated) {
-				    nodes.push(node);
+					if(!c.deprecated) {
+						nodes.push(node);
+					}
+					});
 				}
-			    });
-			}
 
-			return nodes;
+				return nodes;
 		    },
 		    'dataType': 'text'
 		}

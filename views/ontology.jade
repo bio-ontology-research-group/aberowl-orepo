@@ -206,7 +206,7 @@ block content
 
           div#visualise
             div#visualisation
-              div#table_properties(style='float:left;')
+              div#table_properties(style='float:left;width:33.3%;')
                 table
                   tbody
                     tr
@@ -233,13 +233,13 @@ block content
                           p
                             select#properties.multiselect(multiple='multiple')
 
-              div#spinner(style='margin:0 auto;width:100px')
-                label(style='display: inline-block;') Number of classes
+              div#div_spinner(style='float:left;width:33.3%;')
+                label(style='display:inline-block;text-align: center;') Number of classes
                 div.input-group
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-minus
-                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1")
+                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1",data-min="1",data-max="16",readonly:"readonly")
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-plus

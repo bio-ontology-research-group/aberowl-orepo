@@ -713,6 +713,7 @@ $(function() {
 		$("select option").prop("selected", false)
 		$('#versions option:first').prop("selected",true);
 		$('#versions option:first').prop("disabled","disabled");
+		$('#spinner').val(MAXCHILDSTOSHOW);
 
 		$('.multiselect').each(function(component){
 			$(this).multiselect();
@@ -744,9 +745,12 @@ $(function() {
 			console.log(properties.toSource());
 			initTree();
 		});
-		$('.spinner').spinner({
-			min: 0,
-			max: 10
+		$('#spinner').change(function(){
+			var value= $(this).val();
+			if(!isNaN(value)){
+				MAXCHILDSTOSHOW = new Number(value);
+				initTree();
+			}
 		});
 
 	});
