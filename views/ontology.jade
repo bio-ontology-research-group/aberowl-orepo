@@ -220,7 +220,8 @@ block content
                               -var versions = []
                               -index = keys.length
                               -while (index>0) {
-                                option(value='#{index-1}') Version #{index}
+                                -var date = new Date(keys[index-1]*1000);
+                                option(value='#{index-1}') Version #{index+" ("+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()+")"}
                                 -if(index === keys.length)
                                   -versions.push(index-1)//We just add the actual version that will be located at the last position.
                                 -else

@@ -38,8 +38,6 @@ $(function() {
 	.on('loading.jstree', function () {
 	    if (qs.c) {
 		$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent('http://www.w3.org/2002/07/owl#topObjectProperty'),function(data) {
-			console.log("loading");
-			console.log(data);
 		    var html = '<table class="table table-striped"><tbody>'
 		    $.each(data, function(a, y) {
 			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
@@ -54,16 +52,17 @@ $(function() {
 	.on('changed.jstree', function (e, data) {
 	    var last = data.selected[data.selected.length-1];
 	    if(data.node) {
-		$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent(data.node.data),function(data) {
-		    var html = '<table class="table table-striped"><tbody>'
-		    $.each(data, function(a, y) {
-				console.log(a);
-				console.log(y);
-			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
-		    });
-		    html += '</tbody></table>';
-		    $('#browse_content').html(html);
-		    $('#tabs').tabs('option', 'active', 1);
+			console.log(data.node.data);
+			$.getJSON('/service/api/getClass.groovy?objectProperty='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
+				var html = '<table class="table table-striped"><tbody>'
+				$.each(data, function(a, y) {
+					console.log(a);
+					console.log(y);
+				html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
+				});
+				html += '</tbody></table>';
+				$('#browse_content').html(html);
+				$('#tabs').tabs('option', 'active', 1);
 		});
 	    }
 	}) 
@@ -81,7 +80,6 @@ $(function() {
 				}
 		    },
 		    'dataFilter': function(data) {
-				console.log("dataFilter");
 				console.log(data);
 				data = JSON.parse(data);
 				var nodes = [];
