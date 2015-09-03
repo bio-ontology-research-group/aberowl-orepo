@@ -31,23 +31,9 @@ $(function() {
 		var tree = $.jstree.reference('#left_tree');
 		tree.refresh_node(currentNode);
 	    }
-	    if (qs.c) {
-		tree.fireEvent("changed.jstree");
-	    }
-	})
-	.on('loading.jstree', function () {
-	    if (qs.c) {
-		$.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology+'&rootObjectProperty='+encodeURIComponent('http://www.w3.org/2002/07/owl#topObjectProperty'),function(data) {
-		    var html = '<table class="table table-striped"><tbody>'
-		    $.each(data, function(a, y) {
-			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
-		    });
-		    html += '</tbody></table>';
-		    $('#tabs').tabs('option', 'active', 1);
-		    $('#browse').html(html);
-		});
-
-	    }
+	//    if (qs.c) {
+//		tree.fireEvent("changed.jstree");
+//	    }
 	})
 	.on('changed.jstree', function (e, data) {
 	    var last = data.selected[data.selected.length-1];
