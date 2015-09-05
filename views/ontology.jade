@@ -220,7 +220,7 @@ block content
                               -var versions = []
                               -index = keys.length
                               -while (index>0) {
-                                -var date = new Date(keys[index-1]*1000);
+                                -var date = new Date(parseInt(keys[index-1])*1000);
                                 option(value='#{index-1}') Version #{index+" ("+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()+")"}
                                 -if(index === keys.length)
                                   -versions.push(index-1)//We just add the actual version that will be located at the last position.
@@ -240,7 +240,7 @@ block content
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-minus
-                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1",data-min="1",data-max="16")
+                  input#spinner.form-control.input-number(type="text",data-ride="spinner",value="1",data-min="1")
                   span.input-group-btn
                     button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
                       span.glyphicon.glyphicon-plus

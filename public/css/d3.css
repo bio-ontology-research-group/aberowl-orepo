@@ -2,6 +2,10 @@
   cursor: pointer;
 }
 
+.overlay{
+  background-color:#EEE;
+}
+
 .node circle {
   fill: #fff;
   stroke: steelblue;
@@ -9,7 +13,8 @@
 }
 
 .node text {
-  font: 10px sans-serif;
+  font-size:10px;
+  font-family:sans-serif;
 }
 
 .link {
@@ -18,8 +23,16 @@
   stroke-width: 1.5px;
 }
 
-svg {
-	display: block;
-	width: 200%;
-	height: 200%;
+.templink {
+  fill: none;
+  stroke: red;
+  stroke-width: 3px;
+}
+
+.ghostCircle.show{
+  display:block;
+}
+
+.ghostCircle, .activeDrag .ghostCircle{
+  display: none;
 }

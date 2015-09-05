@@ -6,8 +6,9 @@ $(function() {
 	var MAXDEPTHLEVEL = 2; //Constant that represents the number of depth levels to show
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
+	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
 
-	var margin = {top: 20, right: 450, bottom: 20, left: 450},
+	var margin = {top: 20, right: 150, bottom: 20, left: 150},
 		width = 960 - margin.right - margin.left,
 		height = 600 - margin.top - margin.bottom;
 
@@ -18,11 +19,20 @@ $(function() {
 	var diagonal = d3.svg.diagonal()
 		.projection(function(d) { return [d.y, d.x]; });
 
+	function zoom() {
+		svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	}
+
+	// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+	var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+
 	var svg = d3.select("#infovis").append("svg")
 		.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
-		.append("g")
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+		.call(zoomListener);
+
+	var svgGroup = svg.append("g");
 
 	$( "#tabs" ).tabs();
 	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
@@ -88,6 +98,32 @@ $(function() {
 	});//tab
 
 	/**
+	 * Update the Y posistion taking into account the lenghth of the name..
+	 * @param nodes
+	 * @param source
+	 */
+	function updateYPosition(nodes){
+		// Normalize for fixed-depth.
+
+		nodes.forEach(function(d){
+			if(d.name==root.name){
+				d.y = d.depth * (parseInt(d.name.length) * 10);
+				console.log(d.name+"-->"+ d.y);
+			}else{
+				if(d.parent){
+					d.y = d.depth * (parseInt(d.parent["data"].maxLabelLength) * 10);
+					console.log(d.parent["data"].maxLabelLength+"-->"+d.name+"-->"+ d.y);
+				}else{
+					d.y = d.depth * 180;
+					console.log(d.name+"-->"+ d.y);
+				}
+
+			}
+		});
+
+		return(nodes);
+	}
+	/**
 	 * It updates the nodes in the visualization
 	 */
 	function update(source) {
@@ -96,11 +132,11 @@ $(function() {
 		var nodes = tree.nodes(root).reverse(),
 			links = tree.links(nodes);
 
-		// Normalize for fixed-depth.
-		nodes.forEach(function(d) { d.y = d.depth * 180; });
+		nodes = updateYPosition(nodes);
+
 
 		// Update the nodes…
-		var node = svg.selectAll("g.node")
+		var node = svgGroup.selectAll("g.node")
 			.data(nodes, function(d) { return d.id || (d.id = ++i); });
 
 		// Enter any new nodes at the parent's previous position.
@@ -150,7 +186,7 @@ $(function() {
 			.style("fill-opacity", 1e-6);
 
 		// Update the links…
-		var link = svg.selectAll("path.link")
+		var link = svgGroup.selectAll("path.link")
 			.data(links, function(d) { return d.target.id; });
 
 		// Enter any new links at the parent's previous position.
@@ -438,6 +474,8 @@ $(function() {
 			node.data["owlClass"] = data.owlClass;
 			node.data["level"] = MAXDEPTHLEVEL - level;
 			node.data["indexChild"] = 0;
+			node.data["indexQuery"] = 0;
+			node.data["maxLabelLength"] = 0;
 			node.data["moreChildren"] = true;
 			//collapse the nodes children = null and  _children = []
 			node["children"] = null;
@@ -485,7 +523,15 @@ $(function() {
 
 	function parseColour(hslColour){
 		regexp = /hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?%)\)/g;
-		result = regexp.exec(hslColour).slice(1);
+		exec = regexp.exec(hslColour);
+		if(exec!=null) {
+			return(exec.slice(1));
+		}
+		//default white
+		result = [];
+		result[0]=360;
+		result[1]=100;
+		result[2]=100;
 		return(result)
 	}
 
@@ -589,24 +635,30 @@ $(function() {
 				var version;
 				var property;
 				var execQuery=[];
-				for(var i = 0; i<node["versions"].length;i++){//versions
+				var minQueryCounter = node["data"].indexQuery;
+				var maxQueryCounter = node["data"].indexQuery+MAXINQUIRIES;
+				var queryCounter =0;
+				for(var i = 0; (i<node["versions"].length)&&(queryCounter<maxQueryCounter);i++){//versions
 					version = node["versions"][i];
 					if(version!=null){
 						var promise = getSubClasses(node.data["owlClass"],version,"subclass",null);
 						promises.push(promise);
 						execQuery.push(version);
-						for(var j = 0; j<properties.length;j++){//properties
+						queryCounter++;
+						for(var j = 0; (j<properties.length)&&(queryCounter<maxQueryCounter);j++){//properties
 							property = properties[j];
 							if(property!=null){
 								var promise = getSubClasses(node.data["owlClass"],version,"subeq",property);
 								promises.push(promise);
 								execQuery.push([version,j]);
+								queryCounter++;
 							}
 						}
 					}
 				}
 				$.when.apply($,promises).then(function(){
 					if((arguments!=null)&&(arguments.length>0)){
+						var executedIndexQuery =0;
 						var counter = 0;
 						var minIndex = node["data"].indexChild;
 						var maxIndex = node["data"].indexChild+(MAXCHILDSTOSHOW*MAXBREADTHLEVEL);
@@ -615,48 +667,51 @@ $(function() {
 								queryResult = queryResult[0];
 							}
 							if((queryResult!=null)&&(queryResult.result!=null)){
-
-								if((counter+queryResult.result.length)>=minIndex){
-
-									if(countChildren(node) < maxIndex) {
-
-										//$.each(queryResult.result, function(childIndex,child){
-										var child;
-										for(var i=0;((i<queryResult.result.length)&&(countChildren(node)<maxIndex));i++){
-											child = queryResult.result[i];
-											if(counter>=minIndex){
-												if((child!=null)&&(typeof(child)!==undefined)&&(!child.deprecated)){
-													if(!isChildIncluded(node,child,index)){
-														if(expand){
-															if(node.children == null){
-																node.children=[];
-															}
-															node.children.push(buildNode(child,level,execQuery[index]));
-															//node._children = null;
-														}else{
-															if(node._children == null){
-																node._children=[];
-															}
-															node._children.push(buildNode(child,level,execQuery[index]));
-															//node.children = null;
+								var i = 0;
+								if(countChildren(node) < maxIndex) {
+									var child;
+									for(i=0;((i<queryResult.result.length)&&(countChildren(node)<maxIndex));i++){
+										child = queryResult.result[i];
+										if(counter>=minIndex){
+											if((child!=null)&&(typeof(child)!==undefined)&&(!child.deprecated)){
+												if(!isChildIncluded(node,child,index)){
+													if(expand){
+														if(node.children == null){
+															node.children=[];
 														}
+														node.children.push(buildNode(child,level,execQuery[index]));
+														//node._children = null;
+													}else{
+														if(node._children == null){
+															node._children=[];
+														}
+														node._children.push(buildNode(child,level,execQuery[index]));
+														//node.children = null;
 													}
+													node["data"].maxLabelLength = Math.max(node["data"].maxLabelLength,child.label.length);
 												}
 											}
-											counter++;
 										}
+										counter++;
 									}
-									//});	
-								}else{
-									counter+=queryResult.result.length;
+									if(queryResult.result.length==i){//This promise has done completely
+										executedIndexQuery++;
+									}
 								}
 							}
 						});
 						//Clean the array
 						execQuery=[];
 						//At the end we have to update the index
-						if(counter>node["data"].indexChild) {
+						if(countChildren(node)>node["data"].indexChild) {
 							node["data"].indexChild = counter;
+							//If the nodes is less than MAXCHILDSTOSHOW*MAXBREADTHLEVEL means that this iteration of the algorithm is not able to complete the level. There fore we could recursively force
+							//the algorithm to execute new iterations in order to insert more nodes.
+							if(executedIndexQuery===promises.length){
+								node["data"].indexQuery = queryCounter;
+							}else if((countChildren(node)%MAXCHILDSTOSHOW)!=0){//If this expression produce a number distinct from 0 means that the level is not completed.
+								getRecursiveClasses(node, level, expand);
+							}
 						}else{//If the counter is more than indexChild does mean that this node has new children but if not means that all of children has been expanded  so we set the flag a false.
 							node["data"].moreChildren = false;
 						}
@@ -761,6 +816,7 @@ $(function() {
 	$('#spinner').change(function(){
 		var value= $(this).val();
 		if(!isNaN(value)){
+			console.log(value);
 			MAXCHILDSTOSHOW = new Number(value);
 			initTree();
 		}
@@ -768,44 +824,41 @@ $(function() {
 
 	$('#exportSVG').click(function(){
 
-		var html = d3.select("#infovis").select("svg")
+		var svgGraph =   d3.select("#infovis").select("svg")
 			.attr("version", 1.1)
-			.attr("xmlns", "http://www.w3.org/2000/svg")
-			.node().parentNode.innerHTML;
+		 	.attr("xmlns", "http://www.w3.org/2000/svg")
+		 	.node();
 
-		html = html.replace(/˅˅˅/,'...'); //Replace these characters to avoid serialization problem
-		html = html.replace(/˄˄˄/,'...'); //Replace these characters to avoid serialization problem
+		var serializer = new XMLSerializer();
 
-		var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
-		var img = '<img src="'+imgsrc+'">';
+		var xmlString = serializer.serializeToString(svgGraph);
+
+		xmlString = xmlString.replace(/˄˄˄/g, '...');
+		xmlString = xmlString.replace(/˅˅˅/g, '...');
+
+		var imgsrc = 'data:image/svg+xml;base64,' + btoa(xmlString);
 
 		var d = new Date();
 
 		var a = document.createElement("a");
 		a.href = imgsrc
-		a.download = ontology+ d.getTime()+".svg";
+		a.download = ontology + d.getTime() + ".svg";
 		document.body.appendChild(a);
 		a.click();
-		//document.body.removeChild(a);
-		//var xmldom = require('xmldom');
-		/*var svgGraph =  d3.select("#infovis").select("svg")
-			.attr('xmlns', 'http://www.w3.org/2000/svg');
-		var svgXML = (new xmldom.XMLSerializer()).serializeToString(svgGraph[0][0]);
-		fs.writeFile('graph.svg', svgXML);*/
+		document.body.removeChild(a);
 
 	});
 	$('#exportViz').click(function(){
 
 		var root;
+		//Search the root
 		d3.selectAll(".node").filter(function(d){
 			if(d.name=="owl:Thing"){
 				root = d;
 			}
-		})
+		});
 
 		if((root!=null)&&(root!=undefined)) {
-			console.log(root);
-			console.log(exportToGrapvhViz(root,''));
 			var svg = Viz("digraph { "+exportToGrapvhViz(root,'')+" }", "svg");
 
 			var imgsrc = 'data:image/svg+xml;base64,'+ btoa(svg);
@@ -856,11 +909,10 @@ $(function() {
 				result = parseColour(colour);
 			}
 			if(Array.isArray(result)&&(result.length==3)) {
-				description = ' <' + name + '> [label=<"' + name + '">, shape="egg" style="filled" color="' + result[0] + " " + parseFloat(result[1]) + " " + parseFloat(result[2]) + '"];';
+				description = ' <' + name + '> [label=<"' + name + '">, shape="circle" style="filled" color="' + result[0] + " " + parseFloat(result[1]) + " " + parseFloat(result[2]) + '"];';
 			}
 		}
 		return description;
 	};
-
 });
 

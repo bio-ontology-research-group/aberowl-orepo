@@ -13,11 +13,10 @@ var express = require('express'),
     databank = require('databank').Databank,
     // import new API for the visualization module.
     d3 = require('d3'),
-    jsdom = require("jsdom");
+    jsdom = require("jsdom"),
+    xmldom = require('xmldom');
 
-//import new API
-var document = jsdom.jsdom(),
-    svg = d3.select(document.body).append("svg");
+
 
 // import routes
 var routes = require('./routes/index');
@@ -57,7 +56,7 @@ app.use(flash());
 
 // Populate the routes with useful info
 app.use(function(req, res, next) {
-  req.aberowl = 'http://localhost/api/';
+  req.aberowl = 'http://localhost/service/api/';
   req.db = db;
   res.locals.user = req.user;
   next();
