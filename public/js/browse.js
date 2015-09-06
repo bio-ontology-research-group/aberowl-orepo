@@ -26,11 +26,21 @@ $(function() {
 	// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
 	var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
 
+	//define the tip where the node's information will be shown.
+	var tip = d3.tip()
+		.attr('class', 'd3-tip')
+		.offset([-10, 0])
+		.html(function(d) {
+			return getNodeDescription(d);
+		})
+
+
 	var svg = d3.select("#infovis").append("svg")
 		.attr("width", width + margin.right + margin.left)
 		.attr("height", height + margin.top + margin.bottom)
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-		.call(zoomListener);
+		.call(zoomListener)
+		.call(tip);
 
 	var svgGroup = svg.append("g");
 
@@ -98,32 +108,6 @@ $(function() {
 	});//tab
 
 	/**
-	 * Update the Y posistion taking into account the lenghth of the name..
-	 * @param nodes
-	 * @param source
-	 */
-	function updateYPosition(nodes){
-		// Normalize for fixed-depth.
-
-		nodes.forEach(function(d){
-			if(d.name==root.name){
-				d.y = d.depth * (parseInt(d.name.length) * 10);
-				console.log(d.name+"-->"+ d.y);
-			}else{
-				if(d.parent){
-					d.y = d.depth * (parseInt(d.parent["data"].maxLabelLength) * 10);
-					console.log(d.parent["data"].maxLabelLength+"-->"+d.name+"-->"+ d.y);
-				}else{
-					d.y = d.depth * 180;
-					console.log(d.name+"-->"+ d.y);
-				}
-
-			}
-		});
-
-		return(nodes);
-	}
-	/**
 	 * It updates the nodes in the visualization
 	 */
 	function update(source) {
@@ -132,7 +116,21 @@ $(function() {
 		var nodes = tree.nodes(root).reverse(),
 			links = tree.links(nodes);
 
-		nodes = updateYPosition(nodes);
+
+		nodes.forEach(function(d){
+			if(d.name==root.name){
+				d.y = 0;
+			}else if(d.parent){
+				if(d.depth==1){
+					d.y = 100 +	 (parseInt(d.parent["data"].maxLabelLength));
+				}else {
+					d.y = d.parent.y + 200 + (parseInt(d.parent["data"].maxLabelLength));
+				}
+			}else{//default configuration
+				d.y = d.depth * 180;
+			}
+		});
+
 
 
 		// Update the nodes…
@@ -144,8 +142,8 @@ $(function() {
 			.attr("class", "node")
 			.attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
 			.on("click", click)
-			.on("mouseover", mouseover)
-			.on("mouseout", mouseout);
+			.on('mouseover', tip.show)
+			.on('mouseout', tip.hide);
 
 		nodeEnter.append("circle")
 			.attr("r", 1e-6)
@@ -253,37 +251,50 @@ $(function() {
 		return(node);
 	}
 
-	function mouseover(d) {
+	function getNodeDescription(d) {
+		var toolTipText = "";
 		if(((d["versions"]!=undefined)&&(d["versions"]!=null))||((d["properties"]!==undefined)&&(d["properties"]!==null))){
-			var toolTipText = "";
 			if(d["versions"].length>0){
 				//We have to take into account the versions start by 0, so we have to add 1 to all versions
-				toolTipText = "Versions: ";
+				toolTipText = "<strong> Versions: <strong/>";
 				for(var i=0;i<d["versions"].length;i++){
 					toolTipText = toolTipText+(parseInt(d["versions"][i])+1);
 					if((d["versions"].length>1)&&(i<d["versions"].length-1)){
 						toolTipText= toolTipText+', ';
 					}
 				}
-			}
-			if(d["properties"].length>0){
-				toolTipText = toolTipText+"  Properties: "+d["properties"].toString();
+				toolTipText += "<br />";
 			}
 
-			if(toolTipText.replace(/\s/g,'').length>0){
-				d3.select(this).append("text")
-					.attr("class", "hover")
-					.attr('transform', function(d){
-						return 'translate(5, -10)';
-					})
-					.text(toolTipText);
+			if(d["properties"].length>0){
+				toolTipText = toolTipText+"  <strong>Properties: <strong/>"+d["properties"].toString()+"<br />";
+			}
+			if(d.name) {
+				toolTipText = toolTipText + "  <strong>Label: <strong/>"+ d.name +"<br />";
+			}
+			if((d.data)&&(d.data["owlClass"])) {
+				toolTipText = toolTipText + "  <strong>Class IRI: <strong/><br/> "+ encodeURI(d.data["owlClass"])+"<br />";
+			}
+			toolTipText += "<br/>";
+			if(d.view){
+				if(d.view["oboid"]){
+					toolTipText = toolTipText + "  <strong>Obo Id: </strong>"+ encodeURI(d.view["oboid"])+"<br />";
+				}
+				if(d.view["definition"]){
+					toolTipText = toolTipText + "  <strong>Definition: </strong>"+d.view["definition"]+"<br />";
+				}
+				if(d.view["synonym"]){
+					toolTipText = toolTipText + "  <strong>Synonyms: <strong/><br/>";
+					for(var i=0;i< d.view["synonym"].length;i++){
+						toolTipText = toolTipText+(parseInt(d.view["synonym"][i])+1);
+						if((d["versions"].length>1)&&(i< d.view["synonym"].length-1)){
+							toolTipText= toolTipText+"<br />";
+						}
+					}
+				}
 			}
 		}
-	}
-
-	// Toggle children on click.
-	function mouseout(d) {
-		d3.select(this).select("text.hover").remove();
+		return(toolTipText);
 	}
 
 	function updateUpperNodes(parent,d){
@@ -482,6 +493,25 @@ $(function() {
 			node["_children"] = null;
 			node["versions"] = []; //Array of versions that this node belongs
 			node["properties"] = []; //Array of properties that this node has
+			//Info to visualize.
+			node["view"]={};
+			node.view["definition"] = null;
+			node.view["oboid"] = null;
+			node.view["synonym"] = null;
+			if(data.definition) {
+				node.view["definition"] = data.definition;
+			}
+			if(data.oboid) {
+				if(Array.isArray(data.oboid)){
+					node.view["oboid"] = data.oboid[0];
+				}else {
+					node.view["oboid"] = data.oboid;
+				}
+			}
+			if(data.synonym) {
+				node.view["synonyms"] = data.synonym;
+			}
+
 			updateNodeInfo(node,queryType);
 		}
 		return(node);
@@ -779,7 +809,8 @@ $(function() {
 		$("select option").prop("selected", false)
 		$('#versions option:first').prop("selected",true);
 		$('#versions option:first').prop("disabled","disabled");
-		$('#spinner').val(MAXCHILDSTOSHOW);
+		//$('#spinner').val(MAXCHILDSTOSHOW);
+		$('#spinner').val(255);
 
 		$('.multiselect').each(function(component){
 			$(this).multiselect();
@@ -824,10 +855,19 @@ $(function() {
 
 	$('#exportSVG').click(function(){
 
-		var svgGraph =   d3.select("#infovis").select("svg")
+		//getBBox()
+		//getBoundingClientRect()
+		//First we have to relocate the tree,
+		d3.select("#infovis").select("svg").select("g")
+			.attr("transform", "translate(-10,0)").node();
+
+		var width = d3.select("#infovis").select("svg").node().getBBox().width;
+
+		var svgGraph = d3.select("#infovis").select("svg")
+			.attr("width",width+300)
 			.attr("version", 1.1)
-		 	.attr("xmlns", "http://www.w3.org/2000/svg")
-		 	.node();
+			.attr("xmlns", "http://www.w3.org/2000/svg")
+			.node();
 
 		var serializer = new XMLSerializer();
 
@@ -835,6 +875,11 @@ $(function() {
 
 		xmlString = xmlString.replace(/˄˄˄/g, '...');
 		xmlString = xmlString.replace(/˅˅˅/g, '...');
+
+		//Set the last width;
+		d3.select("#infovis").select("svg")
+			.attr("width",width);
+
 
 		var imgsrc = 'data:image/svg+xml;base64,' + btoa(xmlString);
 
@@ -846,6 +891,7 @@ $(function() {
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
+
 
 	});
 	$('#exportViz').click(function(){
