@@ -267,29 +267,25 @@ $(function() {
 			}
 
 			if(d["properties"].length>0){
-				toolTipText = toolTipText+"  <strong>Properties: <strong/>"+d["properties"].toString()+"<br />";
+				toolTipText = toolTipText+"  <strong>Properties: <strong/><br>&emsp;"+d["properties"].toString()+"<br />";
 			}
 			if(d.name) {
 				toolTipText = toolTipText + "  <strong>Label: <strong/>"+ d.name +"<br />";
 			}
 			if((d.data)&&(d.data["owlClass"])) {
-				toolTipText = toolTipText + "  <strong>Class IRI: <strong/><br/> "+ encodeURI(d.data["owlClass"])+"<br />";
+				toolTipText = toolTipText + "  <strong>Class IRI: <strong/><br/>&emsp; "+ encodeURI(d.data["owlClass"])+"<br />";
 			}
-			toolTipText += "<br/>";
 			if(d.view){
 				if(d.view["oboid"]){
-					toolTipText = toolTipText + "  <strong>Obo Id: </strong>"+ encodeURI(d.view["oboid"])+"<br />";
+					toolTipText = toolTipText + "  <strong>Obo Id: </strong><br/>&emsp;"+ encodeURI(d.view["oboid"])+"<br />";
 				}
 				if(d.view["definition"]){
-					toolTipText = toolTipText + "  <strong>Definition: </strong>"+d.view["definition"]+"<br />";
+					toolTipText = toolTipText + "  <strong>Definition: </strong><br/>&emsp;"+d.view["definition"]+"<br />";
 				}
 				if(d.view["synonym"]){
 					toolTipText = toolTipText + "  <strong>Synonyms: <strong/><br/>";
 					for(var i=0;i< d.view["synonym"].length;i++){
-						toolTipText = toolTipText+(parseInt(d.view["synonym"][i])+1);
-						if((d["versions"].length>1)&&(i< d.view["synonym"].length-1)){
-							toolTipText= toolTipText+"<br />";
-						}
+						toolTipText = toolTipText+"&emsp;"+d.view["synonym"][i]+"<br />";
 					}
 				}
 			}
@@ -509,7 +505,7 @@ $(function() {
 				}
 			}
 			if(data.synonym) {
-				node.view["synonyms"] = data.synonym;
+				node.view["synonym"] = data.synonym;
 			}
 
 			updateNodeInfo(node,queryType);
