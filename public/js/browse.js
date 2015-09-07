@@ -806,7 +806,7 @@ $(function() {
 		$('#versions option:first').prop("selected",true);
 		$('#versions option:first').prop("disabled","disabled");
 		//$('#spinner').val(MAXCHILDSTOSHOW);
-		$('#spinner').val(255);
+		$('#spinner').val(250);
 
 		$('.multiselect').each(function(component){
 			$(this).multiselect();
