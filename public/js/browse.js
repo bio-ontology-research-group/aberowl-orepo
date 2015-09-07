@@ -838,7 +838,6 @@ $(function() {
 		});
 
 		$('#spinner').keyup(function(){
-			console.log(value);
 			var value= $(this).val();
 			if(!isNaN(value)){
 				console.log(value);
