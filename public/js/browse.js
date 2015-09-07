@@ -805,8 +805,6 @@ $(function() {
 		$("select option").prop("selected", false)
 		$('#versions option:first').prop("selected",true);
 		$('#versions option:first').prop("disabled","disabled");
-		//$('#spinner').val(MAXCHILDSTOSHOW);
-		$('#spinner').val(250);
 
 		$('.multiselect').each(function(component){
 			$(this).multiselect();
@@ -838,15 +836,20 @@ $(function() {
 			console.log(properties.toSource());
 			initTree();
 		});
-	});
 
-	$('#spinner').change(function(){
-		var value= $(this).val();
-		if(!isNaN(value)){
+		$('#spinner').keyup(function(){
 			console.log(value);
-			MAXCHILDSTOSHOW = new Number(value);
-			initTree();
-		}
+			var value= $(this).val();
+			if(!isNaN(value)){
+				console.log(value);
+				MAXCHILDSTOSHOW = new Number(value);
+				initTree();
+			}
+		});
+
+		$('#spinner').val(250);
+		$('#spinner').trigger('keyup');
+
 	});
 
 	$('#exportSVG').click(function(){
