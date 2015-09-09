@@ -206,7 +206,7 @@ block content
 
           div#visualise
             div#visualisation
-              div#table_properties(style='float:left;width:50%;')
+              div#table_properties(style='float:left;width:70%;')
                 table
                   tbody
                     tr
@@ -233,8 +233,8 @@ block content
                           legend Properties
                           p
                             select#properties.multiselect(multiple='multiple')
-                      td(width="150")
-                      td(width="250")
+                      td(style='width:150px;')
+                      td(style='width:250px;')
                         label(style='display:inline-block;text-align: center;') Number of classes
                         div.input-group
                           span.input-group-btn
@@ -244,10 +244,9 @@ block content
                           span.input-group-btn
                             button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
                               span.glyphicon.glyphicon-plus
-                      td(width="150")
+                      td(style='width:150px;')
                       td
                         button#exportSVG.btn.btn-default() Export to SVG
-                      td
                         button#exportViz.btn.btn-default() Export to GraphViz
             div#infovis(style='width:100%')            
             div#ontology_value(style='display:none') #{ontology.id}
