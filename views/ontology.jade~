@@ -1,7 +1,7 @@
 extends layout
 
 block title
-  title AberOWL: #{ontology.name}
+  title AberOWL: 
 
 block content
   .container-fluid
@@ -16,25 +16,22 @@ block content
         center
           input#quicksearch(type="text" style="overflow:hidden;width=100%")
         br
-        div#left_tree &nbsp;
-        br
-        label Object properties
-        div#left_tree_objectproperty &nbsp;
+        div#left_tree test
      .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
         div(style='float:right')
           -if(messages.info) 
             div.alert.alert-success(role='alert')
               span.glyphicon.glyphicon-ok(aria-hidden='true')
               span &nbsp; Info: #{messages.info}
-          -if(!stats.loaded)
+          -if(!stats.loaded) 
             -if(ontology.status == 'untested')
-              span#loadstatus.label.label-info Loading
+              span.label.label-info Loading
             -else
-              span#loadstatus.label.label-warning Unloadable
+              span.label.label-warning Unloadable
           -else if(!stats.consistent)
-            span#loadstatus.label.label-danger Inconsistent
+            span.label.label-danger Inconsistent
           -else
-            span#loadstatus.label.label-sm.label-success Classified
+            span.label.label-sm.label-success Classified
 
         h1.page-header #{ontology.id} - #{ontology.name}
         h2#wat
@@ -206,52 +203,27 @@ block content
 
           div#visualise
             div#visualisation
-              div#table_properties(style='float:left;width:50%;')
-                table
-                  tbody
-                    tr
-                      td
-                        fieldset
-                          legend Versions
-                          p
-                            select#versions.multiselect(multiple='multiple')
-                              -var keys = Object.keys(ontology.submissions)
-                              -keys.sort() // order the keys, something to take into account in the server.
-                              -var versions = []
-                              -index = keys.length
-                              -while (index>0) {
-                                -var date = new Date(parseInt(keys[index-1])*1000);
-                                option(value='#{index-1}') Version #{index+" ("+date.getFullYear()+"-"+date.getMonth()+"-"+date.getDay()+")"}
-                                -if(index === keys.length)
-                                  -versions.push(index-1)//We just add the actual version that will be located at the last position.
-                                -else
-                                  -versions.push(null)
-                                -index--
-                              -}
-                      td
-                        fieldset
-                          legend Properties
-                          p
-                            select#properties.multiselect(multiple='multiple')
-                      td(width="150")
-                      td(width="250")
-                        label(style='display:inline-block;text-align: center;') Number of classes
-                        div.input-group
-                          span.input-group-btn
-                            button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
-                              span.glyphicon.glyphicon-minus
-                          input#spinner.form-control.input-number(type="text",data-ride="spinner",data-min="1")
-                          span.input-group-btn
-                            button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
-                              span.glyphicon.glyphicon-plus
-                      td(width="150")
-                      td
-                        button#exportSVG.btn.btn-default() Export to SVG
-                      td
-                        button#exportViz.btn.btn-default() Export to GraphViz
-            div#infovis(style='width:100%')            
+              table
+                tbody
+                  tr
+                    td
+                      fieldset
+                        legend Versions
+                        p
+                          select#versions.multiselect(multiple='multiple')
+                            option(value='Mustard') Mustard
+                            option(value='Ketchup') Ketchup
+                            option(value='Relish') Relish
+                    td
+                      fieldset
+                        legend Features
+                        p
+                          select#features.multiselect(multiple='multiple')
+                            option(value='Mustard') Mustard
+                            option(value='Ketchup') Ketchup
+                            option(value='Relish') Relish
+            div#infovis(style='width:100%')
             div#ontology_value(style='display:none') #{ontology.id}
-            div#num_versions(style='display:none') #{JSON.stringify(versions)}
 
           -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
             div#manage
@@ -272,10 +244,10 @@ block content
                 h5 Current update method: 
                   -if(ontology.source == 'bioportal' || ontology.source == 'manual')
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
-                     &nbsp;
+                    &nbsp;
                   -else 
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
-                     &nbsp;
+                    &nbsp;
                   a(href='#', onclick='openSourceForm()') change...
                   div#sourceForm
               a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 

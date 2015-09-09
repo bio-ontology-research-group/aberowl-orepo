@@ -972,7 +972,7 @@ $(function() {
 
 			var a = document.createElement("a");
 			a.href = imgsrc
-			a.download = ontology+ d.getTime()+".xdot";
+			a.download = ontology+ d.getTime()+".dot";
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
