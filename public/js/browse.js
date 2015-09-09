@@ -19,30 +19,49 @@ $(function() {
 	var diagonal = d3.svg.diagonal()
 		.projection(function(d) { return [d.y, d.x]; });
 
-	function zoom() {
-		svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+	var zoomListener;
+	var tip;
+	var svg;
+	var svgGroup;
+
+	/**
+	 * Initialise 3d and 3d/-tip variables that are using in the visualization module. Basically the aim of this function
+	 * is to avoid some incompatibilities that the front end has with the libraries (3d) and (3d-tip).
+	 */
+	function initSVG() {
+		function zoom() {
+			svgGroup.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+		}
+
+		// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+		if(!zoomListener) {
+			zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
+		}
+
+		//define the tip where the node's information will be shown.
+		if(!tip) {
+			tip = d3.tip()
+				.attr('class', 'd3-tip')
+				.offset([-10, 0])
+				.html(function (d) {
+					return getNodeDescription(d);
+				})
+		}
+
+		//define the svg where the tree node will be saved.
+		if(!svg) {
+			svg = d3.select("#infovis").append("svg")
+				.attr("width", width + margin.right + margin.left)
+				.attr("height", height + margin.top + margin.bottom)
+				.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+				.call(zoomListener)
+				.call(tip);
+		}
+
+		if(!svgGroup){
+			svgGroup = svg.append("g");
+		}
 	}
-
-	// define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
-	var zoomListener = d3.behavior.zoom().scaleExtent([0.1, 3]).on("zoom", zoom);
-
-	//define the tip where the node's information will be shown.
-	var tip = d3.tip()
-		.attr('class', 'd3-tip')
-		.offset([-10, 0])
-		.html(function(d) {
-			return getNodeDescription(d);
-		})
-
-
-	var svg = d3.select("#infovis").append("svg")
-		.attr("width", width + margin.right + margin.left)
-		.attr("height", height + margin.top + margin.bottom)
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-		.call(zoomListener)
-		.call(tip);
-
-	var svgGroup = svg.append("g");
 
 	$( "#tabs" ).tabs();
 	$( "#tabs" ).on( "tabsactivate", function( event, ui ) {
@@ -108,7 +127,8 @@ $(function() {
 	});//tab
 
 	/**
-	 * It updates the nodes in the visualization
+	 * Update the nodes in the visualization
+	 * @source represent the node that is going to be updated.
 	 */
 	function update(source) {
 
@@ -238,6 +258,13 @@ $(function() {
 		}
 	}
 
+	/**
+	 * Build a fake node.
+	 * @param name represents the name of the fack node.
+	 * @param min is the min value that will be assigned to the node.
+	 * @param max is the max value that will be assigned to the node.
+	 * @returns {*} the node created.
+	 */
 	function buildFakeNode(name,min,max){
 		var node = null;
 		if(name!=null){
@@ -251,12 +278,17 @@ $(function() {
 		return(node);
 	}
 
+	/**
+	 * Build the description from a node given.
+	 * @param d represents the node from the details are extracted to get the description.
+	 * @returns {string} Description
+	 */
 	function getNodeDescription(d) {
 		var toolTipText = "";
 		if(((d["versions"]!=undefined)&&(d["versions"]!=null))||((d["properties"]!==undefined)&&(d["properties"]!==null))){
 			if(d["versions"].length>0){
 				//We have to take into account the versions start by 0, so we have to add 1 to all versions
-				toolTipText = "<strong> Versions: <strong/>";
+				toolTipText = "<strong> Versions: <strong />";
 				for(var i=0;i<d["versions"].length;i++){
 					toolTipText = toolTipText+(parseInt(d["versions"][i])+1);
 					if((d["versions"].length>1)&&(i<d["versions"].length-1)){
@@ -267,23 +299,26 @@ $(function() {
 			}
 
 			if(d["properties"].length>0){
-				toolTipText = toolTipText+"  <strong>Properties: <strong/><br>&emsp;"+d["properties"].toString()+"<br />";
+				toolTipText = toolTipText+"  <strong>Properties: <strong /><br />&emsp;"+d["properties"].toString()+"<br />";
 			}
 			if(d.name) {
-				toolTipText = toolTipText + "  <strong>Label: <strong/>"+ d.name +"<br />";
+				toolTipText = toolTipText + "  <strong>Label: <strong />"+ d.name +"<br />";
 			}
 			if((d.data)&&(d.data["owlClass"])) {
-				toolTipText = toolTipText + "  <strong>Class IRI: <strong/><br/>&emsp; "+ encodeURI(d.data["owlClass"])+"<br />";
+				var owlClass = d.data["owlClass"];
+				owlClass = owlClass.replace(/</g,'');
+				owlClass = owlClass.replace(/>/g,'');
+				toolTipText = toolTipText + "  <strong>Class IRI: <strong /><br />&emsp; "+ owlClass+"<br />";
 			}
 			if(d.view){
 				if(d.view["oboid"]){
-					toolTipText = toolTipText + "  <strong>Obo Id: </strong><br/>&emsp;"+ encodeURI(d.view["oboid"])+"<br />";
+					toolTipText = toolTipText + "  <strong>Obo Id: <strong /><br />&emsp;"+ d.view["oboid"]+"<br />";
 				}
 				if(d.view["definition"]){
-					toolTipText = toolTipText + "  <strong>Definition: </strong><br/>&emsp;"+d.view["definition"]+"<br />";
+					toolTipText = toolTipText + "  <strong>Definition: <strong /><br />&emsp;"+d.view["definition"]+"<br />";
 				}
 				if(d.view["synonym"]){
-					toolTipText = toolTipText + "  <strong>Synonyms: <strong/><br/>";
+					toolTipText = toolTipText + "  <strong>Synonyms: <strong /><br />";
 					for(var i=0;i< d.view["synonym"].length;i++){
 						toolTipText = toolTipText+"&emsp;"+d.view["synonym"][i]+"<br />";
 					}
@@ -293,6 +328,11 @@ $(function() {
 		return(toolTipText);
 	}
 
+	/**
+	 * Responsible of changing the list of nodes that will be visualised.
+	 * @param parent parent node of the children.
+	 * @param d represent the node that was clicked.
+	 */
 	function updateUpperNodes(parent,d){
 
 		var index = d["data"].min - MAXCHILDSTOSHOW;
@@ -516,6 +556,9 @@ $(function() {
 
 	/**
 	 * This function updates the information (property/version) from given node.
+	 * @param node node to update the information
+	 * @param queryType helps to distinguish if is a property/version
+	 * @return node represents the updated node
 	 */
 	function updateNodeInfo(node,queryType){
 		var indexVersion =-1;
@@ -547,6 +590,11 @@ $(function() {
 		return(node);
 	}
 
+	/**
+	 * Use regular expresion to extract the colours from hslstring
+	 * @param hslColour colour in hsl format
+	 * @returns {*}
+	 */
 	function parseColour(hslColour){
 		regexp = /hsl\(\s*(\d+)\s*,\s*(\d+(?:\.\d+)?%)\s*,\s*(\d+(?:\.\d+)?%)\)/g;
 		exec = regexp.exec(hslColour);
@@ -573,6 +621,9 @@ $(function() {
 	}
 
 
+	/**
+	 * Initialize the tree.
+	 */
 	function initTree(){
 		getRecursiveClasses(getRoot(),0,false).done(function(data){
 			if(data!=null){
@@ -586,6 +637,14 @@ $(function() {
 		});
 	}
 
+	/**
+	 * Check if a child node is contained in the parent node array. If the node is contained then will be updated
+	 * in the array.
+	 * @param node is the parent node.
+	 * @param child is the child node.
+	 * @param index distinguisis between properties and versions.
+	 * @returns {boolean}
+	 */
 	function isChildIncluded(node,child,index){
 		if((node!=null)&&(child!=null)){
 			if(node._children!=null){
@@ -801,6 +860,9 @@ $(function() {
 		versions = JSON.parse($('#num_versions').text());
 		console.log(versions);
 
+		//Init the svg and tip to avoid problems with the front end.
+		initSVG();
+
 		//Reset the selected options.
 		$("select option").prop("selected", false)
 		$('#versions option:first').prop("selected",true);
@@ -840,7 +902,6 @@ $(function() {
 		$('#spinner').keyup(function(){
 			var value= $(this).val();
 			if(!isNaN(value)){
-				console.log(value);
 				MAXCHILDSTOSHOW = new Number(value);
 				initTree();
 			}
@@ -903,7 +964,8 @@ $(function() {
 		});
 
 		if((root!=null)&&(root!=undefined)) {
-			var svg = Viz("digraph { "+exportToGrapvhViz(root,'')+" }", "svg");
+			//var svg = Viz("digraph { "+exportToGrapvhViz(root,'')+" }", "svg");
+			var svg = "digraph { "+exportToGrapvhViz(root,'')+" }";
 
 			var imgsrc = 'data:image/svg+xml;base64,'+ btoa(svg);
 			var d = new Date();

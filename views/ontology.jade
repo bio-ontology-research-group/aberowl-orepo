@@ -206,7 +206,7 @@ block content
 
           div#visualise
             div#visualisation
-              div#table_properties(style='float:left;width:33.3%;')
+              div#table_properties(style='float:left;width:50%;')
                 table
                   tbody
                     tr
@@ -233,21 +233,22 @@ block content
                           legend Properties
                           p
                             select#properties.multiselect(multiple='multiple')
-
-              div#div_spinner(style='float:left;width:33.3%;')
-                label(style='display:inline-block;text-align: center;') Number of classes
-                div.input-group
-                  span.input-group-btn
-                    button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
-                      span.glyphicon.glyphicon-minus
-                  input#spinner.form-control.input-number(type="text",data-ride="spinner",data-min="1")
-                  span.input-group-btn
-                    button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
-                      span.glyphicon.glyphicon-plus
-
-              div#export(style='float:right;')
-                 button#exportSVG.btn.btn-default() Export to SVG
-                 button#exportViz.btn.btn-default() Export to GraphViz
+                      td(width="150")
+                      td(width="250")
+                        label(style='display:inline-block;text-align: center;') Number of classes
+                        div.input-group
+                          span.input-group-btn
+                            button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
+                              span.glyphicon.glyphicon-minus
+                          input#spinner.form-control.input-number(type="text",data-ride="spinner",data-min="1")
+                          span.input-group-btn
+                            button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
+                              span.glyphicon.glyphicon-plus
+                      td(width="150")
+                      td
+                        button#exportSVG.btn.btn-default() Export to SVG
+                      td
+                        button#exportViz.btn.btn-default() Export to GraphViz
             div#infovis(style='width:100%')            
             div#ontology_value(style='display:none') #{ontology.id}
             div#num_versions(style='display:none') #{JSON.stringify(versions)}
