@@ -895,7 +895,7 @@ $(function() {
 					properties[index] = null;
 				}
 			});
-			console.log(properties.toSource());
+//			console.log(properties.toSource());
 			initTree();
 		});
 
