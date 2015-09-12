@@ -62,7 +62,7 @@ block content
           div#overview
             h4.sub-header #{ontology.description}
             -if(user)
-              h5 Do you own this ontology? Email luke.slater@kaust.edu.sa to gain maintenance priveleges.
+              h5 Do you own this ontology? Email aber-owl@googlegroups.com to gain maintenance privileges.
             h2.sub-header Statistics
             .table-responsive
               table.table.table-striped
@@ -121,11 +121,11 @@ block content
               label Super- and Equivalent classes
               input(name='type', type='radio', value='supclass') 
               label Superclasses
-              input(name='type', type='radio', value='equivalent') 
+              input(name='type', type='radio', value='equivalent' checked='true') 
               label Equivalent classes
               input(name='type', type='radio', value='subclass') 
               label Subclasses
-              input(name='type', type='radio', value='subeq' checked='true') 
+              input(name='type', type='radio', value='subeq') 
               label Sub- and Equivalent classes
               br
               a#button.btn.btn.btn-default(onclick='query=document.getElementById(\'autocomplete\').value;redrawTable();') Query
