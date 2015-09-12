@@ -3,7 +3,7 @@ function doSearch() {
   $('#tabs').show();
   //(style='display:none;')
   $('#otabhead').text('Ontologies (loading...)');
-  $('#mtabhead').text('Manchester Syntax (loading...)');
+  $('#mtabhead').text('DL Query (loading...)');
   $('#ctabhead').text('Classes (loading...)');
 
   $('#main_search').dataTable().fnDestroy();
@@ -111,7 +111,7 @@ function doSearch() {
             "dataSrc": function ( json ) {
                 var datatable = new Array();
                 result = json.result;
-                $('#mtabhead').text('Manchester Syntax ('+result.length+')');
+                $('#mtabhead').text('DL Query ('+result.length+')');
 
                 for ( var i=0, ien=result.length ; i<ien ; i++ ) {
                     datatable[i] = new Array() ;
