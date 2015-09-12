@@ -962,7 +962,7 @@ $(function() {
 					properties[index] = null;
 				}
 			});
-			console.log(properties.toSource());
+//			console.log(properties.toSource());
 			initTree();
 		});
 
@@ -1038,7 +1038,7 @@ $(function() {
 
 			var a = document.createElement("a");
 			a.href = imgsrc
-			a.download = ontology+ d.getTime()+".xdot";
+			a.download = ontology+ d.getTime()+".dot";
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);

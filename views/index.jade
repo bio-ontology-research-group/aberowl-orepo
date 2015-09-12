@@ -15,7 +15,7 @@ block content
         div
           center
             div.input-group
-              input#search.form-control(placeholder='Enter a Search Query', type='text')
+              input#search.form-control(placeholder='Enter a Search Query', type='text', autofocus='autofocus')
               span.input-group-btn
                 button#sbutton.btn.btn-default(onclick='doSearch();') Query
             a#sparql.btn.btn.btn-default(href='#' style='display:none') Use in SPARQL
@@ -29,7 +29,7 @@ block content
             li
               a(id='otabhead' href='#ontology') Ontologies
             li
-              a(id='mtabhead' href='#mowl') Manchester Syntax
+              a(id='mtabhead' href='#mowl') DL Query
 
           div#overview
             table#main_search.table.table-striped.table-bordered.table-condensed
