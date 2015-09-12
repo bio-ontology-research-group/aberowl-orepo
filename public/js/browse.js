@@ -759,10 +759,10 @@ $(function() {
 	function getSubClasses(owlClass,version,type,objectProperty){
 
 		if((type=='subeq')&&(objectProperty!=null)){
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
-			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}
 	};
@@ -967,7 +967,6 @@ $(function() {
 		});
 		$('#spinner').keyup(function() {
 			/* This will be fired every time, when textbox's value changes. */
-			console.log("pasa");
 			var value= $(this).val();
 			if(!isNaN(value)){
 				MAXCHILDSTOSHOW = new Number(value);
