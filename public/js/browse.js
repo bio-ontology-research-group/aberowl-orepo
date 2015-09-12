@@ -3,7 +3,7 @@ $(function() {
 	var ontology = $('#ontology_value').text();
 	var versions = []
 	var properties = [];
-	var MAXDEPTHLEVEL = 2; //Constant that represents the number of depth levels to show
+	var MAXDEPTHLEVEL = 1; //Constant that represents the number of depth levels to show
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
 	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
@@ -288,7 +288,7 @@ $(function() {
 		if(((d["versions"]!=undefined)&&(d["versions"]!=null))||((d["properties"]!==undefined)&&(d["properties"]!==null))){
 			if(d["versions"].length>0){
 				//We have to take into account the versions start by 0, so we have to add 1 to all versions
-				toolTipText = "<strong> Versions: <strong />";
+				toolTipText = "<strong> Versions: <strong /><br/>";
 				for(var i=0;i<d["versions"].length;i++){
 					toolTipText = toolTipText+(parseInt(d["versions"][i])+1);
 					if((d["versions"].length>1)&&(i<d["versions"].length-1)){
@@ -299,7 +299,13 @@ $(function() {
 			}
 
 			if(d["properties"].length>0){
-				toolTipText = toolTipText+"  <strong>Properties: <strong /><br />&emsp;"+d["properties"].toString()+"<br />";
+				toolTipText = toolTipText+"  <strong> Properties: <strong /><br/>";
+				for(var i= 0; i<d["properties"].length;i++) {
+					var owlProperty = d["properties"][i];
+					owlProperty = owlProperty.replace(/</g,'');
+					owlProperty = owlProperty.replace(/>/g,'');
+					toolTipText = toolTipText+"<br />&emsp;" + owlProperty + "<br />";
+				}
 			}
 			if(d.name) {
 				toolTipText = toolTipText + "  <strong>Label: <strong />"+ d.name +"<br />";
@@ -347,94 +353,152 @@ $(function() {
 		parent.children = []; //clean the visualizated children array
 
 
-		var fakeNode = buildFakeNode("˅˅˅", d["data"].min - MAXCHILDSTOSHOW, d["data"].min); //We insert at the end of the list
+		var fakeNode = buildFakeNode("˄˄˄", d["data"].min - MAXCHILDSTOSHOW, d["data"].min); //We insert at the end of the list
+		parent.children.push(fakeNode);
 
 		if (d["data"].max + MAXCHILDSTOSHOW < parent._children.length) {
 			$.merge(parent.children, parent._children.splice(d["data"].min, MAXCHILDSTOSHOW));
-			parent.children.unshift(buildFakeNode("˄˄˄", d["data"].max + 1, (d["data"].max + MAXCHILDSTOSHOW + 1)));
+			parent.children.push(buildFakeNode("˅˅˅", d["data"].max + 1, (d["data"].max + MAXCHILDSTOSHOW + 1)));
 		} else {
-			$.merge(parent.children, parent._children.splice(d["data"].min, parent._children.length - d["data"].max));
+			$.merge(parent.children, parent._children.splice(d["data"].min, parent._children.length - d["data"].min));
 		}
-
-		parent.children.push(fakeNode);
 
 		update(parent);
 
 	}
 
+	/**
+	 * Clean the fake nodes from a given parent.
+	 * @param parent is the parent from the fake nodes will be deleted.
+	 */
+	function cleanFakeNodes(parent){
+		if(parent){
+			//Clean the fakes nodes
+			for(var i=0;i<parent.children.length;i++){
+				if((parent.children[i]!=null)&&((parent.children[i].name=="˄˄˄")||(parent.children[i].name=="˅˅˅"))){
+					parent.children.splice(i,1);
+					i--;
+				}
+			}
+		}
+	}
+
+	function getFakeNodes(parent){
+		if(parent.children){
+			for(var i=0;i<parent.children.length;i++){
+				if ((parent.children[i] != null) && ((parent.children[i].name == "˄˄˄") || (parent.children[i].name == "˅˅˅"))) {
+					return(parent.children[i]);
+				}
+			}
+		}
+		return(null);
+	}
+
+	/**
+	 * Retrieves a list of nodes from a given node that will be visualised.
+	 * @param node represents the parent node of the children.
+	 */
+	function getVisualisedNodes(d){
+		if(d._children) {
+			for(var i=0;i<d._children.length;i++){
+				if (d._children[i].name === "˄˄˄") {
+					if ((i + MAXCHILDSTOSHOW) > d._children.length) {
+						return (d._children.splice(i, MAXCHILDSTOSHOW+1)) // In order to get the fake nodes.
+					} else {
+						return (d._children.splice(i, MAXCHILDSTOSHOW + 2))// In order to get the two fake nodes.
+					}
+				}
+				if (d._children[i].name == "˅˅˅") {
+					return (d._children.splice(i - MAXCHILDSTOSHOW, MAXCHILDSTOSHOW+1));// In order to get the fake nodes.
+				}
+			}
+			d.children = d._children.splice(0, MAXCHILDSTOSHOW);
+			d.children.push(buildFakeNode("˅˅˅", MAXCHILDSTOSHOW, MAXCHILDSTOSHOW + MAXCHILDSTOSHOW));
+			return(d.children);
+		}
+		return(null);
+	}
 
 	/**
 	 * Toggle children on click.
 	 */
 	function click(d) {
-		checkLevel(d);
-		if (d.children) {
-			//collapse
-			d._children = d.children;
-			d.children = null;
-		} else {
-			//expand
-			if((d._children!=null)&&(d._children.length>MAXCHILDSTOSHOW)){
-				d.children = d._children.splice(0,MAXCHILDSTOSHOW);
-				d.children.unshift(buildFakeNode("˄˄˄",MAXCHILDSTOSHOW,MAXCHILDSTOSHOW+MAXCHILDSTOSHOW));
-
-			}else if((d.name==="˄˄˄")||(d.name==="˅˅˅")){
-
-				if((d.parent!=null)&&(d.parent!==undefined)){
-					var parent = d.parent;
-
-					//Clean the fakes nodes
-					for(var i=0;i<parent.children.length;i++){
-						if((parent.children[i]!=null)&&((parent.children[i].name=="˄˄˄")||(parent.children[i].name=="˅˅˅"))){
-							parent.children.splice(i,1);
-							i--;
+		//We have to wait for finishing the update.
+		$.when(checkLevel(d))
+			.always(function() {
+				if (d.children) {
+					//collapse
+					var fakeNode = getFakeNodes(d);
+					if (fakeNode != null) {
+						if ((fakeNode.name) && (fakeNode.name == "˅˅˅" )) {//we have to insert on the middle or at the end
+							var index = fakeNode["data"].max;
+							$.merge(d.children, d._children.splice(index, (d._children.length)));
+							d._children = $.merge([], $.merge(d._children.splice(0, index), d.children));
+						} else {//we have just to insert at the begining
+							d._children = $.merge(d.children, d._children);
 						}
+						d.children = null;
+					} else {
+						d._children = d.children;
+						d.children = null;
 					}
+				} else {
+					//expand
+					if ((d._children != null) && (d._children.length > MAXCHILDSTOSHOW)) {
+						d.children = getVisualisedNodes(d);
+					} else if ((d.name === "˄˄˄") || (d.name === "˅˅˅")) {
 
-					if(d.name==="˄˄˄") {//max
-						if ((parent._children.length - d["data"].max) < MAXCHILDSTOSHOW * MAXBREADTHLEVEL) {
-							//We have to wait for the updating process ends.
-							$.when(getRecursiveClasses(parent, 0, false)).done(function(jsonTree){
-								updateUpperNodes(parent, d);
+						if ((d.parent != null) && (d.parent !== undefined)) {
+							var parent = d.parent;
+
+							cleanFakeNodes(d.parent);
+
+							 if (d.name === "˄˄˄") {//min
+
+								var index = d["data"].max;
+
+								if (index > parent._children.length) {// we insert at the end
+									$.merge(parent._children, parent.children);
+								} else {//On the other case we have to mix them
+									$.merge(parent.children, parent._children.splice(index, (parent._children.length)));
+									parent._children = $.merge([], $.merge(parent._children.splice(0, index), parent.children));
+								}
+
+								parent.children = []; //clean the visualizated children array
+
+
+								if (d["data"].min - MAXCHILDSTOSHOW > 0) {
+									$.merge(parent.children, parent._children.splice(d["data"].min, MAXCHILDSTOSHOW));
+									parent.children.unshift(buildFakeNode("˄˄˄", d["data"].min - MAXCHILDSTOSHOW - 1, d["data"].min - 1));//We insert at the begining of the list
+
+								} else {
+									$.merge(parent.children, parent._children.splice(0, MAXCHILDSTOSHOW));
+								}
+
+								parent.children.push(buildFakeNode("˅˅˅", d["data"].max, d["data"].max + MAXCHILDSTOSHOW));
+
+								update(parent);
 								return;
-							});
-						}else {
-							updateUpperNodes(parent, d);
-							return;
+							} else if (d.name === "˅˅˅") {//max
+								if ((parent._children.length - d["data"].max) < MAXCHILDSTOSHOW * MAXBREADTHLEVEL) {
+									//We have to wait for the updating process ends.
+									$.when(getRecursiveClasses(parent, 0, false)).done(function (jsonTree) {
+										updateUpperNodes(parent, d);
+										return;
+									});
+								} else {
+									updateUpperNodes(parent, d);
+									return;
+								}
+							}
 						}
-					}else if(d.name==="˅˅˅"){//min
-
-						var index = d["data"].max;
-
-						if(index > parent._children.length){// we insert at the end
-							$.merge(parent._children,parent.children);
-						}else{//On the other case we have to mix them
-							$.merge(parent.children,parent._children.splice(index, (parent._children.length)));
-							parent._children = $.merge([], $.merge(parent._children.splice(0,index),parent.children));
-						}
-
-						parent.children = []; //clean the visualizated children array
-
-						parent.children.push(buildFakeNode("˄˄˄",d["data"].max,d["data"].max+MAXCHILDSTOSHOW));
-
-						if(d["data"].min-MAXCHILDSTOSHOW>0){
-							$.merge(parent.children,parent._children.splice(d["data"].min,MAXCHILDSTOSHOW));
-							parent.children.push(buildFakeNode("˅˅˅",d["data"].min-MAXCHILDSTOSHOW-1,d["data"].min-1));//We insert at the begining of the list
-
-						}else{
-							$.merge(parent.children,parent._children.splice(0,MAXCHILDSTOSHOW));
-						}
-
-						update(parent);
-						return;
+					} else {
+						d.children = d._children;
+						d._children = null;
 					}
 				}
-			}else{
-				d.children = d._children;
-				d._children = null;
-			}
-		}
-		update(d);
+				update(d);
+			});
 	};
 
 	/**
@@ -442,10 +506,10 @@ $(function() {
 	 */
 	function checkLevel(node){
 		if((node!=null)&&(typeof(node)!="undefined")) {
-			if ((node.data["level"] != "undefined") && (node.data["level"] <= MAXDEPTHLEVEL)) {
+			if ((node.data["level"] != "undefined") && (node.data["level"] < MAXDEPTHLEVEL)) {
 				var newRoot = getRoot(node.data["owlClass"], node.name);
 				node.data["level"] = MAXDEPTHLEVEL;
-				updateTree(node, MAXDEPTHLEVEL - 1);
+				return(updateTree(node, MAXDEPTHLEVEL-1));
 			}
 		}
 	};
@@ -519,7 +583,7 @@ $(function() {
 			node["name"] = data.label;
 			node["data"] = {};
 			node.data["owlClass"] = data.owlClass;
-			node.data["level"] = MAXDEPTHLEVEL - level;
+			node.data["level"] = MAXDEPTHLEVEL-level;
 			node.data["indexChild"] = 0;
 			node.data["indexQuery"] = 0;
 			node.data["maxLabelLength"] = 0;
@@ -691,8 +755,9 @@ $(function() {
 	 * It gets the subclases from a uriClass given.
 	 */
 	function getSubClasses(owlClass,version,type,objectProperty){
+
 		if((type=='subeq')&&(objectProperty!=null)){
-			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+objectProperty+' SOME '+owlClass+'&ontology='+ontology+'&version='+version);
+			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
@@ -732,11 +797,13 @@ $(function() {
 						queryCounter++;
 						for(var j = 0; (j<properties.length)&&(queryCounter<maxQueryCounter);j++){//properties
 							property = properties[j];
-							if(property!=null){
-								var promise = getSubClasses(node.data["owlClass"],version,"subeq",property);
-								promises.push(promise);
-								execQuery.push([version,j]);
-								queryCounter++;
+							if(property!=null){ 
+								if(node.name!='owl:Thing') {
+									var promise = getSubClasses(node.data["owlClass"],version,"subeq",property);
+									promises.push(promise);
+									execQuery.push([version, j]);
+									queryCounter++;
+								}
 							}
 						}
 					}
@@ -764,13 +831,13 @@ $(function() {
 														if(node.children == null){
 															node.children=[];
 														}
-														node.children.push(buildNode(child,level,execQuery[index]));
+														node.children.push(buildNode(child,level + 1,execQuery[index]));
 														//node._children = null;
 													}else{
 														if(node._children == null){
 															node._children=[];
 														}
-														node._children.push(buildNode(child,level,execQuery[index]));
+														node._children.push(buildNode(child,level + 1,execQuery[index]));
 														//node.children = null;
 													}
 													node["data"].maxLabelLength = Math.max(node["data"].maxLabelLength,child.label.length);
@@ -859,7 +926,7 @@ $(function() {
 		}
 		versions = JSON.parse($('#num_versions').text());
 		console.log(versions);
-
+	}).always(function(){
 		//Init the svg and tip to avoid problems with the front end.
 		initSVG();
 
@@ -908,8 +975,7 @@ $(function() {
 		});
 
 		$('#spinner').val(250);
-		$('#spinner').trigger('keyup');
-
+		MAXCHILDSTOSHOW = new Number(250);
 	});
 
 	$('#exportSVG').click(function(){
