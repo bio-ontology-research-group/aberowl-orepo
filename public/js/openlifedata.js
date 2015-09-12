@@ -31,7 +31,7 @@ function redrawDataTable() {
 	"fnInitComplete": function( oSettings ) {
         },
         "ajax": {
-            "url": "/openlifedata/QueryData.groovy?query="+encodeURIComponent(term),
+            "url": "/openlifedata/QueryBio2RDF.groovy?query="+encodeURIComponent(term),
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
