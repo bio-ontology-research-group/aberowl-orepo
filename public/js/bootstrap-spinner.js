@@ -88,10 +88,13 @@
     if (value < this.options.min) value = this.options.min
     if (value > this.options.max) value = this.options.max
 
-    var e = $.Event('change.bs.spinner', { value: value })
-    this.$element.trigger(e)
+    //var e = $.Event('change.bs.spinner', { value: value })
+    //var e = $.Event('keyup', { value: value })
+    //this.$element.trigger(e)
 
-    e = $.Event('changed.bs.spinner')
+    //e = $.Event('changed.bs.spinner')
+    var e = $.Event('keyup')
+
 
     this.$element.val(value.toFixed(this.options.precision)).change().trigger(e)
   }

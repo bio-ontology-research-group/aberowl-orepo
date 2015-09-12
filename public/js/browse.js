@@ -6,7 +6,7 @@ $(function() {
 	var MAXDEPTHLEVEL = 1; //Constant that represents the number of depth levels to show
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
-	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
+	var MAXINQUIRIES = 5; //Constant that represents the maximum numbers of querying that will be done per each level.
 
 	var margin = {top: 20, right: 150, bottom: 20, left: 150},
 		width = 960 - margin.right - margin.left,
@@ -691,6 +691,8 @@ $(function() {
 	function initTree(){
 		getRecursiveClasses(getRoot(),0,false).done(function(data){
 			if(data!=null){
+				//Init the svg and tip to avoid problems with the front end.
+				initSVG();
 				root = data;
 				root.x0 = height / 2;
 				root.y0 = 0;
@@ -757,10 +759,10 @@ $(function() {
 	function getSubClasses(owlClass,version,type,objectProperty){
 
 		if((type=='subeq')&&(objectProperty!=null)){
-			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
-			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}
 	};
@@ -927,8 +929,6 @@ $(function() {
 		versions = JSON.parse($('#num_versions').text());
 		console.log(versions);
 	}).always(function(){
-		//Init the svg and tip to avoid problems with the front end.
-		initSVG();
 
 		//Reset the selected options.
 		$("select option").prop("selected", false)
@@ -965,8 +965,9 @@ $(function() {
 //			console.log(properties.toSource());
 			initTree();
 		});
-
-		$('#spinner').keyup(function(){
+		$('#spinner').keyup(function() {
+			/* This will be fired every time, when textbox's value changes. */
+			console.log("pasa");
 			var value= $(this).val();
 			if(!isNaN(value)){
 				MAXCHILDSTOSHOW = new Number(value);
@@ -974,8 +975,9 @@ $(function() {
 			}
 		});
 
-		$('#spinner').val(250);
-		MAXCHILDSTOSHOW = new Number(250);
+
+		$('#spinner').val(100);
+		MAXCHILDSTOSHOW = new Number(100);
 	});
 
 	$('#exportSVG').click(function(){
