@@ -6,7 +6,7 @@ $(function() {
 	var MAXDEPTHLEVEL = 1; //Constant that represents the number of depth levels to show
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
-	var MAXINQUIRIES = 5; //Constant that represents the maximum numbers of querying that will be done per each level.
+	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
 
 	var margin = {top: 20, right: 150, bottom: 20, left: 150},
 		width = 960 - margin.right - margin.left,
@@ -754,18 +754,41 @@ $(function() {
 	}
 
 	/**
+	 * Retrieve the number of iterations based on the versions and properties selected.
+	 */
+	function getMaxIterations(){
+		var numberInterations =0;
+		for(var i=0;i<versions.length;i++){
+			if(versions[i]!=null){
+				numberInterations++;
+			}
+		}
+		for(var i=0;i<properties.length;i++){
+			if(properties[i]!=null){
+				numberInterations++
+			}
+		}
+
+		return(numberInterations);
+	}
+
+	/**
 	 * It gets the subclases from a uriClass given.
 	 */
 	function getSubClasses(owlClass,version,type,objectProperty){
 
 		if((type=='subeq')&&(objectProperty!=null)){
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
-			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
+			//return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
+
+			console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'"&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			return('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'"&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 		}else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}
 	};
+
 
 	/**
 	 * This function implements a kind of Breadth-first search (BFS) to build the tree.
@@ -792,23 +815,26 @@ $(function() {
 				var queryCounter =0;
 				for(var i = 0; (i<node["versions"].length)&&(queryCounter<maxQueryCounter);i++){//versions
 					version = node["versions"][i];
-					if(version!=null){
-						var promise = getSubClasses(node.data["owlClass"],version,"subclass",null);
-						promises.push(promise);
-						execQuery.push(version);
+					if(version!=null) {
+						if((queryCounter>=minQueryCounter)) {
+							var promise = getSubClasses(node.data["owlClass"], version, "subclass", null);
+							promises.push(promise);
+							execQuery.push(version);
+						}
 						queryCounter++;
-						for(var j = 0; (j<properties.length)&&(queryCounter<maxQueryCounter);j++){//properties
-							property = properties[j];
-							if(property!=null){ 
-								if(node.name!='owl:Thing') {
-									var promise = getSubClasses(node.data["owlClass"],version,"subeq",property);
-									promises.push(promise);
-									execQuery.push([version, j]);
-									queryCounter++;
-								}
+					}
+					for(var j = 0; (j<properties.length)&&(queryCounter<maxQueryCounter);j++){//properties
+						property = properties[j];
+						if(property!=null){
+							if((queryCounter>=minQueryCounter)) {
+								var promise = getSubClasses(node.data["owlClass"], version, "subeq", property);
+								promises.push(promise);
+								execQuery.push([version, j]);
 							}
+							queryCounter++;
 						}
 					}
+
 				}
 				$.when.apply($,promises).then(function(){
 					if((arguments!=null)&&(arguments.length>0)){
@@ -859,12 +885,9 @@ $(function() {
 						//At the end we have to update the index
 						if(countChildren(node)>node["data"].indexChild) {
 							node["data"].indexChild = counter;
-							//If the nodes is less than MAXCHILDSTOSHOW*MAXBREADTHLEVEL means that this iteration of the algorithm is not able to complete the level. There fore we could recursively force
-							//the algorithm to execute new iterations in order to insert more nodes.
-							if(executedIndexQuery===promises.length){
+							//Just in case that the promise has been executed enterely then the index will be updated.
+							if(executedIndexQuery === promises.length){
 								node["data"].indexQuery = queryCounter;
-							}else if((countChildren(node)%MAXCHILDSTOSHOW)!=0){//If this expression produce a number distinct from 0 means that the level is not completed.
-								getRecursiveClasses(node, level, expand);
 							}
 						}else{//If the counter is more than indexChild does mean that this node has new children but if not means that all of children has been expanded  so we set the flag a false.
 							node["data"].moreChildren = false;
@@ -975,8 +998,10 @@ $(function() {
 		});
 
 
-		$('#spinner').val(100);
-		MAXCHILDSTOSHOW = new Number(100);
+		//$('#spinner').val(100);
+		//MAXCHILDSTOSHOW = new Number(100);
+		$('#spinner').val(6);
+		MAXCHILDSTOSHOW = new Number(6);
 	});
 
 	$('#exportSVG').click(function(){
