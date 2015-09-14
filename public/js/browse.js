@@ -1000,10 +1000,8 @@ $(function() {
 		});
 
 
-		//$('#spinner').val(100);
-		//MAXCHILDSTOSHOW = new Number(100);
-		$('#spinner').val(6);
-		MAXCHILDSTOSHOW = new Number(6);
+		$('#spinner').val(100);
+		MAXCHILDSTOSHOW = new Number(100);
 	});
 
 	$('#exportSVG').click(function(){
