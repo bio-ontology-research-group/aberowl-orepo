@@ -1,3 +1,6 @@
+
+
+
 function doSearch() {
 
   $('#tabs').show();
@@ -9,8 +12,11 @@ function doSearch() {
   $('#main_search').dataTable().fnDestroy();
   $('#manchester_search').dataTable().fnDestroy();
   $('#ontology_search').dataTable().fnDestroy();
-  var query = $('#search').val();
-
+    var query = $('#search').val();
+    if (!query) {
+	query = '' ;
+    }
+    window.location.hash = "!"+encodeURIComponent(query) ;
   // Class search by text
   var table = $('#main_search').dataTable( {
     "processing": false,
@@ -175,5 +181,14 @@ $(function() {
       $("#sbutton").click();
     }
   });
-  console.log('added');
+    console.log('added');
+    var qstring = null ;
+    if(window.location.hash) {
+	qstring = decodeURIComponent(window.location.hash.substring(2)); // use 2 because we use #!
+	if (qstring.length > 0) {
+	    $('#search').val(qstring) ;
+	    doSearch() ;
+	}
+    }
+
 });
