@@ -2,7 +2,7 @@ function redrawPubmedTable() {
     //var query = $('#autocomplete').value();
     var query = $.map($('#pubmed_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
 
-    window.location.hash = "#" + query ;
+//    window.location.hash = "#" + query ;
     $('#pubmed_results').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
     var ontology = $("#ontology_value").text();
