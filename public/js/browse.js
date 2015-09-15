@@ -780,9 +780,10 @@ $(function() {
 		if((type=='subeq')&&(objectProperty!=null)){
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			//return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
-
-			console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'"&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
-			return('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'"&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			objectProperty = objectProperty.replace(/</g, '');
+			objectProperty = objectProperty.replace(/>/g, '');
+			console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+			return('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 		}else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
@@ -889,6 +890,7 @@ $(function() {
 							if(executedIndexQuery === promises.length){
 								node["data"].indexQuery = queryCounter;
 							}
+
 						}else{//If the counter is more than indexChild does mean that this node has new children but if not means that all of children has been expanded  so we set the flag a false.
 							node["data"].moreChildren = false;
 						}
@@ -998,10 +1000,8 @@ $(function() {
 		});
 
 
-		//$('#spinner').val(100);
-		//MAXCHILDSTOSHOW = new Number(100);
-		$('#spinner').val(6);
-		MAXCHILDSTOSHOW = new Number(6);
+		$('#spinner').val(100);
+		MAXCHILDSTOSHOW = new Number(100);
 	});
 
 	$('#exportSVG').click(function(){
