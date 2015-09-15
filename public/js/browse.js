@@ -783,7 +783,7 @@ $(function() {
 			objectProperty = objectProperty.replace(/</g, '');
 			objectProperty = objectProperty.replace(/>/g, '');
 			console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
-			return('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+		    return($.getJSON('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
 			//console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
