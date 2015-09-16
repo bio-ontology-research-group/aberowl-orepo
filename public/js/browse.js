@@ -6,7 +6,7 @@ $(function() {
 	var MAXDEPTHLEVEL = 1; //Constant that represents the number of depth levels to show
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
-	var MAXINQUIRIES = 5; //Constant that represents the maximum numbers of querying that will be done per each level.
+	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
 	var MAXCHARTOSHOW = 30; // Constant that represents the number of characters that will be shown per label.
 
 	var margin = {top: 20, right: 150, bottom: 20, left: 150},
