@@ -3,11 +3,13 @@ extends layout
 block title
   title AberOWL: #{ontology.name}
   <meta name="fragment" content="!">
+  meta(name='keywords', content='aberowl aber-owl ontology repository OWL reasoning ontology-based data access biomedical ontologies bio-ontology bio-ontologies')
+  meta(name='description', content='#{ontology.description}')
   
 block content
   .container-fluid
     .row
-      .col-sm-3.col-md-2.sidebar
+      .col-sm-4.col-md-3.sidebar
         div.nav.nav-sidebar
           li
             a(href='/ontology/') 
@@ -21,7 +23,7 @@ block content
         br
         label Object properties
         div#left_tree_objectproperty &nbsp;
-     .col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+     .col-sm-8.col-sm-offset-4.col-md-9.col-md-offset-3.main
         div(style='float:right')
           -if(messages.info) 
             div.alert.alert-success(role='alert')
