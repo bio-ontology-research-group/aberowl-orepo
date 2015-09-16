@@ -12,7 +12,7 @@ str = java.net.URLEncoder.encode(str, "UTF-8")
 if (query.startsWith("/")) {
   query = query.substring(1)
 }
-println "http://aber-owl.net/$query#!$str"
+//println "http://aber-owl.net/$query#!$str"
 WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38)
 HtmlPage page = webClient.getPage("http://aber-owl.net/$query#!$str")
 

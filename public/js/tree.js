@@ -48,11 +48,20 @@ $(function() {
 	.on('loading.jstree', function () {
             if (qs.c) {
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
-		    var html = '<table class="table table-striped"><tbody>';
+		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
 		    $.each(data, function(a, y) {
-			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
+			if (a == "label") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="name">'+y+'</span></td></tr>';
+			} else if (a == "definition") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="description">'+y+'</span></td></tr>';
+			} else if (a == "class") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="sameAs">'+y+'</span></td></tr>';
+			} else {
+			    html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>';
+			}
 		    });
-		    html += '</tbody></table>';
+		    html += '';
+		    html += '</tbody></table></div>';
 		    $('#browse_content').html(html);
 		    $('#tabs').tabs('option', 'active', 1);
 		});
@@ -63,11 +72,20 @@ $(function() {
             var last = data.selected[data.selected.length-1];
             if(data.node) {
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
-		    var html = '<table class="table table-striped"><tbody>'
+		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
 		    $.each(data, function(a, y) {
-			html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>'
+			if (a == "label") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="name">'+y+'</span></td></tr>';
+			} else if (a == "definition") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="description">'+y+'</span></td></tr>';
+			} else if (a == "class") {
+			    html += '<tr><td>'+a+'</td><td><span itemprop="sameAs">'+y+'</span></td></tr>';
+			} else {
+			    html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>';
+			}
 		    });
-		    html += '</tbody></table>';
+		    html += '<meta itemprop="url" content='+window.location+'/>' ;
+		    html += '</tbody></table></div>';
 		    $('#browse_content').html(html);
 		    $('#tabs').tabs('option', 'active', 1);
 		});
