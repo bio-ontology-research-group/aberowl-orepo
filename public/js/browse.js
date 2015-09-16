@@ -967,7 +967,7 @@ $(function() {
 
 		$('.multiselect').each(function(component){
 			$(this).multiselect({
-				buttonWidth: '250px'
+				buttonWidth: '200px'
 			});
 		});
 		$('.checkbox').each(function(index){
