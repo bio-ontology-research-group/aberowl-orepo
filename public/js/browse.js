@@ -16,7 +16,6 @@ $(function() {
 	var i = 0,duration = 350, root;
 
 	var tree = d3.layout.tree()
-		.nodeSize([80, 80])
 		.size([height, width]);
 
 	var diagonal = d3.svg.diagonal()
@@ -146,9 +145,6 @@ $(function() {
 			}
 			d.y = d.depth *(MAXCHARTOSHOW*10);
 		});
-
-
-
 
 		// Update the nodes…
 		var node = svgGroup.selectAll("g.node")
