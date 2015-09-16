@@ -120,7 +120,7 @@ $(function() {
 				    var p = {
 					'id': c.classURI + i,
 					'data': c.classURI,
-					'text': c.label,
+					'text': c.label[0],
 					'children': true,
 					'a_attr':{'href':"#!"+c.classURI},
 					'state': {
@@ -154,7 +154,7 @@ $(function() {
 				var p = {
 				    'id': c.classURI + i,
 				    'data': c.classURI,
-				    'text': c.label,
+				    'text': c.label[0],
 				    'a_attr':{'href':"#!"+c.classURI},
 				    'children': true,
 				    'state': {
@@ -182,7 +182,7 @@ $(function() {
 				    'id': c.classURI + i,
 				    'data': c.classURI,
 				    'a_attr':{'href':"#!"+c.classURI},
-				    'text': c.label,
+				    'text': c.label[0],
 				    'children': true
 				};
 				if(!node.text) node.text = c.remainder;
