@@ -7,6 +7,7 @@ $(function() {
 	var MAXBREADTHLEVEL = 2; //Constant that represent the numbers of breadth levels to show
 	var MAXCHILDSTOSHOW = 6; //Constant that represents the numbers of nodes to show (it has to be more than MAXBREADTHLEVEL).
 	var MAXINQUIRIES = 2; //Constant that represents the maximum numbers of querying that will be done per each level.
+	var MAXCHARTOSHOW = 30; // Constant that represents the number of characters that will be shown per label.
 
 	var margin = {top: 20, right: 150, bottom: 20, left: 150},
 		width = 960 - margin.right - margin.left,
@@ -16,6 +17,7 @@ $(function() {
 
 	var tree = d3.layout.tree()
 		.size([height, width]);
+
 	var diagonal = d3.svg.diagonal()
 		.projection(function(d) { return [d.y, d.x]; });
 
@@ -137,21 +139,12 @@ $(function() {
 			links = tree.links(nodes);
 
 
-		nodes.forEach(function(d){
-			if(d.name==root.name){
+		nodes.forEach(function(d) {
+			if (d.name == root.name) {
 				d.y = 0;
-			}else if(d.parent){
-				if(d.depth==1){
-					d.y = 100 +	 (parseInt(d.parent["data"].maxLabelLength));
-				}else {
-					d.y = d.parent.y + 200 + (parseInt(d.parent["data"].maxLabelLength));
-				}
-			}else{//default configuration
-				d.y = d.depth * 180;
 			}
+			d.y = d.depth *(MAXCHARTOSHOW*10);
 		});
-
-
 
 		// Update the nodes…
 		var node = svgGroup.selectAll("g.node")
@@ -307,8 +300,8 @@ $(function() {
 					toolTipText = toolTipText+"<br />&emsp;" + owlProperty + "<br />";
 				}
 			}
-			if(d.name) {
-				toolTipText = toolTipText + "  <strong>Label: <strong />"+ d.name +"<br />";
+			if((d.data)&&(d.data["label"])) {
+				toolTipText = toolTipText + "  <strong>Label: <strong />"+ d.data["label"] +"<br />";
 			}
 			if((d.data)&&(d.data["owlClass"])) {
 				var owlClass = d.data["owlClass"];
@@ -444,7 +437,8 @@ $(function() {
 					}
 				} else {
 					//expand
-					if ((d._children != null) && (d._children.length > MAXCHILDSTOSHOW)) {
+					if (((d._children != null) && (d._children.length > MAXCHILDSTOSHOW))||
+						((d._children != null) && (d._children.length == MAXCHILDSTOSHOW)&&(node["data"].indexQuery<getMaxIterations()))) {
 						d.children = getVisualisedNodes(d);
 					} else if ((d.name === "˄˄˄") || (d.name === "˅˅˅")) {
 
@@ -580,13 +574,20 @@ $(function() {
 		var node = null
 		if(data!=null){
 			node = {};
-			node["name"] = data.label;
+			if(Array.isArray(data.label)){
+				node["name"] = data.label[0];
+			}else{
+				node["name"] = data.label;
+			}
+			if(node["name"].length>MAXCHARTOSHOW){
+				node["name"] = node["name"].substr(0,MAXCHARTOSHOW)+"...";
+			}
 			node["data"] = {};
+			node.data["label"] = data.label;
 			node.data["owlClass"] = data.owlClass;
 			node.data["level"] = MAXDEPTHLEVEL-level;
 			node.data["indexChild"] = 0;
 			node.data["indexQuery"] = 0;
-			node.data["maxLabelLength"] = 0;
 			node.data["moreChildren"] = true;
 			//collapse the nodes children = null and  _children = []
 			node["children"] = null;
@@ -782,6 +783,7 @@ $(function() {
 			//return($.getJSON('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(objectProperty)+' SOME '+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 			objectProperty = objectProperty.replace(/</g, '');
 			objectProperty = objectProperty.replace(/>/g, '');
+			//console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 			console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 		    return($.getJSON('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 		}else{
@@ -844,38 +846,38 @@ $(function() {
 						var minIndex = node["data"].indexChild;
 						var maxIndex = node["data"].indexChild+(MAXCHILDSTOSHOW*MAXBREADTHLEVEL);
 						$.each(arguments, function(index,queryResult){
-							if(Array.isArray(queryResult)){
-								queryResult = queryResult[0];
-							}
-							if((queryResult!=null)&&(queryResult.result!=null)){
-								var i = 0;
-								if(countChildren(node) < maxIndex) {
+
+							if(countChildren(node) < maxIndex) {
+								if (Array.isArray(queryResult)) {
+									queryResult = queryResult[0];
+								}
+								if ((queryResult != null) && (queryResult.result != null)) {
+									var i = 0;
 									var child;
-									for(i=0;((i<queryResult.result.length)&&(countChildren(node)<maxIndex));i++){
+									for (i = 0; ((i < queryResult.result.length) && (countChildren(node) < maxIndex)); i++) {
 										child = queryResult.result[i];
-										if(counter>=minIndex){
-											if((child!=null)&&(typeof(child)!==undefined)&&(!child.deprecated)){
-												if(!isChildIncluded(node,child,index)){
-													if(expand){
-														if(node.children == null){
-															node.children=[];
+										if (counter >= minIndex) {
+											if ((child != null) && (typeof(child) !== undefined) && (!child.deprecated)) {
+												if (!isChildIncluded(node, child, index)) {
+													if (expand) {
+														if (node.children == null) {
+															node.children = [];
 														}
-														node.children.push(buildNode(child,level + 1,execQuery[index]));
+														node.children.push(buildNode(child, level + 1, execQuery[index]));
 														//node._children = null;
-													}else{
-														if(node._children == null){
-															node._children=[];
+													} else {
+														if (node._children == null) {
+															node._children = [];
 														}
-														node._children.push(buildNode(child,level + 1,execQuery[index]));
+														node._children.push(buildNode(child, level + 1, execQuery[index]));
 														//node.children = null;
 													}
-													node["data"].maxLabelLength = Math.max(node["data"].maxLabelLength,child.label.length);
 												}
 											}
 										}
 										counter++;
 									}
-									if(queryResult.result.length==i){//This promise has done completely
+									if (queryResult.result.length == i) {//This promise has done completely
 										executedIndexQuery++;
 									}
 								}
@@ -887,11 +889,14 @@ $(function() {
 						if(countChildren(node)>node["data"].indexChild) {
 							node["data"].indexChild = counter;
 							//Just in case that the promise has been executed enterely then the index will be updated.
-							if(executedIndexQuery === promises.length){
-								node["data"].indexQuery = queryCounter;
+							node["data"].indexQuery = node["data"].indexQuery + executedIndexQuery;
+							if(node["data"].indexQuery==getMaxIterations()){ //That means that all children nodes have been expanded.
+								node["data"].moreChildren = false;
+							}else if(((countChildren(node)%MAXCHILDSTOSHOW)!=0)&&(node["data"].indexQuery<getMaxIterations())){//If this expression produce a number distinct from 0 means that the level is not completed.
+								getRecursiveClasses(node, level, expand);
 							}
 
-						}else{//If the counter is more than indexChild does mean that this node has new children but if not means that all of children has been expanded  so we set the flag a false.
+						}else{//If the counter is more than indexChild does mean that this node has new children but if does not means that all of children has been expanded  so we set the flag a false.
 							node["data"].moreChildren = false;
 						}
 
@@ -961,7 +966,9 @@ $(function() {
 		$('#versions option:first').prop("disabled","disabled");
 
 		$('.multiselect').each(function(component){
-			$(this).multiselect();
+			$(this).multiselect({
+				buttonWidth: '200px'
+			});
 		});
 		$('.checkbox').each(function(index){
 			$(this).css('color',getColour(index));
@@ -1002,6 +1009,8 @@ $(function() {
 
 		$('#spinner').val(100);
 		MAXCHILDSTOSHOW = new Number(100);
+
+
 	});
 
 	$('#exportSVG').click(function(){
