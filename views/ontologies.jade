@@ -26,7 +26,7 @@ block content
               for ontology in ontologies
                 tr
                   td
-                   a(href='/ontology/#{ontology.id}') #{ontology.id} 
+                    a(href='/ontology/#{ontology.id}') #{ontology.id} 
                   td 
                     -if(stati[ontology.id] == 'unloadable')
                       span.label.label-warning Unloadable
@@ -37,4 +37,8 @@ block content
                     -else
                       span.label.label-sm.label-default Unknown
                   td #{ontology.name}
-                  td(style='word-wrap:break-word;width=65%') #{ontology.description}
+                  td(style='word-wrap:break-word;width=65%')
+                    div(itemscope itemtype='https://schema.org/Dataset')
+                      span(itemprop='description') #{ontology.description}
+                      meta(itemprop='name' content='#{ontology.name}')
+                      meta(itemprop='url' content='/ontology/#{ontology.id}')
