@@ -74,6 +74,9 @@ block content
                     td Class Count
                     td #{stats.classCount}
                   tr
+                    td Unsatisfiable classes
+                    td #{stats.unsatisfiableClassesCount}
+                  tr
                     td Logical Axiom Count
                     td #{stats.logicalAxiomCount}
                   tr
@@ -82,6 +85,10 @@ block content
                   tr
                     td TBox Axiom Count
                     td #{stats.tBoxAxiomCount}
+                  for val, prop in stats.annotations
+                    tr
+                      td #{prop}
+                      td #{val}
             h2.sub-header Recent Versions
             .table-responsive
               table.table.table-striped
