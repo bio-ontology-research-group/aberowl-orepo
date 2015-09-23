@@ -11,17 +11,19 @@ var express = require('express'),
     passHash = require('password-hash'),
     flash = require('express-flash'),
     databank = require('databank').Databank,
+    phantomjs = require('phantomjs'),
     // import new API for the visualization module.
     d3 = require('d3'),
     jsdom = require("jsdom"),
-    xmldom = require('xmldom');
-
+    xmldom = require('xmldom'),
+    prerender = require('prerender-node');
 
 
 // import routes
 var routes = require('./routes/index');
 var ontologies = require('./routes/ontologies');
 var users = require('./routes/users');
+//var phantom = require('./routes/bot');
 
 // connect to the database
 var params = {
@@ -36,6 +38,7 @@ db.connect({}, function(err) {
 }.bind(this));
 
 var app = express();
+app.use(require('prerender-node'));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -62,6 +65,7 @@ app.use(function(req, res, next) {
   next();
 });
 
+//app.use('/bot', phantom);
 app.use('/', routes);
 app.use('/ontology', ontologies);
 app.use('/user', users);
