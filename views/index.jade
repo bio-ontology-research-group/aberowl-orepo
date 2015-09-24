@@ -24,10 +24,12 @@ block scripts
   script(src='/js/jquery.dataTables.min.js')
   script(src='/js/dataTables.bootstrap.min.js')
   script(src='/js/search.js')
-
+  <script> window.prerenderReady = false; </script>
 
 block title
   title AberOWL: Framework for ontology-based data access in biology
+  meta(name='keywords', content='aberowl aber-owl ontology repository OWL reasoning ontology-based data access biomedical ontologies bio-ontology bio-ontologies')
+  meta(name='description', content='AberOWL consists of a repository of ontologies, a set of webservices which provide access to reasoning over the ontologies, and several frontends to provide ontology-based access to biological datasets.')
 
 block content
   .container-fluid

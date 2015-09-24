@@ -5,7 +5,8 @@ block title
   <meta name="fragment" content="!">
   meta(name='keywords', content='aberowl aber-owl ontology repository OWL reasoning ontology-based data access biomedical ontologies bio-ontology bio-ontologies')
   meta(name='description', content='#{ontology.description}')
-  
+  <script> window.prerenderReady = false; </script>
+
 block content
   .container-fluid
     .row
@@ -85,10 +86,11 @@ block content
                   tr
                     td TBox Axiom Count
                     td #{stats.tBoxAxiomCount}
-                  for val, prop in stats.annotations
-                    tr
-                      td #{prop}
-                      td #{val}
+                  -if(stats.annotations)
+                    for val, prop in stats.annotations
+                      tr
+                        td #{prop}
+                        td #{val}
             h2.sub-header Recent Versions
             .table-responsive
               table.table.table-striped
