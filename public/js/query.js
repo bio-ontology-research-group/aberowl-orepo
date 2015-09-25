@@ -106,7 +106,7 @@ $(document).ready(function() {
       ]
   })
     
-  var q = window.location.hash.replace("#","");
+    var q = null ;window.location.hash.replace("#","");
   if (q!=null && q.length>0) {
           query = q ;
           redrawTable();

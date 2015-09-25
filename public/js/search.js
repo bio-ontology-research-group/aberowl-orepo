@@ -72,7 +72,10 @@ function doSearch() {
       { "sWidth": "30%"},
       { "sWidth": "55%"},
     ],
-    "ajax": {
+      "fnInitComplete": function(oSettings, json) {
+	  window.prerenderReady = true ;
+      },
+      "ajax": {
           "url": "/service/api/queryOntologies.groovy?term=" + encodeURIComponent(query.trim()),
           "dataType": 'json',
           "dataSrc": function(result) {
@@ -188,7 +191,10 @@ $(function() {
 	if (qstring.length > 0) {
 	    $('#search').val(qstring) ;
 	    doSearch() ;
+//	    window.prerenderReady = true ;
 	}
+    } else {
+	window.prerenderReady = true ;
     }
 
 });

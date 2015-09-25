@@ -1,3 +1,5 @@
+
+
 var qs = function () {
     // This function is anonymous, is executed immediately and 
     // the return value is assigned to QueryString!
@@ -45,17 +47,28 @@ $(function() {
               tree.fireEvent("changed.jstree");
               }*/
 	})
+	.on('loaded.jstree', function () {
+	    window.prerenderReady = true;
+	})
 	.on('loading.jstree', function () {
             if (qs.c) {
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
+		    var labstr = '' ;
+		    var obostr = '' ;
+		    var descstr = null ;
 		    $.each(data, function(a, y) {
 			if (a == "label") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="name">'+y+'</span></td></tr>';
+			    labstr = y ;
 			} else if (a == "definition") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="description">'+y+'</span></td></tr>';
+			    descstr = y ;
 			} else if (a == "class") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="sameAs">'+y+'</span></td></tr>';
+			} else if (a == "oboid") {
+			    obostr = y.toString().toUpperCase() ;
+			    html += '<tr><td>'+a+'</td><td>'+obostr+'</span></td></tr>';
 			} else {
 			    html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>';
 			}
@@ -63,7 +76,12 @@ $(function() {
 		    html += '';
 		    html += '</tbody></table></div>';
 		    $('#browse_content').html(html);
+		    document.title = obostr + ': ' + labstr ;
+		    if (descstr) {
+			$('meta[name=description]').attr('content', descstr) ;
+		    }
 		    $('#tabs').tabs('option', 'active', 1);
+		    window.prerenderReady = true;
 		});
 
             }
@@ -73,13 +91,19 @@ $(function() {
             if(data.node) {
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
+		    var labstr = '' ;
+		    var obostr = '' ;
 		    $.each(data, function(a, y) {
 			if (a == "label") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="name">'+y+'</span></td></tr>';
+			    labstr = y ;
 			} else if (a == "definition") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="description">'+y+'</span></td></tr>';
 			} else if (a == "class") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="sameAs">'+y+'</span></td></tr>';
+			} else if (a == "oboid") {
+			    obostr = y.toString().toUpperCase() ;
+			    html += '<tr><td>'+a+'</td><td>'+obostr+'</span></td></tr>';
 			} else {
 			    html += '<tr><td>'+a+'</td><td>'+y+'</td></tr>';
 			}
@@ -87,7 +111,9 @@ $(function() {
 		    html += '<meta itemprop="url" content='+window.location+'/>' ;
 		    html += '</tbody></table></div>';
 		    $('#browse_content').html(html);
+                    document.title = obostr + ': ' + labstr ;
 		    $('#tabs').tabs('option', 'active', 1);
+		    window.prerenderReady = true;
 		});
             }
 	}) 
@@ -98,15 +124,15 @@ $(function() {
 		    'url' : function(node) {
 			if(node.id === '#') {
 			    if(qs.c) {
-				return '/service/api/findRoot.groovy?direct=true&query=<'+encodeURIComponent(qs.c)+'>&ontology='+ontology
+				return '/service/api/findRoot.groovy?direct=true&query=<'+encodeURIComponent(qs.c)+'>&ontology='+ontology ;
 			    } else {
-				return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology
+				return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology ;
 			    }
 			} else {
 			    if (node.id) {
 				window.location.hash = "!"+encodeURIComponent(node.data);
 			    }
-			    return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology
+			    return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology ;
 			}
 		    },
 		    'dataFilter': function(data) {
@@ -119,7 +145,7 @@ $(function() {
 				$.each(subtree.classes, function(i, c) {
 				    var p = {
 					'id': c.classURI + i,
-					'data': c.classURI,
+					'data': c.classURI ,
 					'text': c.label[0],
 					'children': true,
 					'a_attr':{'href':"#!"+c.classURI},
@@ -153,7 +179,7 @@ $(function() {
 			    $.each(data.classes, function(i, c) {
 				var p = {
 				    'id': c.classURI + i,
-				    'data': c.classURI,
+				    'data': c.classURI ,
 				    'text': c.label[0],
 				    'a_attr':{'href':"#!"+c.classURI},
 				    'children': true,
@@ -180,7 +206,7 @@ $(function() {
 			    $.each(data, function(i, c) {
 				var node = {
 				    'id': c.classURI + i,
-				    'data': c.classURI,
+				    'data': c.classURI ,
 				    'a_attr':{'href':"#!"+c.classURI},
 				    'text': c.label[0],
 				    'children': true

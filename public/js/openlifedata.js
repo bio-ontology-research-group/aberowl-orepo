@@ -5,7 +5,7 @@ function redrawDataTable() {
     }
 
     var query = $.map($('#data_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
-    window.location.hash = "#" + query ;
+    //window.location.hash = "#" + query ;
 
     $('#data_results').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
