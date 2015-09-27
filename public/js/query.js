@@ -55,7 +55,7 @@ function redrawTable() {
 	    { "sWidth": "15%"},
 	    { "sWidth": "15%"},
 	    { "sWidth": "30%"},
-	    { "sWidth": "40%"},
+	    { "sWidth": "40%"}
 	],
 	"fnInitComplete": function( oSettings ) {
 	    $('#pubmed').attr('href', "/aber-owl/pubmed/?type="+qType+"&owlquery="+encodeURIComponent(query)+"&ontology="+ontology);
@@ -102,7 +102,7 @@ $(document).ready(function() {
           { "sWidth": "15%"},
           { "sWidth": "15%"},
           { "sWidth": "30%"},
-          { "sWidth": "40%"},
+          { "sWidth": "40%"}
       ]
   })
     

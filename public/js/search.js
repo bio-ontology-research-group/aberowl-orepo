@@ -3,6 +3,7 @@
 
 function doSearch() {
 
+    $( "#tabs" ).tabs();
   $('#tabs').show();
   //(style='display:none;')
   $('#otabhead').text('Ontologies (loading...)');
@@ -32,7 +33,7 @@ function doSearch() {
       { "sWidth": "15%"},
       { "sWidth": "15%"},
       { "sWidth": "30%"},
-      { "sWidth": "40%"},
+      { "sWidth": "40%"}
     ],
       "ajax": {
           "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
@@ -70,7 +71,7 @@ function doSearch() {
     "aoColumns" : [
       { "sWidth": "15%"},
       { "sWidth": "30%"},
-      { "sWidth": "55%"},
+      { "sWidth": "55%"}
     ],
       "fnInitComplete": function(oSettings, json) {
 	  window.prerenderReady = true ;
@@ -112,7 +113,7 @@ function doSearch() {
       { "sWidth": "15%"},
       { "sWidth": "15%"},
       { "sWidth": "30%"},
-      { "sWidth": "40%"},
+      { "sWidth": "40%"}
     ],
       "ajax": {
         "url": "/service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
@@ -149,7 +150,7 @@ $(function() {
           { "sWidth": "15%"},
           { "sWidth": "15%"},
           { "sWidth": "30%"},
-          { "sWidth": "40%"},
+          { "sWidth": "40%"}
       ]
   });
 
@@ -161,7 +162,7 @@ $(function() {
       aoColumns : [
           { "sWidth": "15%"},
           { "sWidth": "30%"},
-          { "sWidth": "55%"},
+          { "sWidth": "55%"}
       ]
   });
 
@@ -174,7 +175,7 @@ $(function() {
           { "sWidth": "15%"},
           { "sWidth": "15%"},
           { "sWidth": "30%"},
-          { "sWidth": "40%"},
+          { "sWidth": "40%"}
       ]
   });
 
@@ -198,3 +199,5 @@ $(function() {
     }
 
 });
+
+window['doSearch'] = doSearch ;
