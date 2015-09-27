@@ -2,12 +2,16 @@ extends layout
 
 block title
   title AberOWL: Help pages
+  meta(name='title', content='AberOWL help pages')
+  meta(name='description', content='AberOWL API documentation and help pages')
+  link(rel='stylesheet', href='/css/base.css')
+  link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
+  link(rel='stylesheet', href='/css/style.css')
 
 block content
   .container-fluid
     .starter-template
-      -if(messages)
-        p #{messages.errors}
+
       h1 AberOWL Help
 
       p. 

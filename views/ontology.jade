@@ -5,9 +5,18 @@ block title
   <meta name="fragment" content="!">
   meta(name='keywords', content='aberowl aber-owl ontology repository OWL reasoning ontology-based data access biomedical ontologies bio-ontology bio-ontologies')
   meta(name='description', content='#{ontology.description}')
+  link(rel="icon" href="http://aber-owl.net/favicon.png")
+  link(rel='stylesheet', href='/css/base.css')
+  link(rel='stylesheet', href='/css/style.min.css')
+  link(rel='stylesheet', href='/css/d3.css')
+  link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
+  link(rel='stylesheet', href='/css/jquery-ui.css')
+  link(rel='stylesheet', href='/css/jquery.tagsinput.css')
+  link(rel='stylesheet', href='/css/style.css')
+  link(rel='stylesheet', href='/css/bootstrap-multiselect.css')
   <script> window.prerenderReady = false; </script>
 
-block scripts
+block append scripts
   script(async src='/js/ontology.js')
 //  script(src='/js/jquery-2.1.3.min.js')
 //  script(src='/js/jstree.min.js')
@@ -304,10 +313,10 @@ block content
                 h5 Current update method: 
                   -if(ontology.source == 'bioportal' || ontology.source == 'manual')
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') #{ontology.source}
-                     &nbsp;
+                      &nbsp;
                   -else 
                     div#osource.label.label-success(href='#', data-placement='bottom', data-original-title='wat', data-content='test', rel='popover', data-trigger='hover') Updating directly from: #{ontology.source}
-                     &nbsp;
+                      &nbsp;
                   a(href='#', onclick='openSourceForm()') change...
                   div#sourceForm
               a.btn.btn-sm.btn-warning(style='margin-left:10px', href='#', onclick='openVersionForm()', role='button') 
