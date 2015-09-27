@@ -3,7 +3,7 @@ extends layout
 block append scripts
   script(src='/js/jquery-2.1.3.min.js')
   script(src='/js/jquery-ui.min.js')
-  script(async src='/js/jquery.dataTables.min.js')
+  script(src='/js/jquery.dataTables.min.js')
   script(async src='/js/search.js')
   <script> window.prerenderReady = false; </script>
 
@@ -29,8 +29,6 @@ block content
     .jumbotron
         p(align='center')
           span AberOWL framework for ontology-based data access.
-        p(align='center')
-          span Currently hosting #{stats.oCount} ontologies, with #{stats.cCount} classes and #{stats.aCount} axioms.
         div
           center
             div.input-group
