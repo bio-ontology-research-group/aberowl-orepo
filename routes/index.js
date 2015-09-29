@@ -5,8 +5,9 @@ var passHash = require('password-hash');
 var _ = require('underscore')._;
 
 /* GET home page. */
+
 router.get('/', function(req, res) {
-  request.get(req.aberowl + 'getStats.groovy', {
+/*  request.get(req.aberowl + 'getStats.groovy', {
       'json': true
     }, function(request, response, body) {
       if(response.statusCode = 200 && _.isObject(body)) {
@@ -14,11 +15,13 @@ router.get('/', function(req, res) {
         body.cCount = body.cCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
         body.aCount = body.aCount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
       }
-      res.render('index', {
-        'stats': body
-      });
+*/
+    res.render('index', {
+//        'stats': body
     });
+//    });
 });
+
 
 router.get('/register', function(req, res) {
   res.render('register', {});

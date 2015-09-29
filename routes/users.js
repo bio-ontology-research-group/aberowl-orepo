@@ -6,13 +6,19 @@ var pluralise = require('pluralize');
 
 /* GET users listing. */
 router.get('/:username', function(req, res) {
-  req.db.read('users', req.params.username, function(err, user) {
-    res.render('user_page', {
-      'ontologies': null,
-      'random_noun': pluralise(names.choose()),
-      'target_user': user
+    var ontologies = {};
+    
+    req.db.read('ontologies') ;
+	   
+      
+    
+    req.db.read('users', req.params.username, function(err, user) {
+	res.render('user_page', {
+	    'ontologies': ontologies,
+	    'random_noun': pluralise(names.choose()),
+	    'target_user': user
+	});
     });
-  });
 });
 
 module.exports = router;

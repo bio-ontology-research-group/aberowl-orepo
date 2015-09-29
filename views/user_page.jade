@@ -1,5 +1,12 @@
 extends layout
 
+block title
+  title User page for ${target_user.username}
+  link(rel='stylesheet', href='/css/base.css')
+  link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
+  link(rel='stylesheet', href='/css/style.css')
+  link(rel="icon" href="http://aber-owl.net/favicon.png")
+
 block content
   .container-fluid
     .jumbotron

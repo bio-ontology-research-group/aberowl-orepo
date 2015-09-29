@@ -8,6 +8,12 @@ var _ = require('underscore')._;
 var passport = require('passport');
 var fs = require('fs');
 
+if (typeof String.prototype.endsWith !== 'function') {
+    String.prototype.endsWith = function(suffix) {
+	return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}
+
 /** Ontology Listing and display. **/
 
 router.get('/', function(req, res) {
@@ -94,11 +100,15 @@ router.post('/upload', function(req, res) {
               'source': req.body.url,
               'owners': [ req.user.username ]
             };
-
-            req.db.save('ontologies', req.body.acronym, ont, function(err) {
-              req.flash('info', 'Ontology added successfully and will be synchronised soon...')
-              res.redirect('/ontology/' + req.body.acronym);
-            });
+	    if (req.body.url.endsWith("owl") || req.body.url.endsWith("rdf")) {
+		req.db.save('ontologies', req.body.acronym, ont, function(err) {
+		    req.flash('info', 'Ontology added successfully and will be synchronised soon...')
+		    res.redirect('/ontology/' + req.body.acronym);
+		});
+	    } else {
+		req.flash('error', 'Link does not seem to point to an ontology file (must end with rdf or owl).')
+		res.redirect('/ontology/' + req.body.acronym);
+	    }
         } else {
           req.flash('error', 'You must give a URL or an ontology file!');
           res.redirect('/ontology/upload')
