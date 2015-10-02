@@ -28,7 +28,7 @@ function redrawPubmedTable() {
 	    $('#sparql').show();*/
         },
         "ajax": {
-            "url": "/aber-owl/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
+            "url": "/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();

@@ -96,10 +96,8 @@ block content
               li
                 a(href='#manage') Manage
           div#overview
-            h4.sub-header #{ontology.description}
-            -if(user)
-              h5 Do you own this ontology? Email aber-owl@googlegroups.com to gain maintenance privileges.
-            h2.sub-header Statistics
+            h5.sub-header #{ontology.description}
+            h2.sub-header Ontology metadata
             .table-responsive
               table.table.table-striped
                 tbody
@@ -109,37 +107,11 @@ block content
                   tr
                     td Unsatisfiable classes
                     td #{stats.unsatisfiableClassesCount}
-                  tr
-                    td Logical Axiom Count
-                    td #{stats.logicalAxiomCount}
-                  tr
-                    td RBox Axiom Count
-                    td #{stats.rBoxAxiomCount}
-                  tr
-                    td TBox Axiom Count
-                    td #{stats.tBoxAxiomCount}
                   -if(stats.annotations)
                     for val, prop in stats.annotations
                       tr
                         td #{prop}
                         td #{val}
-            h2.sub-header Recent Versions
-            .table-responsive
-              table.table.table-striped
-                thead
-                  tr
-                    th Date 
-                    th Download
-                tbody
-                  - var x = 1
-                  for i, time in ontology.submissions
-                    - time = new Date(parseInt(time)*1000).toUTCString()
-                    - if(x > 3) return;
-                    tr
-                      td #{time}
-                      td 
-                        a(href='/onts/'+i) Download...
-                    - x++
           div#browse
             div#browse_content
           div#downloads
@@ -150,14 +122,14 @@ block content
                     th Date 
                     th Download
                 tbody
-                  - var x = 1
-                  for i, time in ontology.submissions
+                  - var oKeys = Object.keys(ontology.submissions).sort().reverse()
+                  for time in oKeys
+                    - dl = ontology.submissions[time]
                     - time = new Date(parseInt(time)*1000).toUTCString()
                     tr
                       td #{time}
                       td 
-                        a(href='/onts/'+i) Download...
-                    - x++
+                        a(href='/onts/'+dl) Download...
           div#query
             center
               input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
@@ -328,3 +300,4 @@ block content
               form.form(action='/ontology/#{ontology.id}/delete', method='post', role='form')
                 button.btn.btn-danger(type='submit') Delete Ontology
         div#ontology_value(style='display:none') #{ontology.id}
+        +footer

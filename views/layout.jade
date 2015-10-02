@@ -1,5 +1,20 @@
 doctype html
 
+mixin footer    
+  .footer.text-center
+      div
+        p AberOWL is jointly developed by researchers from <a href="http://www.kaust.edu.sa/faculty/hoehndorf.html">King Abdullah University of Science and Technology</a> and the <a href="http://www.pdn.cam.ac.uk/staff/schofield/index.shtml">University of Cambridge</a>.
+          center
+            ul.nav.navbar-nav(style='display:inline-block;float:none;vertical-align:top;text-align:center;')
+              li
+                a(href='https://github.com/bio-ontology-research-group') Source code
+              li
+                a(href='https://github.com/bio-ontology-research-group/aberowl-orepo/issues') Issue tracker
+              li
+                a(href='http://www.biomedcentral.com/1471-2105/16/26') How to cite
+              li
+                a(href='/help') Help
+
 html(lang='en')
   head
 
@@ -52,16 +67,4 @@ html(lang='en')
 
     block content
 
-    .footer
-      div
-        p(align='center') AberOWL is jointly developed by researchers from <a href="http://www.kaust.edu.sa/faculty/hoehndorf.html">King Abdullah University of Science and Technology</a> and the <a href="http://www.pdn.cam.ac.uk/staff/schofield/index.shtml">University of Cambridge</a>.
-        .container(style='text-align:center;')
-          ul.nav.navbar-nav(style='display: inline-block;float:none;margin-left: auto;margin-right: auto;text-align: center;')
-            li(style='text-align: center;')
-              a(href='https://github.com/bio-ontology-research-group') Source code
-            li
-              a(href='https://github.com/bio-ontology-research-group/aberowl-orepo/issues') Issue tracker
-            li
-              a(href='http://www.biomedcentral.com/1471-2105/16/26') How to cite
-            li
-              a(href='/help') Help
+
