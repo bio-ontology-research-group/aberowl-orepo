@@ -48,10 +48,10 @@ function doSearch() {
     "bAutoWidth": false,
     "iDisplayLength": 50,
     "bJQueryUI": false,
-      "columnDefs": [
-          { "visible": false, "targets": 0 }
-      ],
-      "drawCallback": function ( settings ) {
+    "columnDefs": [
+        { "visible": false, "targets": [0,1] }
+    ],
+    "drawCallback": function ( settings ) {
           var api = this.api();
           var rows = api.rows( {page:'current'} ).nodes();
           var last=null;
@@ -59,6 +59,7 @@ function doSearch() {
           api.column(0, {page:'all'} ).data().each( function ( group, i ) {
               if ( last !== group ) {
                   $(rows).eq( i ).before(
+//                      '<tr class="group"><td colspan="3">'+group+'</td></tr>'
                       '<tr class="group"><td colspan="3">'+group+'</td></tr>'
                   );
 		  
@@ -67,10 +68,10 @@ function doSearch() {
           } );
       },
     "aoColumns" : [
-      { "sWidth": "15%"},
-      { "sWidth": "15%"},
-      { "sWidth": "30%"},
-      { "sWidth": "55%"}
+      { "sWidth": "0%"},
+      { "sWidth": "0%"},
+      { "sWidth": "60%"},
+      { "sWidth": "40%"}
     ],
       "ajax": {
           "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
@@ -102,18 +103,18 @@ function doSearch() {
 		    var iri = result[m][i][0].iri ;
 		    datatable[rowcount] = new Array() ;
 		    datatable[rowcount][1] = '' ;
-		    datatable[rowcount][0] = result[m][i][0].label || result[m][i][0].oboid || " ";
-		    datatable[rowcount][3] = result[m][i][0].definition || " " ;
-		    datatable[rowcount][2] = "<tt>"+iri+"</tt><br> (<small>" ;
+		    datatable[rowcount][0] = result[m][i][0].label + " (<small><tt>" + iri + "</tt></small>)" || result[m][i][0].oboid + " (<small><tt>" + iri + "</tt></small>)" || "<small><tt>" + iri + "</tt></small>";
+		    datatable[rowcount][2] = result[m][i][0].definition || " " ;
+		    datatable[rowcount][3] = "" ;
 		    result[m][i] = result[m][i].sort(function(a,b) {
 			return a.ontology.localeCompare(b.ontology) ;
 		    });
 		    for (var obj in result[m][i]) {
-			datatable[rowcount][1] += "<a href='/ontology/"+result[m][i][obj].ontology+"'>"+result[m][i][obj].ontology+"</a>, " ;
-			datatable[rowcount][2] += "<a href='/ontology/"+result[m][i][obj].ontology+"#!"+encodeURIComponent(iri)+"'>"+result[m][i][obj].ontology+"</a>, " ;
+//			datatable[rowcount][1] += "<a href='/ontology/"+result[m][i][obj].ontology+"'>"+result[m][i][obj].ontology+"</a>, " ;
+			datatable[rowcount][3] += "<a href='/ontology/"+result[m][i][obj].ontology+"#!"+encodeURIComponent(iri)+"'>"+result[m][i][obj].ontology+"</a>, " ;
 		    }
-		    datatable[rowcount][1] = datatable[rowcount][1].substr(0,datatable[rowcount][1].length - 2);
-		    datatable[rowcount][2] = datatable[rowcount][2].substr(0,datatable[rowcount][2].length - 2) + "</small>)";
+//		    datatable[rowcount][1] = datatable[rowcount][1].substr(0,datatable[rowcount][1].length - 2);
+		    datatable[rowcount][3] = datatable[rowcount][3].substr(0,datatable[rowcount][3].length - 2);
 		    rowcount += 1;
 		}
 	    }
