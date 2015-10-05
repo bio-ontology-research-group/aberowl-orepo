@@ -1,6 +1,6 @@
 function redrawDataTable() {
     var term = $("#data_autocomplete_tagsinput .tag span").text().trim();
-    if (term.startsWith("'")) {
+    if (term.startsWith('\'')) {
 	term = term.substring(1,term.length-1);
     }
 

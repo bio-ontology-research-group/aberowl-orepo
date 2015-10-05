@@ -148,7 +148,7 @@ $(function() {
 					'data': c.classURI ,
 					'text': c.label[0],
 					'children': true,
-					'a_attr':{'href':"#!"+c.classURI},
+					'a_attr':{'href':"#!"+encoreURIComponent(c.classURI)},
 					'state': {
 					    'opened': false
 					}
