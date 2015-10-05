@@ -1,3 +1,18 @@
+function groupBy( array , f )
+{
+  var groups = {};
+  array.forEach( function( o )
+  {
+    var group = JSON.stringify( f(o) );
+    groups[group] = groups[group] || [];
+    groups[group].push( o );  
+  });
+  return Object.keys(groups).map( function( group )
+  {
+    return groups[group]; 
+  })
+}
+
 function doSearch() {
 
   $( "#tabs" ).tabs({
@@ -41,7 +56,7 @@ function doSearch() {
           var rows = api.rows( {page:'current'} ).nodes();
           var last=null;
 	  
-          api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+          api.column(0, {page:'all'} ).data().each( function ( group, i ) {
               if ( last !== group ) {
                   $(rows).eq( i ).before(
                       '<tr class="group"><td colspan="3">'+group+'</td></tr>'
@@ -55,7 +70,7 @@ function doSearch() {
       { "sWidth": "15%"},
       { "sWidth": "15%"},
       { "sWidth": "30%"},
-      { "sWidth": "40%"}
+      { "sWidth": "55%"}
     ],
       "ajax": {
           "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
@@ -65,14 +80,40 @@ function doSearch() {
             var datatable = new Array();
 	    var rowcount = 0 ;
 	    for (var m in result) {
-		for (var i=0;i<result[m].length;i++){
-//		for (var exp in result[m]){
-//                for( var i=0, i=result.length ; i<ien ; i++ ) {
+		// group by IRI and sort by length of definition
+		result[m] = groupBy(result[m], function(item) { return [item.iri] }) ;
+		for (var iri in result[m]) {
+		    result[m][iri] = result[m][iri].sort(function(a,b) {
+			b.definition = b.definition || "" ;
+			a.definition = a.definition || "" ;
+			return b.definition.length - a.definition.length
+		    }) ;
+		}
+		result[m] = result[m].sort(function(a,b) {
+		    b[0].definition = b[0].definition || "" ;
+		    a[0].definition = a[0].definition || "" ;
+		    if (b.length - a.length === 0) {
+			return b[0].definition.length - a[0].definition.length ;
+		    } else {
+			return b.length - a.length ;
+		    }
+		});
+		for (var i in result[m]) {
+		    var iri = result[m][i][0].iri ;
 		    datatable[rowcount] = new Array() ;
-		    datatable[rowcount][2] = "<a href='/ontology/"+result[m][i].ontology + "#!" + encodeURIComponent(result[m][i].iri) +"'>"+result[m][i].iri+"</a>" ;
-		    datatable[rowcount][1] = "<a href='/ontology/"+result[m][i].ontology+"'>"+result[m][i].ontology+"</a>" ;
-		    datatable[rowcount][0] = result[m][i].label || result[m][i].oboid ;
-		    datatable[rowcount][3] = result[m][i].definition || " " ;
+		    datatable[rowcount][1] = '' ;
+		    datatable[rowcount][0] = result[m][i][0].label || result[m][i][0].oboid || " ";
+		    datatable[rowcount][3] = result[m][i][0].definition || " " ;
+		    datatable[rowcount][2] = "<tt>"+iri+"</tt><br> (<small>" ;
+		    result[m][i] = result[m][i].sort(function(a,b) {
+			return a.ontology.localeCompare(b.ontology) ;
+		    });
+		    for (var obj in result[m][i]) {
+			datatable[rowcount][1] += "<a href='/ontology/"+result[m][i][obj].ontology+"'>"+result[m][i][obj].ontology+"</a>, " ;
+			datatable[rowcount][2] += "<a href='/ontology/"+result[m][i][obj].ontology+"#!"+encodeURIComponent(iri)+"'>"+result[m][i][obj].ontology+"</a>, " ;
+		    }
+		    datatable[rowcount][1] = datatable[rowcount][1].substr(0,datatable[rowcount][1].length - 2);
+		    datatable[rowcount][2] = datatable[rowcount][2].substr(0,datatable[rowcount][2].length - 2) + "</small>)";
 		    rowcount += 1;
 		}
 	    }
