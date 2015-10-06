@@ -114,6 +114,7 @@ passport.deserializeUser(function(id, done) {
 
 // development error handler
 // will print stacktrace
+app.set('env', 'production') ;
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);

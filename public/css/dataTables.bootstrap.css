@@ -1,3 +1,7 @@
+tr.group,
+tr.group:hover {
+    background-color: #ddd !important;
+}
 div.dataTables_length label {
     font-weight: normal;
     text-align: left;

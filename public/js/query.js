@@ -125,11 +125,11 @@ $(document).ready(function() {
       'source': function(request, response) {
         var ontology = $("#ontology_value").text(),
             query = extractLast(request.term);
-
         $.getJSON("/service/api/queryNames.groovy", {
             term: query,
             ontology: ontology
         }, function(json) {
+
           if(query.match(/an/)) {
             json.unshift({
               'data': 'AND',
@@ -145,7 +145,8 @@ $(document).ready(function() {
               'value': 'SOME'
             });
           }
-          response(json);
+	    console.log(json);
+          response(Object.keys(json));
         });
       },
       'select': function(event, ui) {
