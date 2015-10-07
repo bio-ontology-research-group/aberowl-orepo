@@ -119,6 +119,8 @@ function doSearch() {
 		}
 	    }
             $('#ctabhead').text('Classes ('+rowcount+')');
+	      $('#search').focus();
+	      $('#search').select();
             return datatable;
           }
       },
