@@ -1,10 +1,12 @@
 function redrawDataTable() {
-    var term = $("#data_autocomplete_tagsinput .tag span").text().trim();
+    var term = $("#data_autocomplete").val().trim();
     if (term.startsWith('\'')) {
 	term = term.substring(1,term.length-1);
     }
 
-    var query = $.map($('#data_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
+//    var query = $.map($('#data_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
+    var query = $('#data_autocomplete').val();
+    var ontology = window.location.pathname.replace("ontology/","").substr(1);
     //window.location.hash = "#" + query ;
 
     $('#data_results').dataTable().fnDestroy();
@@ -72,7 +74,7 @@ $(function() {
 	  { "sWidth": "35%"}
       ]
   })
-    
+    /*
   $('#data_autocomplete').tagsInput({
     'height': '40px',
     'width': '100%',
@@ -124,6 +126,7 @@ $(function() {
        $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
      }
   });
+*/
 });
 
 function split( val ) {

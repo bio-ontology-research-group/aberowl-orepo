@@ -24,15 +24,48 @@ var qs = function () {
 }();
 
 $(function() {
-    if (window.location.hash) {
-	qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
-    }
     if($('#loadstatus').text() != 'Classified') {
 	return;
     }
     
     var ontology = $('#ontology_value').text();
-    $('#left_tree')
+    $('#quicksearch').autocomplete({
+	'source': function(request, response) {
+	    var ontology = window.location.pathname.replace("ontology/","").substr(1),
+            query = extractLast(request.term);
+            $.getJSON("/service/api/queryNames.groovy", {
+		term: query,
+		ontology: ontology,
+		prefix: true
+            }, function(json) {
+		var l = [] ;
+		for (var k in json) {
+		    var v = json[k] ;
+		    var object = new Object();
+		    object.label = k ;
+		    object.value = v ;
+		    l.push(object);
+		}
+		response(l) ;
+            });
+	},
+	'select': function(event, ui) {
+	    window.location.hash = "!"+encodeURIComponent(ui.item.value) ;
+	    $('#left_tree').jstree("destroy");
+	    f() ;
+	    console.log(ui);
+	}
+    }).data("ui-autocomplete")._renderItem = function (ul, item) {
+        return $("<li>")
+            .append(item.label)
+            .appendTo(ul);
+    };
+
+
+    if (window.location.hash) {
+	qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
+    }
+    var f = function() { $('#left_tree')
 
 	.bind("select_node.jstree", function (e, data) {
 	    return data.instance.open_node(data.node);
@@ -51,6 +84,9 @@ $(function() {
 	    window.prerenderReady = true;
 	})
 	.on('loading.jstree', function () {
+	    if (window.location.hash) {
+		qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
+	    }
             if (qs.c) {
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
@@ -77,6 +113,9 @@ $(function() {
 		    html += '</tbody></table></div>';
 		    $('#browse_content').html(html);
 		    document.title = obostr + ': ' + labstr ;
+		    $('#autocomplete').val(labstr);
+		    $('#pubmed_autocomplete').val(labstr);
+		    $('#data_autocomplete').val(labstr);
 		    if (descstr) {
 			$('meta[name=description]').attr('content', descstr) ;
 		    }
@@ -89,10 +128,13 @@ $(function() {
 	.on('changed.jstree', function (e, data) {
             var last = data.selected[data.selected.length-1];
             if(data.node) {
+		window.location.hash = "!"+encodeURIComponent(data.node.data);
+		
 		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
 		    var labstr = '' ;
 		    var obostr = '' ;
+		    var labAuto = '' ;
 		    $.each(data, function(a, y) {
 			if (a == "label") {
 			    html += '<tr><td>'+a+'</td><td><span itemprop="name">'+y+'</span></td></tr>';
@@ -110,6 +152,13 @@ $(function() {
 		    });
 		    html += '<meta itemprop="url" content='+window.location+'/>' ;
 		    html += '</tbody></table></div>';
+		    if (/\s/g.test(labstr)) { 
+			labstr = "\'"+labstr+"\'"; 
+		    }
+		    console.log(labstr.indexOf(" "));
+		    $('#autocomplete').val(labstr);
+		    $('#pubmed_autocomplete').val(labstr);
+		    $('#data_autocomplete').val(labstr);
 		    $('#browse_content').html(html);
                     document.title = obostr + ': ' + labstr ;
 		    $('#tabs').tabs('option', 'active', 1);
@@ -148,7 +197,7 @@ $(function() {
 					'data': c.classURI ,
 					'text': c.label[0],
 					'children': true,
-					'a_attr':{'href':"#!"+encoreURIComponent(c.classURI)},
+					'a_attr':{'href':"#!"+encodeURIComponent(c.classURI)},
 					'state': {
 					    'opened': false
 					}
@@ -160,7 +209,7 @@ $(function() {
 					node.children.push(p);
 
 					if(data.chosen.classURI == c.classURI) {
-					    $('#quicksearch').addTag(p.text);
+					    $('#quicksearch').value = p.text;
 					    p.state.selected = true;
 					}
 
@@ -226,4 +275,6 @@ $(function() {
 		}
             }
 	});
+		     }
+    f() ;
 });

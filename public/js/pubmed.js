@@ -1,11 +1,13 @@
 function redrawPubmedTable() {
     //var query = $('#autocomplete').value();
-    var query = $.map($('#pubmed_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
+    var query = $('#autocomplete').val();
+//    var query = $.map($('#pubmed_autocomplete_tagsinput .tag span'),function(e,i){return '<'+uriMap[$(e).text().trim()]+'>';}).join(' ');
 
 //    window.location.hash = "#" + query ;
     $('#pubmed_results').dataTable().fnDestroy();
     var qType = $('input[name="type"]:checked').val();
-    var ontology = $("#ontology_value").text();
+//    var ontology = $("#ontology_value").text();
+    var ontology = window.location.pathname.replace("ontology/","").substr(1);
 
     var table = $('#pubmed_results').dataTable( {
         "processing": false,
@@ -28,7 +30,7 @@ function redrawPubmedTable() {
 	    $('#sparql').show();*/
         },
         "ajax": {
-            "url": "/pubmed/?type="+qType+"&ontology="+ontology+"&owlquery="+encodeURIComponent(query)+"&output=json",
+            "url": "/pubmed/?type="+qType+"&ontology="+ontology+"&labels=true&owlquery="+encodeURIComponent(query)+"&output=json",
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -72,57 +74,30 @@ $(function() {
           { "sWidth": "60%"}
       ]
   })
-    
-  $('#pubmed_autocomplete').tagsInput({
-    'height': '40px',
-    'width': '100%',
-    'defaultText': '',
-    'delimiter': '|',
-    'autocomplete_url': '',
-    'autocomplete': {
-      'source': function(request, response) {
-        var ontology = $("#ontology").text(),
-            query = extractLast(request.term);
 
-        $.getJSON("/service/api/queryNames.groovy", {
-            term: query,
-            ontology: ontology
-        }, function(json) {
-          if(query.match(/an/)) {
-            json.unshift({
-              'data': 'AND',
-              'iri': 'AND',
-              'ontology': '',
-              'value': 'AND'
-            }); 
-          } else if(query.match(/so/)) {
-            json.unshift({
-              'data': 'SOME',
-              'iri': 'SOME',
-              'ontology': '',
-              'value': 'SOME'
-            });
-          }
-          response(json);
-        });
+  $('#pubmed_autocomplete').autocomplete({
+      'source': function(request, response) {
+	  var ontology = window.location.pathname.replace("ontology/","").substr(1),
+          query = extractLast(request.term);
+          $.getJSON("/service/api/queryNames.groovy", {
+              term: query,
+              ontology: ontology,
+	      prefix: true
+          }, function(json) {
+              response(Object.keys(json));
+          });
       },
       'select': function(event, ui) {
-        uriMap[ui.item.value] = ui.item.data;
+	  var terms = split( this.value );
+          // remove the current input
+          terms.pop();
+          // add the selected item
+          terms.push( ui.item.value );
+          // add placeholder to get the comma-and-space at the end
+          terms.push( "" );
+          this.value = terms.join( " " );
+          return false;
       }
-    }, 
-    'autocomplete_renderitem': function(ul, item) {
-      return $( "<li>" )
-             .append( "<p>" + item.label +"</p> <p> <span style=\"float:left;font-size:9px\">" + item.iri + "</span>"+
-              "<span style=\"font-size:9px;margin-left:20px;float:right;\"><b>"+item.ontology+"</b></span></p><br />"+
-              "<span onclick=\"window.location.href='/ontology/"+item.ontology+"/?c="+encodeURIComponent(item.iri)+"';\">[View in Ontology Browser]</a>")
-             .appendTo(ul);
-     },
-     'onRemoveTag': function(value) {
-        delete uriMap[value];
-     },
-     'onAddTag': function() {
-       $('div.tagsinput span.tag').filter(function(){ console.log($(this).text()); return $(this).text().match(/^AND\s/) || $(this).text().match(/^SOME\s/); }).each(function(){ $(this).css('backgroundColor', '#123'); });
-     }
   });
 });
 
