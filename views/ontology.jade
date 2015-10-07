@@ -11,39 +11,34 @@ block title
   link(rel='stylesheet', href='/css/d3.css')
   link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
   link(rel='stylesheet', href='/css/jquery-ui.css')
-  link(rel='stylesheet', href='/css/jquery.tagsinput.css')
   link(rel='stylesheet', href='/css/style.css')
   link(rel='stylesheet', href='/css/bootstrap-multiselect.css')
   <script> window.prerenderReady = false; </script>
 
 block append scripts
-  script(async src='/js/ontology.js')
-  // script(src='/js/jquery-2.1.3.min.js')
-  // script(src='/js/jstree.min.js')
-  // script(src='/js/jquery.tagsinput.js')
-  // script(src='/js/bootstrap.min.js')
-  // script(src='/js/bootstrap-table.min.js')
-  // script(src='/js/jquery.dataTables.min.js')
-  // script(src='/js/jquery-ui.min.js')
-  // script(src='/js/d3.min.js')
-  // script(src='/js/d3.tip.v0.6.3.js')
-  // script(src='/js/query.js')
-  // script(src='/js/quicksearch.js')
-  // script(src='/js/pubmed.js')
-  // script(src='/js/openlifedata.js')
-  // script(src='/js/manage.js')
-  // script(src='/js/tree.js')
-  // script(src='/js/objectproperty_tree.js')
-  // script(src='/js/browse.js')
-  // script(src='/js/sparql.js')
-  // script(src='/js/bootstrap-multiselect.js')
-  // script(src='/js/bootstrap-multiselect.js')
-  // script(src='/js/bootstrap-spinner.js')
-  // script(src='/js/dom.js')
-  // script(src='/js/dom-parser.js')
-  // script(src='/js/sax.js')
-  // script(src='/js/dataTables.bootstrap.min.js')
+  script(src='/js/jquery-2.1.3.min.js')
+  script(src='/js/jquery-ui.min.js')
+  script(src='/js/jstree.min.js')
+  script(src='/js/bootstrap.min.js')
+  script(src='/js/bootstrap-table.min.js')
+  script(src='/js/bootstrap-multiselect.js')
+  script(src='/js/bootstrap-spinner.js')
+  script(src='/js/jquery.dataTables.min.js')
+  script(src='/js/d3.min.js')
+  script(src='/js/d3.tip.v0.6.3.js')
+  script(src='/js/dom.js')
+  script(src='/js/dom-parser.js')
+  script(src='/js/sax.js')
+  script(src='/js/query.js')
+  script(src='/js/pubmed.js')
+  script(src='/js/openlifedata.js')
+  script(src='/js/manage.js')
+  script(src='/js/tree.js')
+  script(src='/js/browse.js')
+  script(src='/js/sparql.js')
+  script(src='/js/objectproperty_tree.js')
 
+//  script(async src='/js/ontology.js')
   // script(src='/js/jquery-2.1.3.min.js')
   // script(src='/js/jstree.min.js')
   // script(src='/js/jquery.tagsinput.js')
@@ -75,8 +70,7 @@ block content
               span.glyphicon.glyphicon-menu-left(aria-hidden='true') 
               span Back to Browse
           li.divider(role='presentation', style="background-color:#aaa;display:block;height:5px;")
-        center
-          input#quicksearch(type="text" style="overflow:hidden;width=100%")
+        input#quicksearch(type="text" style="margin:10px;width=100%;")
         br
         div#left_tree &nbsp;
         br
@@ -107,7 +101,7 @@ block content
             li
               a(href='#browse') Browse
             li
-              a(href='#query') Query
+              a(href='#query') DL Query
             li
               a(href='#visualise') Visualise
             li
@@ -158,7 +152,7 @@ block content
                         a(href='/onts/'+dl) Download...
           div#query
             center
-              input#autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input#autocomplete.form-control(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
               input(name='type', type='radio', value='supeq') 
               label Super- and Equivalent classes
               input(name='type', type='radio', value='superclass') 
@@ -183,7 +177,7 @@ block content
 
           div#pubmed
             center
-              input#pubmed_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input#pubmed_autocomplete.form-control(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
               input(name='type', type='radio', value='supeq') 
               label Super- and Equivalent classes
               input(name='type', type='radio', value='supclass') 
@@ -205,7 +199,7 @@ block content
 
           div#data
             center
-              input#data_autocomplete(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
+              input#data_autocomplete.form-control(style='width:100%', placeholder='Enter Manchester OWL Syntax Query')
               input(name='type', type='radio', value='supeq') 
               label Super- and Equivalent classes
               input(name='type', type='radio', value='supclass') 

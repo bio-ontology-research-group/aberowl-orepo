@@ -220,12 +220,6 @@ width:100%;
 }
 
 
-#quicksearch_tagsinput {
-overflow:hidden;
-}
-#autocomplete_tagsinput {
-overflow:hidden;
-}
 .jumbotron {
 margin-left: 2%;
 margin-right: 2%;
@@ -259,4 +253,7 @@ padding:5px;
 
 .paginate_button {
 margin:5px;
+}
+#quicksearch {
+    width=100%;
 }
