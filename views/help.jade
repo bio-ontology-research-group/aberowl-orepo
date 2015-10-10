@@ -132,7 +132,7 @@ block content
       h4 Examples
       
       p A query for subclasses and equivalent classes in GO for <tt>'part of' some 'apoptotic process'</tt>: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=%27part%20of%27%20some%20%27apoptotic%20process%27&ontology=GO&labels=true'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query='part of' some 'apoptotic process'&ontology=GO&labels=true</tt></a>,
-      | The same query using IRIs instead of labels: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FBFO_0000050%3E%20SOME%20%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0006915%3E&ontology=GO'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=&lt;http://purl.obolibrary.org/obo/BFO_0000050&gt; some &lt;http://purl.obolibrary.org/obo/GO_0006915&gt;&amp;ontology=GO</tt></a>.
+      | The same query using IRIs instead of labels: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FBFO_0000050%3E%20SOME%20%3Chttp%3A%2F%2Fpurl.obolibrary.org%2Fobo%2FGO_0006915%3E&ontology=GO'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=subeq&query=&lt;http://purl.obolibrary.org/obo/BFO_0000050&gt; some &lt;http://purl.obolibrary.org/obo/GO_0006915&gt;&amp;ontology=GO</tt></a>.<br>
 
       h4 Parameters
       table.table.table-striped.table-responsive
@@ -366,6 +366,11 @@ block content
         li Paul Schofield (University of Cambridge)
         li Robert Hoehndorf (King Abdullah University of Science and Technology) 
 
+      h3.api Can you show me all the unsatisfiable classes across all ontologies?
+
+      p Yes: <a href='http://aber-owl.net/service/api/runQuery.groovy?type=equivalent&query=%3Chttp://www.w3.org/2002/07/owl%23Nothing%3E'><tt>http://aber-owl.net/service/api/runQuery.groovy?type=equivalent&query=%3Chttp://www.w3.org/2002/07/owl%23Nothing%3E</tt></a>
+
+        
       h3.api How do I cite AberOWL?
 
       p To cite AberOWL, please use the following reference:

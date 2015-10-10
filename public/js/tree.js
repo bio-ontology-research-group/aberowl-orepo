@@ -72,6 +72,7 @@ $(function() {
 	})
 	.on('open_node.jstree close_node.jstree', function(e, data) {
             var currentNode = data.node;
+	    console.log(currentNode);
             if(e.type == 'close_node') {
 		var tree = $.jstree.reference('#left_tree');
 		tree.refresh_node(currentNode);
@@ -155,7 +156,6 @@ $(function() {
 		    if (/\s/g.test(labstr)) { 
 			labstr = "\'"+labstr+"\'"; 
 		    }
-		    console.log(labstr.indexOf(" "));
 		    $('#autocomplete').val(labstr);
 		    $('#pubmed_autocomplete').val(labstr);
 		    $('#data_autocomplete').val(labstr);
@@ -192,8 +192,9 @@ $(function() {
 			    var addChildren = function(node, subtree) {
 				node.children = [];
 				$.each(subtree.classes, function(i, c) {
+				    console.log(node.id);
 				    var p = {
-					'id': c.classURI + i,
+					'id': c.classURI + i ,
 					'data': c.classURI ,
 					'text': c.label[0],
 					'children': true,
@@ -227,7 +228,7 @@ $(function() {
 
 			    $.each(data.classes, function(i, c) {
 				var p = {
-				    'id': c.classURI + i,
+				    'id': c.classURI + i ,
 				    'data': c.classURI ,
 				    'text': c.label[0],
 				    'a_attr':{'href':"#!"+c.classURI},
