@@ -30,7 +30,7 @@ block content
         h1(align='center')
           span AberOWL ontology repository and semantic search engine
         div
-          p(style='font-size:18px;display: inline-block;') Type any term or phrase to search the AberOWL ontology repository for a class that is described using the phrase (try <a href='#!pancreas' onclick='javascript:$("#search").val("pancreas");doSearch();$("#ctabhead").click();'>pancreas</a>, <a href='#!PATO:0001234' onclick='javascript:$("#search").val("PATO:0001234");doSearch();$("#ctabhead").click();'>PATO:0001234</a>, <a href='#!sugar binding go' onclick='javascript:$("#search").val("sugar binding go");doSearch();$("#ctabhead").click();'>sugar binding GO</a>), for ontologies that use the phrase in their description (try  <a href='#!integrated upper ontology' integrated upper ontology onclick='javascript:$("#search").val("integrated upper ontology");doSearch();$("#otabhead").click();'>integrated upper ontology</a>, <a href='#!infectious disease' onclick='javascript:$("#search").val("infectious disease");doSearch();$("#otabhead").click();'>infectious disease</a>, <a href='#!GFO' onclick='javascript:$("#search").val("GFO");doSearch();$("#otabhead").click();'>GFO</a> or <a href='#!pathology' onclick='javascript:$("#search").val("pathology");doSearch();$("#otabhead").click();'>pathology</a>), or perform a Description Logic query across all ontologies in AberOWL (try <a href='#!&#39;part of&#39; some &#39;apoptotic process&#39 and regulates some &#39;apoptotic process&#39' onclick='javascript:$("#search").val("&#39;part of&#39; some &#39;apoptotic process&#39 and regulates some &#39;apoptotic process&#39;");doSearch();$("#mtabhead").click();'>'part of' some 'apoptotic process' and regulates some 'apoptotic process'</a> ):
+          p(style='font-size:18px;display: inline-block;') Type any term or phrase to search the AberOWL ontology repository for a class that is described using the phrase (try <a href='#!pancreas' onclick='javascript:$("#search").val("pancreas");doSearch();$("#ctabhead").click();'>pancreas</a>, <a href='#!PATO:0001234' onclick='javascript:$("#search").val("PATO:0001234");doSearch();$("#ctabhead").click();'>PATO:0001234</a>, <a href='#!sugar binding go' onclick='javascript:$("#search").val("sugar binding go");doSearch();$("#ctabhead").click();'>sugar binding GO</a>), for ontologies that use the phrase in their description (try  <a href='#!integrated upper ontology' integrated upper ontology onclick='javascript:$("#search").val("integrated upper ontology");doSearch();$("#otabhead").click();'>integrated upper ontology</a>, <a href='#!infectious disease' onclick='javascript:$("#search").val("infectious disease");doSearch();$("#otabhead").click();'>infectious disease</a>, <a href='#!GFO' onclick='javascript:$("#search").val("GFO");doSearch();$("#otabhead").click();'>GFO</a> or <a href='#!pathology' onclick='javascript:$("#search").val("pathology");doSearch();$("#otabhead").click();'>pathology</a>), or perform a Description Logic query across all ontologies in AberOWL (try <a href='#!&#39;part of&#39; some &#39;apoptotic process&#39 and regulates some &#39;apoptotic process&#39' onclick='javascript:$("#search").val("&#39;part of&#39; some &#39;apoptotic process&#39 and regulates some &#39;apoptotic process&#39;");$("input:radio[name=type]").filter("[value=subeq]").prop("checked", true);doSearch();$("#mtabhead").click();'>'part of' some 'apoptotic process' and regulates some 'apoptotic process'</a> ):
         div
           center
             div.input-group
@@ -69,11 +69,11 @@ block content
             label Super- and Equivalent classes
             input(name='type', type='radio', value='supclass', onclick='doSearch()')
             label Superclasses
-            input(name='type', type='radio', value='equivalent', onclick='doSearch()')
+            input(name='type', type='radio', value='equivalent' checked='true', onclick='doSearch()')
             label Equivalent classes
             input(name='type', type='radio', value='subclass', onclick='doSearch()')
             label Subclasses
-            input(name='type', type='radio', value='subeq' checked='true', onclick='doSearch()')
+            input(name='type', type='radio', value='subeq', onclick='doSearch()')
             label Sub- and Equivalent classes
 
             table#manchester_search.table.table-striped.table-bordered.table-condensed
