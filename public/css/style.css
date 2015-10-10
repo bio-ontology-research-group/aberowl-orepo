@@ -226,7 +226,12 @@ margin-right: 2%;
 margin-top:40px;
 padding:20px;
 }
-
+.jumbotron h1 {
+    font-size: 28px;
+}
+.jumbotron .examples {
+    font-size: 18px;
+}
 .starter-template {
   padding: 0px 40px;
 }
