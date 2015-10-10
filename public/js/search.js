@@ -18,7 +18,7 @@ function doSearch() {
     $( "#tabs" ).tabs({
 	'activate': function(event, ui) {
 	    ui.newPanel.find('.dataTables_scrollHeadInner').css('width','100%');
-	    ui.newPanel.find('.table.table-striped.table-bordered.table-condensed.no-footer.dataTable').css('width','100%');
+	    ui.newPanel.find('.table').css('width','100%');
 	}
     });
     $('#tabs').show();
@@ -58,10 +58,17 @@ function doSearch() {
 	    
             api.column(0, {page:'all'} ).data().each( function ( group, i ) {
 		if ( last !== group ) {
-                    $(rows).eq( i ).before(
+		    if (i%2 === 0) {
+			$(rows).eq( i ).before(
 			//                      '<tr class="group"><td colspan="3">'+group+'</td></tr>'
-			'<tr class="group">'+group+'</tr>'
-                    );
+			    '<tr style="background-color: #DCDCDC;" class="group">'+group+'</tr>'
+			);
+		    } else {
+			$(rows).eq( i ).before(
+			//                      '<tr class="group"><td colspan="3">'+group+'</td></tr>'
+			    '<tr style="background-color: white;" class="group">'+group+'</tr>'
+			);
+		    }
 		    
                     last = group;
 		}
@@ -73,6 +80,15 @@ function doSearch() {
 	    { "sWidth": "60%"},
 	    { "sWidth": "40%"}
 	],
+	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+	    console.log(iDisplayIndexFull);
+	    if ((iDisplayIndex%2) === 0 ) {
+		$(nRow).css('background-color', '#DCDCDC').find('td')[1].remove();
+	    } else {
+		$(nRow).css('background-color', 'white').find('td')[1].remove();
+	    }
+	    $(nRow).find('td')[0].colSpan='2';
+	},
 	"ajax": {
             "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
             "dataType": 'json',
