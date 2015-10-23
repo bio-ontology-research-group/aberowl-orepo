@@ -17,22 +17,28 @@ if (typeof String.prototype.endsWith !== 'function') {
 /** Ontology Listing and display. **/
 
 router.get('/', function(req, res) {
-  var ontologies = {};
-
-  req.db.scan('ontologies', function(ontology) {
-    ontologies[ontology.id] = ontology; 
-  }, function() {
-    request.get(req.aberowl + 'getStatuses.groovy', {
-      'json': true
-    }, function(request, response, body) {
-      res.render('ontologies', {
-        'title': 'Ontology List',
-        'ontologies': _.sortBy(ontologies, 'id'),
-        'stati': body
-      });
+    var ontologies = {};
+    var purls = {};
+    var purl = req.param('purl');
+    req.db.scan('ontologies', function(ontology) {
+	ontologies[ontology.id] = ontology; 
+	purls[ontology.purl] = ontology; 
+    }, function() {
+	if (purl && purls[purl]) {
+	    res.redirect('/ontology/'+purls[purl].id);
+	}
+	request.get(req.aberowl + 'getStatuses.groovy', {
+	    'json': true
+	}, function(request, response, body) {
+	    res.render('ontologies', {
+		'title': 'Ontology List',
+		'ontologies': _.sortBy(ontologies, 'id'),
+		'stati': body
+	    });
+	});
     });
-  });
 });
+
 
 /** Ontology Uploading **/
 
