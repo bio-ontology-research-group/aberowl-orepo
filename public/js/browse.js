@@ -75,7 +75,7 @@ $(function() {
 	} else if(ui.newPanel.selector == '#data') {
 	    $("#data_button").click();
 	} else if(ui.newPanel.selector == '#query') {
-	    $("#button").click();
+	    //$("#button").click();
 	} else if(ui.newPanel.selector == '#sparql') {
 	    var tree = $.jstree.reference('#left_tree');
 	    var selectedNodes = tree.get_selected(true);

@@ -8,9 +8,6 @@ var pluralise = require('pluralize');
 router.get('/:username', function(req, res) {
     var ontologies = {};
     
-    req.db.read('ontologies') ;
-	   
-      
     
     req.db.read('users', req.params.username, function(err, user) {
 	res.render('user_page', {
