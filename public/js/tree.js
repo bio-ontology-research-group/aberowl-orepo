@@ -32,7 +32,8 @@ $(function() {
     $('#quicksearch').autocomplete({
 	'source': function(request, response) {
 	    var ontology = window.location.pathname.replace("ontology/","").substr(1),
-            query = extractLast(request.term);
+            query = request.term;
+	    console.log(query);
             $.getJSON("/service/api/queryNames.groovy", {
 		term: query,
 		ontology: ontology,
@@ -51,9 +52,10 @@ $(function() {
 	},
 	'select': function(event, ui) {
 	    window.location.hash = "!"+encodeURIComponent(ui.item.value) ;
+	    $('#quicksearch').val(ui.item.label);
 	    $('#left_tree').jstree("destroy");
 	    f() ;
-	    console.log(ui);
+	    return false;
 	}
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
         return $("<li>")
@@ -210,7 +212,7 @@ $(function() {
 					node.children.push(p);
 
 					if(data.chosen.classURI == c.classURI) {
-					    $('#quicksearch').value = p.text;
+//					    $('#quicksearch').value = p.text;
 					    p.state.selected = true;
 					}
 
