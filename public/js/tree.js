@@ -1,5 +1,4 @@
 
-
 var qs = function () {
     // This function is anonymous, is executed immediately and 
     // the return value is assigned to QueryString!
@@ -26,11 +25,15 @@ var qs = function () {
 var f = null ;
 
 $(function() {
+    $("a[id='jump-class']").click(function(){
+	$('#left_tree').jstree("destroy");
+	f() ;
+	return false ;
+    }) ;
+
     if($('#loadstatus').text() != 'Classified') {
 	return;
     }
-
-    $('a jump-class').click(function() { f(); }) ;
 
     var ontology = $('#ontology_value').text();
     $('#quicksearch').autocomplete({
@@ -129,7 +132,7 @@ $(function() {
 		    $.each($("div[id='man-owlclass']"),function(index, div){
 			var iri = $(div).attr('data-iri');
 			var data = $(div).text();
-			$(div).html("<a id='jump-class' href='#!"+encodeURIComponent(iri)+"''>"+data+"</a>");
+			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
 			//console.log(f);
 		    });
 		    $('#tabs').tabs('option', 'active', 1);
@@ -177,8 +180,7 @@ $(function() {
 		    $.each($("div[id='man-owlclass']"),function(index, div){
 			var iri = $(div).attr('data-iri');
 			var data = $(div).text();
-			$(div).html("<a id='jump-class' href='#!"+encodeURIComponent(iri)+"''>"+data+"</a>");
-			console.log(f);
+			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
 		    });
 		    $('#tabs').tabs('option', 'active', 1);
 		    window.prerenderReady = true;
@@ -297,4 +299,5 @@ $(function() {
 	});
 		   }
     f() ;
+
 });
