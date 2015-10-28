@@ -23,17 +23,21 @@ var qs = function () {
     return query_string;
 }();
 
+var f = null ;
+
 $(function() {
     if($('#loadstatus').text() != 'Classified') {
 	return;
     }
-    
+
+    $('a jump-class').click(function() { f(); }) ;
+
     var ontology = $('#ontology_value').text();
     $('#quicksearch').autocomplete({
 	'source': function(request, response) {
 	    var ontology = window.location.pathname.replace("ontology/","").substr(1),
             query = request.term;
-	    console.log(query);
+//	    console.log(query);
             $.getJSON("/service/api/queryNames.groovy", {
 		term: query,
 		ontology: ontology,
@@ -67,14 +71,14 @@ $(function() {
     if (window.location.hash) {
 	qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
     }
-    var f = function() { $('#left_tree')
+    f = function() { $('#left_tree')
 
 	.bind("select_node.jstree", function (e, data) {
 	    return data.instance.open_node(data.node);
 	})
 	.on('open_node.jstree close_node.jstree', function(e, data) {
             var currentNode = data.node;
-	    console.log(currentNode);
+//	    console.log(currentNode);
             if(e.type == 'close_node') {
 		var tree = $.jstree.reference('#left_tree');
 		tree.refresh_node(currentNode);
@@ -122,7 +126,14 @@ $(function() {
 		    if (descstr) {
 			$('meta[name=description]').attr('content', descstr) ;
 		    }
+		    $.each($("div[id='man-owlclass']"),function(index, div){
+			var iri = $(div).attr('data-iri');
+			var data = $(div).text();
+			$(div).html("<a id='jump-class' href='#!"+encodeURIComponent(iri)+"''>"+data+"</a>");
+			//console.log(f);
+		    });
 		    $('#tabs').tabs('option', 'active', 1);
+		        /* rewrite Manchester OWL axioms */
 		    window.prerenderReady = true;
 		});
 
@@ -163,6 +174,12 @@ $(function() {
 		    $('#data_autocomplete').val(labstr);
 		    $('#browse_content').html(html);
                     document.title = obostr + ': ' + labstr ;
+		    $.each($("div[id='man-owlclass']"),function(index, div){
+			var iri = $(div).attr('data-iri');
+			var data = $(div).text();
+			$(div).html("<a id='jump-class' href='#!"+encodeURIComponent(iri)+"''>"+data+"</a>");
+			console.log(f);
+		    });
 		    $('#tabs').tabs('option', 'active', 1);
 		    window.prerenderReady = true;
 		});
@@ -194,7 +211,7 @@ $(function() {
 			    var addChildren = function(node, subtree) {
 				node.children = [];
 				$.each(subtree.classes, function(i, c) {
-				    console.log(node.id);
+//				    console.log(node.id);
 				    var p = {
 					'id': c.classURI + i ,
 					'data': c.classURI ,
@@ -221,7 +238,7 @@ $(function() {
 					    p = addChildren(p, c.children);
 					}
 				    } else {
-					console.log('not adding because deprecated');
+//					console.log('not adding because deprecated');
 				    }
 				});
 
@@ -250,7 +267,7 @@ $(function() {
 
 				    nodes.push(p);
 				} else {
-				    console.log('not adding because deprecated');
+//				    console.log('not adding because deprecated');
 				}
 			    });
 			} else {
@@ -278,6 +295,6 @@ $(function() {
 		}
             }
 	});
-		     }
+		   }
     f() ;
 });

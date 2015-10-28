@@ -129,3 +129,29 @@ a {
     font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
     padding:7px;
 }
+
+#man-property {
+    display:inline;
+    color: green;
+}
+
+#man-keyword {
+    display:inline;
+    color: red;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#man-and {
+    display:inline;
+    color: red;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#man-owlclass {
+    display:inline;
+    color: blue;
+}
+#man-owlclass a {
+    display:inline;
+    color: blue;
+}
