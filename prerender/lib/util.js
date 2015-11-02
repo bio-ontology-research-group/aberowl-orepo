@@ -18,11 +18,12 @@ util.getUrl = function (req) {
     realUrl = realUrl.replace(/^\//, '');
 
     try {
-        decodedUrl = decodeURIComponent(realUrl);
+//        decodedUrl = decodeURIComponent(realUrl);
+        decodedUrl = realUrl;
     } catch (e) {
         decodedUrl = realUrl;
     }
-
+//    util.log('decoded url: ', decodedUrl);
     parts = url.parse(decodedUrl, true);
 
     // Remove the _escaped_fragment_ query parameter

@@ -139,7 +139,6 @@ server.onRequest = function(req, res) {
 
 server.createPage = function(req, res) {
     var _this = this;
-
     if(!this.phantom) {
         setTimeout(function(){
             _this.createPage(req, res);
@@ -155,7 +154,6 @@ server.createPage = function(req, res) {
 
 server.onPhantomPageCreate = function(req, res) {
     var _this = this;
-
     req.prerender.stage = 0;
     req.prerender.pendingRequests = 1;
 
@@ -183,7 +181,13 @@ server.onPhantomPageCreate = function(req, res) {
             req.prerender.downloadChecker = setInterval(function() {
                 _this.checkIfPageIsDoneLoading(req, res, req.prerender.status === 'fail');
             }, (req.prerender.pageDoneCheckTimeout || _this.options.pageDoneCheckTimeout || PAGE_DONE_CHECK_TIMEOUT));
-
+	    var hash = encodeURIComponent(req.prerender.url.substring(req.prerender.url.indexOf('#')+2));
+	    var base = req.prerender.url ;
+	    if (base.indexOf("#")>-1) {
+		base = req.prerender.url.substring(0, req.prerender.url.indexOf('#')).replace("#","");
+	    }
+	    req.prerender.url = base + "#!" + hash ;
+	    util.log('encoded: ',hash);
             req.prerender.page.open(encodeURI(req.prerender.url), function(status) {
                 req.prerender.status = status;
             });
