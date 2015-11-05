@@ -59,4 +59,15 @@ router.get('/login', function(req, res) {
   res.render('login', {});
 });
 
+router.get('/statistics', function(req, res) {
+  request.get(req.aberowl + 'getStats.groovy', {
+    'json': true
+  }, function(request, response, body) {
+    console.log(body);
+    res.render('statistics', {
+      'stats': body
+    });
+  })
+});
+
 module.exports = router;
