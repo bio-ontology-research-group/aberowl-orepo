@@ -35,6 +35,8 @@ block content
                   td 
                     -if(stati[ontology.id] == 'unloadable')
                       span.label.label-warning Unloadable
+                    -else if(stati[ontology.id] == 'incoherent')
+                      span.label.label-danger Incoherent (structural)
                     -else if(stati[ontology.id] == 'inconsistent')
                       span.label.label-danger Inconsistent
                     -else if(stati[ontology.id] == 'classified')

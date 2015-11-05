@@ -81,11 +81,14 @@ function doSearch() {
 	    { "sWidth": "40%"}
 	],
 	"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
-	    console.log(iDisplayIndexFull);
 	    if ((iDisplayIndex%2) === 0 ) {
-		$(nRow).css('background-color', '#DCDCDC').find('td')[1].remove();
+//		jQuery(nRow).css('background-color', '#DCDCDC').find('td')[1].remove();
+		$(nRow).css('background-color', '#DCDCDC').find('td')[1];
+		$(nRow).find("td:last").remove();
 	    } else {
-		$(nRow).css('background-color', 'white').find('td')[1].remove();
+//		jQuery(nRow).css('background-color', 'white').find('td')[1].remove();
+		$(nRow).css('background-color', 'white').find('td')[1];
+		$(nRow).find("td:last").remove();
 	    }
 	    $(nRow).find('td')[0].colSpan='2';
 	},

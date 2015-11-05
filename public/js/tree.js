@@ -1,5 +1,4 @@
 
-
 var qs = function () {
     // This function is anonymous, is executed immediately and 
     // the return value is assigned to QueryString!
@@ -23,16 +22,25 @@ var qs = function () {
     return query_string;
 }();
 
+var f = null ;
+
 $(function() {
+    $("a[id='jump-class']").click(function(){
+	$('#left_tree').jstree("destroy");
+	f() ;
+	return false ;
+    }) ;
+
     if($('#loadstatus').text() != 'Classified') {
 	return;
     }
-    
+
     var ontology = $('#ontology_value').text();
     $('#quicksearch').autocomplete({
 	'source': function(request, response) {
 	    var ontology = window.location.pathname.replace("ontology/","").substr(1),
-            query = extractLast(request.term);
+            query = request.term;
+//	    console.log(query);
             $.getJSON("/service/api/queryNames.groovy", {
 		term: query,
 		ontology: ontology,
@@ -51,9 +59,10 @@ $(function() {
 	},
 	'select': function(event, ui) {
 	    window.location.hash = "!"+encodeURIComponent(ui.item.value) ;
+	    $('#quicksearch').val(ui.item.label);
 	    $('#left_tree').jstree("destroy");
 	    f() ;
-	    console.log(ui);
+	    return false;
 	}
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
         return $("<li>")
@@ -65,14 +74,14 @@ $(function() {
     if (window.location.hash) {
 	qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
     }
-    var f = function() { $('#left_tree')
+    f = function() { $('#left_tree')
 
 	.bind("select_node.jstree", function (e, data) {
 	    return data.instance.open_node(data.node);
 	})
 	.on('open_node.jstree close_node.jstree', function(e, data) {
             var currentNode = data.node;
-	    console.log(currentNode);
+//	    console.log(currentNode);
             if(e.type == 'close_node') {
 		var tree = $.jstree.reference('#left_tree');
 		tree.refresh_node(currentNode);
@@ -120,7 +129,14 @@ $(function() {
 		    if (descstr) {
 			$('meta[name=description]').attr('content', descstr) ;
 		    }
+		    $.each($("div[id='man-owlclass']"),function(index, div){
+			var iri = $(div).attr('data-iri');
+			var data = $(div).text();
+			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
+			//console.log(f);
+		    });
 		    $('#tabs').tabs('option', 'active', 1);
+		        /* rewrite Manchester OWL axioms */
 		    window.prerenderReady = true;
 		});
 
@@ -161,6 +177,11 @@ $(function() {
 		    $('#data_autocomplete').val(labstr);
 		    $('#browse_content').html(html);
                     document.title = obostr + ': ' + labstr ;
+		    $.each($("div[id='man-owlclass']"),function(index, div){
+			var iri = $(div).attr('data-iri');
+			var data = $(div).text();
+			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
+		    });
 		    $('#tabs').tabs('option', 'active', 1);
 		    window.prerenderReady = true;
 		});
@@ -192,7 +213,7 @@ $(function() {
 			    var addChildren = function(node, subtree) {
 				node.children = [];
 				$.each(subtree.classes, function(i, c) {
-				    console.log(node.id);
+//				    console.log(node.id);
 				    var p = {
 					'id': c.classURI + i ,
 					'data': c.classURI ,
@@ -210,7 +231,7 @@ $(function() {
 					node.children.push(p);
 
 					if(data.chosen.classURI == c.classURI) {
-					    $('#quicksearch').value = p.text;
+//					    $('#quicksearch').value = p.text;
 					    p.state.selected = true;
 					}
 
@@ -219,7 +240,7 @@ $(function() {
 					    p = addChildren(p, c.children);
 					}
 				    } else {
-					console.log('not adding because deprecated');
+//					console.log('not adding because deprecated');
 				    }
 				});
 
@@ -248,7 +269,7 @@ $(function() {
 
 				    nodes.push(p);
 				} else {
-				    console.log('not adding because deprecated');
+//				    console.log('not adding because deprecated');
 				}
 			    });
 			} else {
@@ -276,6 +297,7 @@ $(function() {
 		}
             }
 	});
-		     }
+		   }
     f() ;
+
 });
