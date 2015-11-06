@@ -1,5 +1,6 @@
 $(function() {
-  var tags = [];
+  var terms = {};
+
   $('#filter').tagsInput({
     'width': 'auto',
     'defaultText': 'Search by topic',
@@ -19,22 +20,56 @@ $(function() {
        },
     },
     'onAddTag': function(tag) {
-      $('#otable tr').each(function(row) {
-        var cell = $('td:first', this).text();
-        if(!cell.match(tag)) $(this).hide();
+      var newTags = [];
+      $.getJSON('/service/api/runQuery.groovy', {
+        'query': encodeURIComponent(tag),
+        'type': 'subeq',
+        'labels': true,
+        'ontology': 'EDAMTO'
+      }, function(data) {
+        newTags.push(tag);
+        if(data && data.result.length > 0) {
+          $.each(data.result, function(t, y) {
+           newTags.push(y.label[0]);
+          });
+
+          terms[tag] = newTags;
+
+          $('#otable tr').each(function(row) {
+            var relevant = false;
+            var cell = $('td:first', this).html();
+            $.each(terms, function(a, y) {
+            console.log(y);
+            console.log(y[0]);
+            console.log(y.length);
+              for(var m=0;m<y.length;m++) {
+              console.log(cell);
+                if(cell.match('\>' + y[m] +'\<\/span\>')) relevant = true; // yeah that's bad 
+              }
+            });
+
+            if(!relevant) {
+              $(this).hide();
+            }
+          });
+
+        }
       });
-      tags.push(tag);
+
+            
     },
     'onRemoveTag': function(tag) {
-      tags.splice(tags.indexOf(tag), 1);
+      delete terms[tag];
 
       var matched = false;
       $('#otable tr').each(function(row) {
         var cell = $('td:first', this).text();
 
         if(tags.length > 0) {
-          $.each(tags, function(t) {
-            if(cell.match(t)) matched = true;
+          $.each(terms, function(t) {
+            for(var m=0;m<t.length;m++) {
+              if(cell.match(t[m])) matched = true;
+            }
           });
 
           if(matched) {
@@ -46,7 +81,6 @@ $(function() {
           $(this).show();
         }
       });
-      console.log('rmtag');
     }
   });
 });
