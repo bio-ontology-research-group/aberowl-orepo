@@ -1,18 +1,8 @@
 $(function() {
   var tags = [];
-  $('#filter').autocomplete({
-    'selectFirst': true,
-      'width': '100px',
-      'autoFill': true,
-      'source': [
-        'one',
-        'two',
-        'three'
-      ]
-
-  });
   $('#filter').tagsInput({
     'width': 'auto',
+    'defaultText': 'Search by topic',
     'autocomplete_url': '',
     'autocomplete': {
       'selectFirst': true,

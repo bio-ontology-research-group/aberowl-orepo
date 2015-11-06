@@ -132,7 +132,7 @@ $(function() {
 		    $.each($("div[id='man-owlclass']"),function(index, div){
 			var iri = $(div).attr('data-iri');
 			var data = $(div).text();
-			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
+			$(div).html("<a title='"+iri+"' id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
 			//console.log(f);
 		    });
 		    $('#tabs').tabs('option', 'active', 1);
@@ -180,7 +180,7 @@ $(function() {
 		    $.each($("div[id='man-owlclass']"),function(index, div){
 			var iri = $(div).attr('data-iri');
 			var data = $(div).text();
-			$(div).html("<a id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
+			$(div).html("<a title='"+iri+"' id='jump-class' onclick='window.location.hash=\"!"+encodeURIComponent(iri)+"\";(\"a\");$(\"#left_tree\").jstree(\"destroy\");f();'>"+data+"</a>");
 		    });
 		    $('#tabs').tabs('option', 'active', 1);
 		    window.prerenderReady = true;
