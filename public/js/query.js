@@ -89,13 +89,13 @@ $(document).ready(function() {
           $.getJSON("/service/api/queryNames.groovy", {
               term: query,
               ontology: ontology,
-	      prefix: true
+              prefix: true
           }, function(json) {
               response(Object.keys(json));
           });
       },
       'select': function(event, ui) {
-	  var terms = split( this.value );
+        var terms = split( this.value );
           // remove the current input
           terms.pop();
           // add the selected item

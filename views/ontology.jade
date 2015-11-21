@@ -121,6 +121,26 @@ block content
             .table-responsive
               table.table.table-striped
                 tbody
+                  -if(ontology.homepage)
+                    tr
+                      td Homepage
+                      td 
+                        a(href=ontology.homepage) #{ontology.homepage}
+                  -if(ontology.contact)
+                    - var ocont = ontology.contact.join(', ');
+                    tr
+                      td Contact
+                      td #{ocont}
+                  -if(ontology.topics)
+                    tr
+                      - var otops = ontology.topics.map(function(e) { return e[1].replace(/\'/g,''); }).join(', ');
+                      td Topics
+                      td #{otops}
+                  -if(ontology.species)
+                    tr
+                      - var ospec = ontology.species.join(', ');
+                      td Species
+                      td #{ospec}
                   tr
                     td Class Count
                     td #{stats.classCount}
