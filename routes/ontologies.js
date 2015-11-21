@@ -64,7 +64,7 @@ router.post('/upload', function(req, res) {
 
             fs.writeFile(newPath, data, function (err) {
               // Create ontology in DB
-              var time = Date.now();
+              var time = Date.now()/1000;
               var ont = {
                 'id': req.body.acronym,
                 'name': req.body.name,
