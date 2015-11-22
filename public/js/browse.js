@@ -511,7 +511,7 @@ $(function() {
     function getRoot(){
 	var root = null
 	var data ={};
-	data["id"] = "owlThing";
+	//data["id"] = "owlThing";
 	data["label"] = "owl:Thing";
 	data["owlClass"] = "<http://www.w3.org/2002/07/owl#Thing>";
 	data["classURI"] = "http://www.w3.org/2002/07/owl#Thing";
@@ -926,7 +926,6 @@ $(function() {
 	    });
 	}
 	versions = JSON.parse($('#num_versions').text());
-	console.log(versions);
     }).always(function(){
 
 	//Reset the selected options.
@@ -987,42 +986,68 @@ $(function() {
 	//getBBox()
 	//getBoundingClientRect()
 	//First we have to relocate the tree,
-	d3.select("#infovis").select("svg").select("g")
-	    .attr("transform", "translate(-10,0)").node();
-
-	var width = d3.select("#infovis").select("svg").node().getBBox().width;
-
-	var svgGraph = d3.select("#infovis").select("svg")
-	    .attr("width",width+300)
-	    .attr("version", 1.1)
-	    .attr("xmlns", "http://www.w3.org/2000/svg")
-	    .node();
-
-	var serializer = new XMLSerializer();
-
-	var xmlString = serializer.serializeToString(svgGraph);
-
-	xmlString = xmlString.replace(/˄˄˄/g, '...');
-	xmlString = xmlString.replace(/˅˅˅/g, '...');
 
 	//Set the last width;
-	d3.select("#infovis").select("svg")
-	    .attr("width",width);
 
+	d3.selectAll(".node").filter(function(d){
+	    if(d.name=="owl:Thing"){
+		root = d;
+	    }
+	});
 
-	var imgsrc = 'data:image/svg+xml;base64,' + btoa(xmlString);
+	if((root!=null)&&(root!=undefined)) {
+	    //var svg = Viz("digraph { "+exportToGrapvhViz(root,'')+" }", "svg");
+	    var svg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
+			      "<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\"\n" +
+		          "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+				  "xmlns:y=\"http://www.yworks.com/xml/graphml\"\n" +
+				  "xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">\n"+
+			      "<graph id=\"G\" edgedefault=\"undirected\">\n"+exportToGraphML(root,'')+"\n</graph>\n</graphml>";
+	    var imgsrc = 'data:image/svg+xml;base64,'+ btoa(svg);
+	    var d = new Date();
 
-	var d = new Date();
-
-	var a = document.createElement("a");
-	a.href = imgsrc
-	a.download = ontology + d.getTime() + ".svg";
-	document.body.appendChild(a);
-	a.click();
-	document.body.removeChild(a);
+	    var a = document.createElement("a");
+	    a.href = imgsrc
+	    a.download = ontology+ d.getTime()+".graphml";
+	    document.body.appendChild(a);
+	    a.click();
+	    document.body.removeChild(a);
+	}
 
 
     });
+
+	function exportToGraphML(node,stGraph){
+		if(node.children==null){
+			return(stGraph)
+		}
+		stGraph = stGraph.concat(createGraphMLDescription(node));
+		$.each(node.children,function(index,child){
+			var name = child.name;
+			if((name=="˄˄˄")||(name=="˅˅˅")) {
+				name = "...";
+			}
+			stGraph = stGraph.concat(createGraphMLDescription(child));
+			stGraph = stGraph.concat(" <edge source=\""+node.id+"\" target=\""+child.id+"\"/>\n");
+
+			if(name!="...") {
+				stGraph = exportToGrapvhViz(child, stGraph);
+			}
+
+		});
+		return(stGraph);
+	};
+
+	function createGraphMLDescription(child){
+		var description ='';
+		if(name!=null){
+			description = "<node id=\"" + child.id + "\">\n";
+			description = description.concat("<data key=\"d"+child.id+"\">\n<y:ShapeNode>\n<y:Shape type=\"rectangle\"/>\n<y:NodeLabel>"+child.name+"</y:NodeLabel>\n</y:ShapeNode>\n</data>\n</node>\n");
+		}
+		return description;
+	};
+
+
     $('#exportViz').click(function(){
 
 	var root;
@@ -1050,43 +1075,31 @@ $(function() {
 
     });
 
-    function exportToGrapvhViz(node,stGraph){
-	if(node.children==null){
-	    return (stGraph);
-	}
-	stGraph= stGraph.concat(createGraphicVizDescription(node.name,node["colour"],node["leaf"]));
-	$.each(node.children,function(index,child){
-	    var name = child.name;
-	    if((name=="˄˄˄")||(name=="˅˅˅")) {
-		name = "...";
-	    }
-	    stGraph = stGraph.concat(createGraphicVizDescription(name,child["colour"],child["leaf"]));
-	    if(child["edge"]!=null){
-		result = parseColour(child["edge"]);
-		stGraph = stGraph.concat(' <' + node.name + '> -> <' + name + '> [color="' + result[0] + " " + parseFloat(result[1]) + " " + parseFloat(result[2]) + '"];');
-	    }else {
-		stGraph = stGraph.concat(" <" + node.name + "> -> <" + name + ">; ");
-	    }
+	function exportToGrapvhViz(node,stGraph){
+		if(node.children==null){
+			return (stGraph);
+		}
+		stGraph= stGraph.concat(createGraphicVizDescription(node.name));
+		$.each(node.children,function(index,child){
+			var name = child.name;
+			if((name=="˄˄˄")||(name=="˅˅˅")) {
+			name = "...";
+			}
+			stGraph = stGraph.concat(createGraphicVizDescription(name));
+			stGraph = stGraph.concat(" <" + node.name + "> -> <" + name + ">; ");
 
-	    if(name!="...") {
-		stGraph = exportToGrapvhViz(child, stGraph);
-	    }
+			if(name!="...") {
+				stGraph = exportToGrapvhViz(child, stGraph);
+			}
 
-	});
-	return(stGraph);
+		});
+		return(stGraph);
     };
 
-    function createGraphicVizDescription(name,colour,leaf){
+    function createGraphicVizDescription(name){
 	var description ='';
-	if((name!=null)&&((colour!=null)||(leaf!=null))){
-	    if(leaf!=null){
-		result = parseColour(leaf);
-	    }else{
-		result = parseColour(colour);
-	    }
-	    if(Array.isArray(result)&&(result.length==3)) {
-		description = ' <' + name + '> [label=<"' + name + '">, shape="circle" style="filled" color="' + result[0] + " " + parseFloat(result[1]) + " " + parseFloat(result[2]) + '"];';
-	    }
+	if(name!=null){
+		description = ' <' + name + '> [label=<"' + name + '">, shape="box" style="filled" ]';
 	}
 	return description;
     };
