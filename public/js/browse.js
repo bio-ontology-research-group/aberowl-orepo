@@ -753,7 +753,7 @@ $(function() {
 	    objectProperty = objectProperty.replace(/</g, '');
 	    objectProperty = objectProperty.replace(/>/g, '');
 	    //console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
-	    console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
+	    //console.log('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
 	    return($.getJSON('/service/api/retrieveRSuccessors.groovy?relation='+encodeURIComponent(objectProperty)+'&class='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version));
 	}else{
 	    //console.log('/service/api/runQuery.groovy?type='+type+'&direct=true&query='+encodeURIComponent(owlClass)+'&ontology='+ontology+'&version='+version);
@@ -916,6 +916,8 @@ $(function() {
 	return(def.promise());
     };
 
+	//We control if the list of the versions and the list of the properites have been changed for improving the performance.
+	var changedList = false;
     //Get the object properties from the server.
     $.getJSON('/service/api/getObjectProperties.groovy?ontology='+ontology,function(jsonData,textStatus,jqXHR) {
 	if((jsonData!=null)&&(jsonData!=undefined)){
@@ -933,14 +935,23 @@ $(function() {
 	$('#versions option:first').prop("selected",true);
 	$('#versions option:first').prop("disabled","disabled");
 
-	$('.multiselect').each(function(component){
+	$('.multiselect').each(function(){
 	    $(this).multiselect({
-		buttonWidth: '200px'
+		buttonWidth: '200px',
+		onDropdownHide:function(event){
+			//Thus, the tree will only be updated when some of the lists will be updated.
+			if(changedList){
+				initTree();
+				changedList = false;
+				console.log("tree updated");
+			}
+		}
 	    });
 	});
 	$('.checkbox').each(function(index){
 	    $(this).css('color',getColour(index));
 	});
+
 	$('#versions').change(function(){
 	    $('#versions option').each(function(index){
 		if(index > 0){
@@ -951,9 +962,12 @@ $(function() {
 		    }
 		}
 	    });
-	    console.log(versions.toSource());
-	    initTree();
+		changedList = true;
+	    //console.log(versions.toSource());
+	    //initTree(); If we update the tree each time that an user change the properties or version then the application is blocked.
 	});
+
+
 	$('#properties').change(function(){
 	    $('#properties option').each(function(index){
 		if($(this).is(':checked')){
@@ -962,9 +976,11 @@ $(function() {
 		    properties[index] = null;
 		}
 	    });
-	    //			console.log(properties.toSource());
-	    initTree();
+		changedList = true;
+	    //console.log(properties.toSource());
+	    //initTree(); If we update the tree each time that an user change the properties or version then the application is blocked.
 	});
+
 	$('#spinner').keyup(function() {
 	    /* This will be fired every time, when textbox's value changes. */
 	    var value= $(this).val();
@@ -1031,7 +1047,7 @@ $(function() {
 			stGraph = stGraph.concat(" <edge source=\""+node.id+"\" target=\""+child.id+"\"/>\n");
 
 			if(name!="...") {
-				stGraph = exportToGrapvhViz(child, stGraph);
+				stGraph = exportToGraphML(child, stGraph);
 			}
 
 		});
