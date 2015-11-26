@@ -176,7 +176,8 @@ $(function() {
 	    .attr("d", function(d) {
 		var o = {x: source.x0, y: source.y0};
 		return diagonal({source: o, target: o});
-	    });
+	    })
+		.attr("back-fill","none");
 
 	// Transition links to their new position.
 	link.transition()
@@ -996,7 +997,7 @@ $(function() {
 
 
     });
-	
+
 	$('#exportSVG').click(function(){
 
 		//getBBox()
@@ -1019,6 +1020,7 @@ $(function() {
 
 		xmlString = xmlString.replace(/˄˄˄/g, '...');
 		xmlString = xmlString.replace(/˅˅˅/g, '...');
+		xmlString = xmlString.replace(/back-fill/g,'fill');
 
 		//Set the last width;
 		d3.select("#infovis").select("svg")
