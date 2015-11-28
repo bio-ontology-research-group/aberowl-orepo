@@ -51,11 +51,11 @@ block content
 
       h4 Class Query
 
-      p Aber-OWL provides semantic access to ontologies. It performs
+      p AberOWL provides semantic access to ontologies. It performs
         |OWL-EL reasoning over a repository of ontologies using
         |the <a href="https://code.google.com/p/elk-reasoner/">ELK
         |reasoner</a> and answers queries over single ontologies or the
-        |full Aber-OWL ontology repository. Ontologies in Aber-OWL are
+        |full AberOWL ontology repository. Ontologies in AberOWL are
         |identified by their name, and queries are performed
         |in <a href="http://www.w3.org/TR/owl2-manchester-syntax/">Manchester
         |OWL Syntax</a>. Class names in Manchester OWL syntax are
@@ -66,12 +66,12 @@ block content
 
       h4 PubMed Query
 
-      p Aber-OWL: Pubmed is a semantic search engine for Pubmed and
+      p AberOWL: Pubmed is a semantic search engine for Pubmed and
         |Pubmed Central. We maintain an index of Medline abstracts and
-        |fulltext articles in Pubmed Central. Aber-OWL: Pubmed takes an
+        |fulltext articles in Pubmed Central. AberOWL: Pubmed takes an
         |OWL query as input, an ontology, and query type
         |(<tt>subclass</tt>, <tt>superclass</tt>, <tt>equivalent</tt>),
-        |retrieves all classes satisfying the query from Aber-OWL, and
+        |retrieves all classes satisfying the query from AberOWL, and
         |constructs a query based on the disjunction of class
         |names. Relevant documents are then retrieved from a local Apache Lucene-based
         |repository of abstracts and articles.
@@ -80,11 +80,11 @@ block content
 
       h4 SPARQL Query
 
-      p Aber-OWL: SPARQL provides semantic access to Linked Data by
+      p AberOWL: SPARQL provides semantic access to Linked Data by
         |incorporating OWL reasoning within the SPARQL syntax. In
-        |particular, Aber-OWL: SPARQL performs query expansion based on
+        |particular, AberOWL: SPARQL performs query expansion based on
         |SPARQL syntax extended by the following construct:
-        |<pre>OWL [querytype] [&lt;Aber-OWL service URI&gt;] [&lt;ontology name&gt;] { [OWL query] }</pre>
+        |<pre>OWL [querytype] [&lt;AberOWL service URI&gt;] [&lt;ontology name&gt;] { [OWL query] }</pre>
         |For example, the query
         |<pre>OWL subclass &lt;http://aber-owl.net/aber-owl/service/&gt; &lt;GO&gt; { part_of some 'apoptotic process' } </pre>
         |will return a set of class URIs that satisfy the query <tt>part_of some 'apoptotic process'</tt> in the Gene Ontology.
@@ -374,5 +374,5 @@ block content
       h3.api How do I cite AberOWL?
 
       p To cite AberOWL, please use the following reference:
-      p <a href=http://www.biomedcentral.com/1471-2105/16/26>Aber-OWL: a framework for ontology-based data access in biology</a>. Hoehndorf, R; Slater, L; Schofield, PN; Gkoutos, Georgios V. BMC Bioinformatics 16:26, 2015.
+      p <a href=http://www.biomedcentral.com/1471-2105/16/26>AberOWL: a framework for ontology-based data access in biology</a>. Hoehndorf, R; Slater, L; Schofield, PN; Gkoutos, Georgios V. BMC Bioinformatics 16:26, 2015.
   +footer
