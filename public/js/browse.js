@@ -944,7 +944,6 @@ $(function() {
 			if(changedList){
 				initTree();
 				changedList = false;
-				console.log("tree updated");
 			}
 		}
 	    });
