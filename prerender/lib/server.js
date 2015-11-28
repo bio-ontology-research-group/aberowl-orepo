@@ -181,12 +181,18 @@ server.onPhantomPageCreate = function(req, res) {
             req.prerender.downloadChecker = setInterval(function() {
                 _this.checkIfPageIsDoneLoading(req, res, req.prerender.status === 'fail');
             }, (req.prerender.pageDoneCheckTimeout || _this.options.pageDoneCheckTimeout || PAGE_DONE_CHECK_TIMEOUT));
-	    var hash = encodeURIComponent(req.prerender.url.substring(req.prerender.url.indexOf('#')+2));
-	    var base = req.prerender.url ;
-	    if (base.indexOf("#")>-1) {
-		base = req.prerender.url.substring(0, req.prerender.url.indexOf('#')).replace("#","");
+	    var hash = null ;
+	    if (req.prerender.url.indexOf("#!")>-1) {
+		hash = encodeURIComponent(req.prerender.url.substring(req.prerender.url.indexOf("#!")+2));
 	    }
-	    req.prerender.url = base + "#!" + hash ;
+	    var base = req.prerender.url ;
+	    util.log('base url: ', base) ;
+	    if (base.indexOf("#!")>-1) {
+		base = req.prerender.url.substring(0, req.prerender.url.indexOf("#!"));
+	    }
+	    if (hash != null) {
+		req.prerender.url = base + "#!" + hash ;
+	    }
 	    util.log('encoded: ',hash);
             req.prerender.page.open(encodeURI(req.prerender.url), function(status) {
                 req.prerender.status = status;

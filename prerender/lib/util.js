@@ -23,7 +23,6 @@ util.getUrl = function (req) {
     } catch (e) {
         decodedUrl = realUrl;
     }
-//    util.log('decoded url: ', decodedUrl);
     parts = url.parse(decodedUrl, true);
 
     // Remove the _escaped_fragment_ query parameter
@@ -41,7 +40,6 @@ util.getUrl = function (req) {
     delete parts.query[''];
 
     var newUrl = url.format(parts);
-
     //url.format encodes spaces but not arabic characters. decode it here so we can encode it all correctly later
     try {
         return decodeURIComponent(newUrl);

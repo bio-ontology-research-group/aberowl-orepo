@@ -112,7 +112,7 @@ block content
               a(href='#sparql') SPARQL
             li
               a(href='#downloads') Download
-            -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+            -if(user && (user.admin || (user.owns && user.owns.indexOf(ontology.id) != -1)))
               li
                 a(href='#manage') Manage
           div#overview
@@ -306,7 +306,7 @@ block content
             div#ontology_value(style='display:none') #{ontology.id}
             div#num_versions(style='display:none') #{JSON.stringify(versions)}
 
-          -if(user && (user.admin || (user.owns && user.owns.contains(ontology.id))))
+          -if(user && (user.admin || (user.owns && user.owns.indexOf(ontology.id) != -1)))
             div#manage
               -if(messages.info) 
                 div.alert.alert-success(role='alert')

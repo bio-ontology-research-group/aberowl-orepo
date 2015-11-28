@@ -39,11 +39,7 @@ $(function() {
             var relevant = false;
             var cell = $('td:first', this).html();
             $.each(terms, function(a, y) {
-            console.log(y);
-            console.log(y[0]);
-            console.log(y.length);
               for(var m=0;m<y.length;m++) {
-              console.log(cell);
                 if(cell.match('\>' + y[m] +'\<\/span\>')) relevant = true; // yeah that's bad 
               }
             });
@@ -65,7 +61,7 @@ $(function() {
       $('#otable tr').each(function(row) {
         var cell = $('td:first', this).text();
 
-        if(tags.length > 0) {
+        if(terms.length > 0) {
           $.each(terms, function(t) {
             for(var m=0;m<t.length;m++) {
               if(cell.match(t[m])) matched = true;
