@@ -37,6 +37,9 @@ router.post('/register', function(req, res) {
       password = passHash.generate(req.body.password);
 
   if(username && email && password) {
+    if(username.match(/\s/)) {
+      return res.render('register', {'msg': 'Username can only be one word.'});
+    }
     req.db.read('users', username, function(err, user) {
       if(!user) {
         req.db.save('users', username, {
