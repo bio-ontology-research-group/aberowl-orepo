@@ -28,6 +28,8 @@
     "pluralize": "latest",
     "request": "latest",
     "serve-favicon": "~2.1.3",
+    "phantomjs": "latest",
+    "xmldom": "latest",
     "underscore": "latest"
   }
 }
