@@ -31,9 +31,9 @@ router.get('/', function(req, res) {
 	    'json': true
 	}, function(request, response, body) {
 	    res.render('ontologies', {
-		'title': 'Ontology List',
-		'ontologies': _.sortBy(ontologies, 'id'),
-		'stati': body
+          'title': 'Ontology List',
+          'ontologies': _.sortBy(ontologies, 'id'),
+          'stati': body
 	    });
 	});
     });
@@ -179,10 +179,20 @@ router.get('/:id', function(req, res) {
         'ontology': ontology.id
       },
       'json': true
-    }, function(request, response, body) {
-      res.render('ontology', {
-        'ontology': ontology,
-        'stats': body
+    }, function(r, response, body) {
+      request.get(req.aberowl + 'getStatuses.groovy', { // todo, make an endpoint to just get an individual status. this is a bit silly.
+        'qs': {
+          'ontology': ontology.id
+        },
+        'json': true
+      }, function(r, response, stati) {
+        if(ontology.status != 'untested') {
+          ontology.status = stati[ontology.id];
+        }
+        res.render('ontology', {
+          'ontology': ontology,
+          'stats': body
+        });
       });
     });
   });

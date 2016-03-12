@@ -83,14 +83,15 @@ block content
               span.glyphicon.glyphicon-ok(aria-hidden='true')
               span &nbsp; Info: #{messages.info}
           -if(!stats.loaded)
-            -if(ontology.status == 'untested')
+          -if(ontology.status)
+            -if(ontology.status.status == 'untested')
               span#loadstatus.label.label-info Loading
+            -else if(ontology.status.status != 'classified')
+              span#loadstatus.label.label-danger #{ontology.status.status}: #{ontology.status.message}
             -else
-              span#loadstatus.label.label-warning Unloadable
-          -else if(!stats.consistent)
-            span#loadstatus.label.label-danger Inconsistent
+              span#loadstatus.label.label-sm.label-success Classified
           -else
-            span#loadstatus.label.label-sm.label-success Classified
+              span#loadstatus.label.label-sm.label-default Unknown
 
         h1.page-header #{ontology.id} - #{ontology.name}
         h2#wat
