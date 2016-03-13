@@ -31,7 +31,7 @@ $(function() {
 	return false ;
     }) ;
 
-    if($('#loadstatus').text() != 'Classified') {
+    if($('#loadstatus').text() == 'Loading') {
 	return;
     }
 
