@@ -7,6 +7,7 @@ var pluralise = require('pluralize');
 var _ = require('underscore')._;
 var passport = require('passport');
 var fs = require('fs');
+var path = require('path');
 
 if (typeof String.prototype.endsWith !== 'function') {
     String.prototype.endsWith = function(suffix) {
@@ -64,7 +65,7 @@ router.post('/upload', function(req, res) {
 
             fs.writeFile(newPath, data, function (err) {
               // Create ontology in DB
-              var time = Date.now()/1000;
+              var time = Math.floor(Date.now()/1000);
               var ont = {
                 'id': req.body.acronym,
                 'name': req.body.name,
@@ -93,7 +94,7 @@ router.post('/upload', function(req, res) {
           });
         } else if(_.has(req.body, 'url')) {
           // Create ontology in DB
-            var time = Date.now();
+            var time = Math.floor(Date.now()/1000);
             var ont = {
               'id': req.body.acronym,
               'name': req.body.name,
@@ -167,6 +168,15 @@ router.post('/:id/upload', function(req, res) {
   }
 });
 
+router.get('/:id/download', function(req, res) {
+  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  if(err || !ontology) {
+    req.flash('error', 'No such ontology');
+    return res.redirect('/ontology');
+  }
+  res.sendFile(path.resolve('onts/'+ontology.submissions[ontology.lastSubDate]));
+  });
+});
 
 router.get('/:id', function(req, res) {
   req.db.read('ontologies', req.params.id, function(err, ontology) {
