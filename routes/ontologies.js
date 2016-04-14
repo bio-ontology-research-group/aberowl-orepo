@@ -174,7 +174,7 @@ router.get('/:id/download', function(req, res) {
     req.flash('error', 'No such ontology');
     return res.redirect('/ontology');
   }
-  res.sendFile(path.resolve('http://aber-owl.net/onts/'+ontology.submissions[ontology.lastSubDate]));
+  res.redirect('http://aber-owl.net/onts/'+ontology.submissions[ontology.lastSubDate]);
   });
 });
 
