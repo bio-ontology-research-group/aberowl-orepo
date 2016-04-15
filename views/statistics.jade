@@ -1,7 +1,7 @@
 extends layout
 
 block title
-  title AberOWL: Help pages
+  title AberOWL: Statistics
   meta(name='title', content='AberOWL help pages')
   meta(name='description', content='AberOWL API documentation and help pages')
   link(rel='stylesheet', href='/css/base.css')
@@ -16,34 +16,34 @@ block content
     .starter-template
 
       h1 AberOWL Statistics
-      h2.sub-header The statistics of the ontologies saved in AberOWL
+      h2.sub-header AberOWL Ontology Statistics
       .table-responsive
         table.table.table-striped
           tbody
             tr
-              td Number of the axioms.
+              td Number of axioms
               td #{stats.aCount}
             tr
-              td Number of the classest.
+              td Number of classes
               td #{stats.cCount}
             tr
-              td Number of the ontologies.
+              td Number of ontologies
               td #{stats.oCount}
             tr
-              td Number of the labels
+              td Number of labels
               td #{stats.lCount}
             tr
-              td Number of the definitions
+              td Number of definitions
               td #{stats.dCount}
             tr
-              td Number of the unsuccessful imports. 
+              td Number of missing files 
               td #{stats.noFileError}
             tr
-              td Number of the unsuccessful imports.
+              td Number unsuccessful imports
               td #{stats.importError}
             tr
-              td Number of the unsuccessful parsers.
+              td Incoherent ontologies
               td #{stats.parseError}
             tr
-              td Number of the others erros caused during ontology loading.
+              td Ontologies with other errors
               td #{stats.otherError}
