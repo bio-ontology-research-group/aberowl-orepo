@@ -14,8 +14,8 @@ var express = require('express'),
     phantomjs = require('phantomjs'),
     // import new API for the visualization module.
     d3 = require('d3'),
-    dagreD3 = require('dagre-d3'),
-    jsdom = require('jsdom'),
+    jsdom = require("jsdom"),
+    xmldom = require('xmldom'),
     prerender = require('prerender-node');
 
 

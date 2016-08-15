@@ -8,6 +8,7 @@ block title
   link(rel="icon" href="http://aber-owl.net/favicon.png")
   link(rel='stylesheet', href='/css/base.css')
   link(rel='stylesheet', href='/css/style.min.css')
+  link(rel='stylesheet', href='/css/d3.css')
   link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
   link(rel='stylesheet', href='/css/jquery-ui.css')
   link(rel='stylesheet', href='/css/style.css')
@@ -16,14 +17,15 @@ block title
 
 block append scripts
   script(src='/js/jquery-2.1.3.min.js')
-  script(src='/js/d3.v3.min.js')
-  script(src='/js/dagre-d3.min.js')
   script(src='/js/jquery-ui.min.js')
   script(src='/js/jstree.min.js')
   script(src='/js/bootstrap.min.js')
   script(src='/js/bootstrap-table.min.js')
   script(src='/js/bootstrap-multiselect.js')
+  script(src='/js/bootstrap-spinner.js')
   script(src='/js/jquery.dataTables.min.js')
+  script(src='/js/d3.min.js')
+  script(src='/js/d3.tip.v0.6.3.js')
   script(src='/js/dom.js')
   script(src='/js/dom-parser.js')
   script(src='/js/sax.js')
@@ -32,9 +34,7 @@ block append scripts
   script(src='/js/openlifedata.js')
   script(src='/js/manage.js')
   script(src='/js/tree.js')
-  script(src='/js/visualise.js')
   script(src='/js/browse.js')
-
   script(src='/js/sparql.js')
   script(src='/js/objectproperty_tree.js')
 
@@ -45,6 +45,8 @@ block append scripts
   // script(src='/js/bootstrap.min.js')
   // script(src='/js/jquery.dataTables.min.js')
   // script(src='/js/jquery-ui.min.js')
+  // script(src='/js/d3.min.js')
+  // script(src='/js/d3.tip.v0.6.3.js')
   // script(src='/js/query.js')
   // script(src='/js/quicksearch.js')
   // script(src='/js/pubmed.js')
@@ -55,6 +57,7 @@ block append scripts
   // script(src='/js/browse.js')
   // script(src='/js/sparql.js')
   // script(src='/js/bootstrap-multiselect.js')
+  // script(src='/js/bootstrap-spinner.js')
   // script(src='/js/dataTables.bootstrap.min.js')
 
 block content
@@ -290,7 +293,14 @@ block content
                             select#properties.multiselect(multiple='multiple')
               div#table_properties(style='float:left;width:10%;margin: 50px;')
                 label(style='display:inline-block;text-align: center;') Number of classes
-                input#numclass.form-control.input-number(name="numclass" type="text")
+                div.input-group
+                  span.input-group-btn
+                    button.btn.btn-default(type="button",data-value="decrease",data-target="#spinner",data-toggle="spinner")
+                      span.glyphicon.glyphicon-minus
+                  input#spinner.form-control.input-number(type="text",data-ride="spinner",data-min="1")
+                  span.input-group-btn
+                    button.btn.btn-default(type="button",data-value="increase",data-target="#spinner",data-toggle="spinner")
+                      span.glyphicon.glyphicon-plus
               div#table_properties(style='float:left;width:10%;margin: 50px;')
                 button#exportSVG.btn.btn-default() Export to SVG
                 button#exportViz.btn.btn-default() Export to GraphViz
