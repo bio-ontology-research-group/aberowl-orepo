@@ -81,11 +81,13 @@ $(function() {
 	})
 	.on('open_node.jstree close_node.jstree', function(e, data) {
             var currentNode = data.node;
-//	    console.log(currentNode);
             if(e.type == 'close_node') {
-		var tree = $.jstree.reference('#left_tree');
-		tree.refresh_node(currentNode);
+				var tree = $.jstree.reference('#left_tree');
+				tree.refresh_node(currentNode);
             }
+			if(currentNode) {//we update the graph
+				updateGraph(currentNode);
+			}
             /*if (qs.c) {
               tree.fireEvent("changed.jstree");
               }*/
