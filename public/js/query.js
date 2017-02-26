@@ -36,7 +36,7 @@ function redrawTable() {
 	    $('#sparql').show();
         },
         "ajax": {
-            "url": "/service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
+            "url": "/aberowl-test-service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim())+"&ontology="+ontology,
 	    "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -86,7 +86,7 @@ $(document).ready(function() {
       'source': function(request, response) {
 	  var ontology = window.location.pathname.replace("ontology/","").substr(1),
           query = extractLast(request.term);
-          $.getJSON("/service/api/queryNames.groovy", {
+          $.getJSON("/aberowl-test-service/api/queryNames.groovy", {
               term: query,
               ontology: ontology,
               prefix: true

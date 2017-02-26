@@ -93,7 +93,7 @@ function doSearch() {
 	    $(nRow).find('td')[0].colSpan='2';
 	},
 	"ajax": {
-            "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
+            "url": "/aberowl-test-service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function(result) {
 
@@ -101,7 +101,7 @@ function doSearch() {
 		var rowcount = 0 ;
 		for (var m in result) {
 		    // group by IRI and sort by length of definition
-		    result[m] = groupBy(result[m], function(item) { return [item.iri] }) ;
+		    result[m] = groupBy(result[m], function(item) { return [item.class] }) ;
 		    for (var iri in result[m]) {
 			result[m][iri] = result[m][iri].sort(function(a,b) {
 			    b.definition = b.definition || "" ;
@@ -119,7 +119,7 @@ function doSearch() {
 			}
 		    });
 		    for (var i in result[m]) {
-			var iri = result[m][i][0].iri ;
+			var iri = result[m][i][0].class ;
 			datatable[rowcount] = new Array() ;
 			datatable[rowcount][3] = "" ;
 			datatable[rowcount][1] = '' ;
@@ -171,7 +171,7 @@ function doSearch() {
 	    window.prerenderReady = true ;
 	},
 	"ajax": {
-            "url": "/service/api/queryOntologies.groovy?term=" + encodeURIComponent(query.trim()),
+            "url": "/aberowl-test-service/api/queryOntologies.groovy?term=" + encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function(result) {
 		$('#otabhead').text('Ontologies ('+result.length+')');
@@ -179,7 +179,7 @@ function doSearch() {
 		var datatable = new Array();
 		for( var i=0, ien=result.length ; i<ien ; i++ ) {
 		    datatable[i] = new Array() ;
-		    datatable[i][0] = "<a href='/ontology/"+result[i].uri+"'>"+result[i].uri+"</a>" ;
+		    datatable[i][0] = "<a href='/ontology/"+result[i].ontology+"'>"+result[i].ontology+"</a>" ;
 		    datatable[i][1] = result[i].name;
 		    datatable[i][2] = result[i].description;
 		}
@@ -227,7 +227,7 @@ function doSearch() {
             } );
 	},
 	"ajax": {
-            "url": "/service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
+            "url": "/aberowl-test-service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -236,7 +236,7 @@ function doSearch() {
 
                 for ( var i=0, ien=result.length ; i<ien ; i++ ) {
                     datatable[i] = new Array() ;
-                    datatable[i][2] = "<a href='/ontology/"+result[i].ontologyURI + "#!" +result[i].classURI+"'>"+result[i].classURI+"</a>" ;
+                    datatable[i][2] = "<a href='/ontology/"+result[i].ontologyURI + "#!" +result[i].class+"'>"+result[i].class+"</a>" ;
                     datatable[i][1] = "<a href='/ontology/"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
                     datatable[i][0] = result[i].label || " " ;
                     datatable[i][3] = result[i].definition || " " ;

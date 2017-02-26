@@ -41,7 +41,7 @@ $(function() {
 	    var ontology = window.location.pathname.replace("ontology/","").substr(1),
             query = request.term;
 //	    console.log(query);
-            $.getJSON("/service/api/queryNames.groovy", {
+            $.getJSON("/aberowl-test-service/api/queryNames.groovy", {
 		term: query,
 		ontology: ontology,
 		prefix: true
@@ -98,7 +98,7 @@ $(function() {
 		qs.c = decodeURIComponent(window.location.hash.substring(2)) ;
 	    }
             if (qs.c) {
-		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
+		$.getJSON('/aberowl-test-service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(qs.c)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
 		    var labstr = '' ;
 		    var obostr = '' ;
@@ -147,7 +147,7 @@ $(function() {
             if(data.node) {
 		window.location.hash = "!"+encodeURIComponent(data.node.data);
 		
-		$.getJSON('/service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
+		$.getJSON('/aberowl-test-service/api/getClass.groovy?type=equivalent&query='+encodeURIComponent(data.node.data)+'&ontology='+ontology,function(data) {
 		    var html = '<div itemscope itemtype="http://schema.org/Class"><table class="table table-striped"><tbody>';
 		    var labstr = '' ;
 		    var obostr = '' ;
@@ -194,15 +194,15 @@ $(function() {
 		    'url' : function(node) {
 			if(node.id === '#') {
 			    if(qs.c) {
-				return '/service/api/findRoot.groovy?direct=true&query=<'+encodeURIComponent(qs.c)+'>&ontology='+ontology ;
+				return '/aberowl-test-service/api/findRoot.groovy?direct=true&query=<'+encodeURIComponent(qs.c)+'>&ontology='+ontology ;
 			    } else {
-				return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology ;
+				return '/aberowl-test-service/api/runQuery.groovy?type=subclass&direct=true&query=<http://www.w3.org/2002/07/owl%23Thing>&ontology='+ontology ;
 			    }
 			} else {
 			    if (node.id) {
 				window.location.hash = "!"+encodeURIComponent(node.data);
 			    }
-			    return '/service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology ;
+			    return '/aberowl-test-service/api/runQuery.groovy?type=subclass&direct=true&query=<'+encodeURIComponent(node.data)+'>&ontology='+ontology ;
 			}
 		    },
 		    'dataFilter': function(data) {
