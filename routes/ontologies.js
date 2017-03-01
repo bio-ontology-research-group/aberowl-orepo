@@ -21,7 +21,7 @@ router.get('/', function(req, res) {
     var ontologies = {};
     var purls = {};
     var purl = req.param('purl');
-    req.db.scan('ontologies', function(ontology) {
+    req.db.scan('ontos', function(ontology) {
 	ontologies[ontology.id] = ontology; 
 	purls[ontology.purl] = ontology; 
     }, function() {
@@ -56,7 +56,7 @@ router.get('/upload', function(req,res) {
 
 router.post('/upload', function(req, res) {
   if(req.isAuthenticated()) {
-    req.db.read('ontologies', req.body.acronym, function(err, exOnt) { 
+    req.db.read('ontos', req.body.acronym, function(err, exOnt) { 
       if(!exOnt) { 
         if(_.has(req.files, 'ontology')) {
           fs.readFile(req.files.ontology.path, function (err, data) {
@@ -80,7 +80,7 @@ router.post('/upload', function(req, res) {
               };
               ont.submissions[time] = newName;
 
-              req.db.save('ontologies', req.body.acronym, ont, function(err) {
+              req.db.save('ontos', req.body.acronym, ont, function(err) {
                 request.get(req.aberowl + 'reloadOntology.groovy', {
                   'qs': {
                     'name': req.body.acronym 
@@ -108,7 +108,7 @@ router.post('/upload', function(req, res) {
               'owners': [ req.user.username ]
             };
 	    if (req.body.url.endsWith("owl") || req.body.url.endsWith("rdf")) {
-		req.db.save('ontologies', req.body.acronym, ont, function(err) {
+		req.db.save('ontos', req.body.acronym, ont, function(err) {
 		    req.flash('info', 'Ontology added successfully and will be synchronised soon...')
 		    res.redirect('/ontology/' + req.body.acronym);
 		});
@@ -133,7 +133,7 @@ router.post('/upload', function(req, res) {
 
 router.post('/:id/upload', function(req, res) {
   if(req.isAuthenticated()) {
-    req.db.read('ontologies', req.params.id, function(err, exOnt) { 
+    req.db.read('ontos', req.params.id, function(err, exOnt) { 
       if(exOnt && (_.include(exOnt.owners, req.user.username) || req.user.admin == true)) { 
         fs.readFile(req.files.ontology.path, function (err, data) {
           var newName = req.params.id + '_' + (_.size(exOnt.submissions) + 1) + '.ont',
@@ -145,7 +145,7 @@ router.post('/:id/upload', function(req, res) {
             exOnt.lastSubDate = time;
             exOnt.status = 'untested';
 
-            req.db.save('ontologies', req.params.id, exOnt, function(err) {
+            req.db.save('ontos', req.params.id, exOnt, function(err) {
               request.get(req.aberowl + 'reloadOntology.groovy', {
                 'qs': {
                   'name': req.params.id
@@ -169,17 +169,17 @@ router.post('/:id/upload', function(req, res) {
 });
 
 router.get('/:id/download', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
   if(err || !ontology) {
     req.flash('error', 'No such ontology');
     return res.redirect('/ontology');
   }
-  res.redirect('http://aber-owl.net/onts/'+ontology.submissions[ontology.lastSubDate]);
+  res.redirect('http://aber-owl.net/ontologies/'+ontology.id+'/release/'+ontology.submissions[ontology.lastSubDate]);
   });
 });
 
 router.get('/:id', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     if(err || !ontology) {
       req.flash('error', 'No such ontology');
       return res.redirect('/ontology');
@@ -209,7 +209,7 @@ router.get('/:id', function(req, res) {
 });
 
 router.get('/:id/downloads', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     res.render('ontology_download', {
       'ontology': ontology
     });
@@ -217,7 +217,7 @@ router.get('/:id/downloads', function(req, res) {
 });
 
 router.get('/:id/manage', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
       res.render('ontology_manage', {
         'ontology': ontology
@@ -230,7 +230,7 @@ router.get('/:id/manage', function(req, res) {
 });
 
 router.get('/:id/query', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     res.render('ontology_query', {
       'ontology': ontology
     });
@@ -238,7 +238,7 @@ router.get('/:id/query', function(req, res) {
 });
 
 router.get('/:id/browse', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     res.render('ontology_browse', {
       'ontology': ontology
     });
@@ -248,7 +248,7 @@ router.get('/:id/browse', function(req, res) {
 /** Ontology Modification **/
 
 router.post('/:id/update', function(req, res) { // this is just to update the deets
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
       ontology.name = req.body.name;
       ontology.description = req.body.description;
@@ -264,7 +264,7 @@ router.post('/:id/update', function(req, res) { // this is just to update the de
 });
 
 router.post('/:id/updatesyncmethod', function(req, res) { // this is just to update the deets
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
       if(req.body.method == 'Bioportal') {
         ontology.source = 'bioportal';
@@ -275,7 +275,7 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
       }
       console.log(req.body.method);
 
-      req.db.save('ontologies', ontology.id, ontology, function() {
+      req.db.save('ontos', ontology.id, ontology, function() {
         req.flash('info', 'Sync Method Updated');
         res.redirect('/ontology/'+ontology.id+'/');
       });
@@ -287,9 +287,9 @@ router.post('/:id/updatesyncmethod', function(req, res) { // this is just to upd
 });
 
 router.post('/:id/delete', function(req, res) {
-  req.db.read('ontologies', req.params.id, function(err, ontology) {
+  req.db.read('ontos', req.params.id, function(err, ontology) {
     if(req.user && (req.user.admin || (req.user.owns && _.include(req.user.owns, ontology.id)))) {
-      req.db.del('ontologies', ontology.id, function() {
+      req.db.del('ontos', ontology.id, function() {
         req.flash('info', 'Ontology deleted');
         res.redirect('/ontology');
       });
