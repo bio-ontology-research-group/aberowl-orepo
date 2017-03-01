@@ -12,7 +12,7 @@ import org.eclipse.jetty.servlet.*
 import groovy.servlet.*
  
 def startJetty() {
-  def server = new Server(30000)
+  def server = new Server(30003)
   def context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
 
   context.resourceBase = '.'  

@@ -32,9 +32,9 @@ router.get('/', function(req, res) {
 	    'json': true
 	}, function(request, response, body) {
 	    res.render('ontologies', {
-          'title': 'Ontology List',
-          'ontologies': _.sortBy(ontologies, 'id'),
-          'stati': body
+		'title': 'Ontology List',
+		'ontologies': _.sortBy(ontologies, 'id'),
+		'stati': body
 	    });
 	});
     });

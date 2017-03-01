@@ -124,7 +124,7 @@ server.onRequest = function(req, res) {
     res.send = _.bind(this._send, this, req, res);
 
     var tempUrl = util.getUrl(req) ;
-    tempUrl = tempUrl.replace("http://localhost:3000/","http://aber-owl.net/") ;
+    tempUrl = tempUrl.replace("http://localhost:3001/","http://aber-owl.net/") ;
     req.prerender = {
         url: tempUrl,
         start: new Date()

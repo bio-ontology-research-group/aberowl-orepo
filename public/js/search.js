@@ -93,7 +93,7 @@ function doSearch() {
 	    $(nRow).find('td')[0].colSpan='2';
 	},
 	"ajax": {
-            "url": "/aberowl-test-service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
+            "url": "/service/api/queryNames.groovy?term=" + encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function(result) {
 
@@ -171,7 +171,7 @@ function doSearch() {
 	    window.prerenderReady = true ;
 	},
 	"ajax": {
-            "url": "/aberowl-test-service/api/queryOntologies.groovy?term=" + encodeURIComponent(query.trim()),
+            "url": "/service/api/queryOntologies.groovy?term=" + encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function(result) {
 		$('#otabhead').text('Ontologies ('+result.length+')');
@@ -220,14 +220,14 @@ function doSearch() {
             api.column(0, {page:'current'} ).data().each( function ( group, i ) {
 		if (!last || (last && last[0] !== group[0] )) {
                     $(rows).eq( i ).before(
-			'<tr class="group"><td colspan="3">'+group[0]+'</td></tr>'
+			'<tr class="group"><td colspan="3">'+group+'</td></tr>'
                     );
                     last = group;
 		}
             } );
 	},
 	"ajax": {
-            "url": "/aberowl-test-service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
+            "url": "/service/api/runQuery.groovy?type="+qType+"&labels=true&query="+encodeURIComponent(query.trim()),
             "dataType": 'json',
             "dataSrc": function ( json ) {
                 var datatable = new Array();
@@ -236,7 +236,7 @@ function doSearch() {
 
                 for ( var i=0, ien=result.length ; i<ien ; i++ ) {
                     datatable[i] = new Array() ;
-                    datatable[i][2] = "<a href='/ontology/"+result[i].ontologyURI + "#!" +result[i].class+"'>"+result[i].class+"</a>" ;
+                    datatable[i][2] = "<a href='/ontology/"+result[i].ontologyURI + "#!" +result[i].classURI+"'>"+result[i].classURI+"</a>" ;
                     datatable[i][1] = "<a href='/ontology/"+result[i].ontologyURI+"'>"+result[i].ontologyURI+"</a>" ;
                     datatable[i][0] = result[i].label || " " ;
                     datatable[i][3] = result[i].definition || " " ;
