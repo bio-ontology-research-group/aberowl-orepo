@@ -22,8 +22,10 @@ router.get('/', function(req, res) {
     var purls = {};
     var purl = req.param('purl');
     req.db.scan('ontos', function(ontology) {
-	ontologies[ontology.id] = ontology; 
-	purls[ontology.purl] = ontology; 
+	if (ontology.uptodate) {
+	    ontologies[ontology.id] = ontology; 
+	    purls[ontology.purl] = ontology;
+	}
     }, function() {
 	if (purl && purls[purl]) {
 	    res.redirect('/ontology/'+purls[purl].id);
