@@ -119,7 +119,7 @@ function doSearch() {
 			}
 		    });
 		    for (var i in result[m]) {
-			var iri = result[m][i][0].class ;
+			var iri = result[m][i][0].iri ;
 			datatable[rowcount] = new Array() ;
 			datatable[rowcount][3] = "" ;
 			datatable[rowcount][1] = '' ;
@@ -179,7 +179,7 @@ function doSearch() {
 		var datatable = new Array();
 		for( var i=0, ien=result.length ; i<ien ; i++ ) {
 		    datatable[i] = new Array() ;
-		    datatable[i][0] = "<a href='/ontology/"+result[i].ontology+"'>"+result[i].ontology+"</a>" ;
+		    datatable[i][0] = "<a href='/ontology/"+result[i].uri+"'>"+result[i].uri+"</a>" ;
 		    datatable[i][1] = result[i].name;
 		    datatable[i][2] = result[i].description;
 		}
